@@ -1,9 +1,7 @@
+======================
 # HashPotatoes
 Orbital Project 2019
-
-===============
-# HashPotatoes
-===============
+======================
 
 ### Owners
 @nadiah25 
@@ -19,16 +17,16 @@ Through this application, we hope that everyone can have a better learning envir
 
 ### Features
 #### Description of the product
-*LOGIN PAGE
-*REGISTRATION PAGE
-*CREATING POST BUTTON
-*ANONYMOUS OPTION
-*TAGGING SYSTEM
-    *PRIVATE
-    *PUBLIC
-*HOME FEED
-    *FOLLOW/FAVOURITE SYSTEM
-*OWN POST PAGE
-    *EDIT AND DELETE POST OPTION
-*SEARCH BAR
-*SETTINGS
+* LOGIN PAGE
+* REGISTRATION PAGE
+* CREATING POST BUTTON
+* ANONYMOUS OPTION
+* TAGGING SYSTEM
+    * PRIVATE
+    * PUBLIC
+* HOME FEED
+    * FOLLOW/FAVOURITE SYSTEM
+* OWN POST PAGE
+    * EDIT AND DELETE POST OPTION
+* SEARCH BAR
+* SETTINGS
