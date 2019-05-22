@@ -1,11 +1,11 @@
-======================
-## HashPotatoes
-## Orbital Project 2019
-======================
+# HashPotatoes
+### Orbital Project 2019
 
-### Owners
+### Team Members
 @nadiah25 
 @janicetyy
+
+## Project Overview
 
 ### Motivation
 Students in NUS can decide which modules to take up each semester and depending on their own pace, may differ from their existing peers. Hence, it is difficult to create a new social circle where they are able to carry out effective discussion for each modules quickly. Some may even fear that their questions are too simple, where they may then appear to be less competent. In addition, existing school forums are web-based thus less convenient to access through mobile devices, and notifications to alert about responses to their questions are not available.
