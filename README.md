@@ -31,7 +31,7 @@ Through this application, we hope that everyone can have a better learning envir
 * SEARCH BAR
 * SETTINGS
 
-###Technology stack
+### Technology stack
 * Android Studio
 * Firebase
 * Version Control System (GitHub)
