@@ -32,6 +32,6 @@ Through this application, we hope that everyone can have a better learning envir
 * SETTINGS
 
 ### Technology stack
-* Android Studio
+* Android Studio (Java)
 * Firebase
 * Version Control System (GitHub)
