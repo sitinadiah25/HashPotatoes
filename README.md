@@ -30,3 +30,8 @@ Through this application, we hope that everyone can have a better learning envir
     * EDIT AND DELETE POST OPTION
 * SEARCH BAR
 * SETTINGS
+
+###Technology stack
+* Android Studio
+* Firebase
+* Version Control System (GitHub)
