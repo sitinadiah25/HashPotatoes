@@ -31,6 +31,6 @@ Through this application, we hope that everyone can have a better learning envir
 * SETTINGS - This page is for general application settings, such as change of password or notification settings.
 
 ### Technology stack
-* Android Studio
+* Android Studio (Java)
 * Firebase
 * Version Control System (GitHub)
