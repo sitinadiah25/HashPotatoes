@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_potato);
+        //tabLayout.getTabAt(0).setIcon(R.drawable.ic_potato);
     }
 
     /**

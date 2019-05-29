@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RibeyeMarrowRegular">
+        <item name="android:fontFamily">@font/ribeyemarrowregular</item>
+        <item name="fontFamily">@font/ribeyemarrowregular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
 </resources>
