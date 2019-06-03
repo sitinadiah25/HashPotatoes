@@ -22,6 +22,8 @@
         <activity android:name=".Profile.ProfileActivity"></activity>
         <activity android:name=".Feature.FeatureActivity"></activity>
         <activity android:name=".Profile.AccountSettingsActivity"></activity>
+        <activity android:name=".Login.RegisterActivity"></activity>
+        <activity android:name=".Login.LoginActivity"></activity>
     </application>
 
 </manifest>

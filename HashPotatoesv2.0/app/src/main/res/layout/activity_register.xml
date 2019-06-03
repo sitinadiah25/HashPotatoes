@@ -13,12 +13,14 @@
         android:paddingLeft="25dp"
         android:paddingRight="25dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            android:src="@drawable/potatologo_name"
-            android:layout_gravity="center"
-            android:layout_marginBottom="15dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register a New Account"
+            android:textSize="20sp"
+            android:textColor="@color/Black"
+            android:gravity="center"
+            android:layout_marginBottom="35dp"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -32,6 +34,21 @@
                 android:inputType="textEmailAddress"
                 android:hint="Email"
                 android:id="@+id/inputEmail"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Full Name"
+                android:id="@+id/inputName"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -54,20 +71,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
-            android:text="Login"
-            android:id="@+id/btn_login"
+            android:text="Register"
+            android:id="@+id/btn_register"
             android:padding="12dp"
-            android:background="@drawable/blue_rounded_button"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:text="No Account yet? Create one"
-            android:gravity="center"
-            android:textSize="16dp"
-            android:id="@+id/linkSignUp"
-            android:textColor="@color/linkBlue"/>
+            android:background="@drawable/blue_rounded_button"
+            android:layout_marginTop="35dp"/>
 
     </LinearLayout>
 
@@ -86,7 +94,7 @@
         android:layout_alignBottom="@id/ProgressBar"
         android:layout_alignRight="@id/ProgressBar"
         android:layout_alignLeft="@id/ProgressBar"
-        android:id="@+id/pleaseWait"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:id="@+id/loadingPleaseWait"/>
 
 </RelativeLayout>
