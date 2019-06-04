@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                     mProgressBar.setVisibility((View.VISIBLE));
                     loadingPleaseWait.setVisibility(View.VISIBLE);
 
-                    firebaseMethods.registerNewEmail(email,password,username);
+                    firebaseMethods.registerNewEmail(email, password, username);
                 }
             }
         });
@@ -76,19 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean checkInputs(String email, String password, String username){
         Log.d(TAG,"checkInputsL checking inputs for null values");
-        if(email.equals(""))
-        {
-            Toast.makeText(mContext,"Please enter an email",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (username.equals(""))
-        {
-            Toast.makeText(mContext, "Please enter a username", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (password.equals(""))
-        {
-            Toast.makeText(mContext, "Please enter a password", Toast.LENGTH_SHORT).show();
+        if(email.equals("") || username.equals("") || password.equals("")) {
+            Toast.makeText(mContext, "All fields must be filled out", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -134,6 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+                Log.d(TAG, "onAuthStateChanged: user: " + user);
 
                 if (user != null) {
                     //User is signed in
@@ -146,15 +136,20 @@ public class RegisterActivity extends AppCompatActivity {
                             //1st check: Make sure that the username is not already in use
                             //if name is taken, add random string to the back of it
                             // and users can change it later
-                            if(firebaseMethods.checkIfUsernameExists(username,dataSnapshot)){
+                            if(firebaseMethods.checkIfUsernameExists(username, dataSnapshot)){
                                 append = myRef.push().getKey().substring(3,10);
                                 Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
                             }
                             username = username + append;
 
                             //add user to database
+                            firebaseMethods.addNewUser(email, username, "", "", "", "");
 
-                            //add user_account_setting to database
+                            Log.d(TAG, "onDataChange: Signup successful.");
+
+                            Toast.makeText(mContext, "Signup successful. Sending verification email.", Toast.LENGTH_SHORT).show();
+
+                            mAuth.signOut();
                         }
 
                         //error method
@@ -163,6 +158,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                         }
                     });
+
+                    finish();
                 }
                 else {
                     //User is signed out

@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.hashpotatoesv20.Models.User;
+import com.example.hashpotatoesv20.Models.UserAccountSettings;
+import com.example.hashpotatoesv20.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -13,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class FirebaseMethods {
 
@@ -21,11 +25,16 @@ public class FirebaseMethods {
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
     private String userID;
 
     private Context mContext;
+
     public FirebaseMethods(Context context){
         mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
         mContext = context;
 
         if(mAuth.getCurrentUser() != null) {
@@ -38,7 +47,7 @@ public class FirebaseMethods {
 
         User user = new User();
 
-        for (DataSnapshot ds:dataSnapshot.getChildren()){
+        for (DataSnapshot ds:dataSnapshot.child(userID).getChildren()){
             Log.d(TAG, "checkIfUsernameExists: datasnapshot: " + ds);
 
             user.setUsername(ds.getValue(User.class).getUsername());
@@ -65,6 +74,9 @@ public class FirebaseMethods {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            //send verification email
+                            sendVerificationEmail();
+
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             userID = mAuth.getCurrentUser().getUid();
@@ -79,6 +91,52 @@ public class FirebaseMethods {
                         // ...
                     }
                 });
+    }
+
+    public void sendVerificationEmail() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            user.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+
+                            }
+                            else {
+                                Toast.makeText(mContext, "Couldn't send verification email", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Add information to the users nodes
+     * Add information to the user_account_settings node
+     * @param email
+     * @param username
+     * @param description
+     * @param website
+     * @param profile_photo
+     * @param major
+     */
+    public void addNewUser(String email, String username, String description,
+                           String website, String profile_photo, String major) {
+        User user = new User(userID, StringManipulation.condenseUsername(username), email);
+
+        myRef.child(mContext.getString(R.string.dbname_users))
+                .child(userID)
+                .setValue(user);
+
+        UserAccountSettings settings = new UserAccountSettings(
+                description, username, 0, 0, major,
+                0, profile_photo, username, website, 1);
+
+        myRef.child(mContext.getString(R.string.dbname_users_account_settings))
+                .child(userID)
+                .setValue(settings);
     }
 
 }
