@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private Context mContext;
     private ProgressBar mProgressBar;
-    private EditText mEmail, mPassword;
+    private EditText mEmail, mPassword,mUsername;
     private TextView mPleaseWait;
 
     @Override
@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         mPleaseWait = (TextView) findViewById(R.id.pleaseWait);
         mEmail = (EditText) findViewById(R.id.inputEmail);
         mPassword = (EditText) findViewById(R.id.inputPassword);
+        mUsername = (EditText) findViewById(R.id.inputName);
         mContext = LoginActivity.this;
 
         Log.d(TAG, "onCreate: started.");
