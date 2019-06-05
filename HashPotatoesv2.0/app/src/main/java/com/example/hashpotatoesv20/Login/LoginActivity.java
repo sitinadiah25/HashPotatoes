@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.R;
 import com.google.android.gms.tasks.OnCompleteListener;

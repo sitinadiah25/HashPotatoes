@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         initImageLoader();
         setupBottomNavigationView();
         setupViewPager();
-
-        mAuth.signOut();
     }
 
     private void initImageLoader(){
