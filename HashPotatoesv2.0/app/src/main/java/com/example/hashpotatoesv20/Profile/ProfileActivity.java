@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,16 +33,29 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Log.d(TAG, "onCreate: started.");
-        mProgressBar = (ProgressBar) findViewById(R.id.profileProgressBar);
-        mProgressBar.setVisibility(View.GONE);
 
-        setupBottomNavigationView();
+        init();
+
+        /*mProgressBar = (ProgressBar) findViewById(R.id.profileProgressBar);
+        mProgressBar.setVisibility(View.GONE);*/
+
+        /*setupBottomNavigationView();
         setupToolbar();
         setupActivityWidgets();
-        setProfileImage();
+        setProfileImage();*/
     }
 
-    private void setProfileImage(){
+    private void init(){
+        Log.d(TAG, "init: inflating" + getString(R.string.profile_fragment));
+
+        ProfileFragment fragment = new ProfileFragment();
+        FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container,fragment);
+        transaction.addToBackStack(getString(R.string.profile_fragment));
+        transaction.commit();
+    }
+
+    /*private void setProfileImage(){
         Log.d(TAG, "setProfileImage: setting profile photo");
         String imgUrl = "https://cdn.shopify.com/s/files/1/0553/1817/products/Whistle_Flute_KawaiiCat_FlatBrimCap_2048x2048.png?v=1514921387";
         UniversalImageLoader.setImage(imgUrl, profilePhoto, mProgressBar, "");
@@ -68,9 +82,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    /**
+    *//**
      * BottomNavigationView setup
-     */
+     *//*
     private void setupBottomNavigationView() {
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
@@ -80,5 +94,5 @@ public class ProfileActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
-
+*/
 }
