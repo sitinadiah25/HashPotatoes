@@ -4,28 +4,26 @@ public class UserAccountSettings {
 
     private String description;
     private String display_name;
-    private long followers;
-    private long following;
     private String major;
     private long posts;
     private String profile_photo;
     private String username;
     private String website;
-    private long year;
+    private String year;
+    private long hashtags;
 
-    public UserAccountSettings(String description, String display_name, long followers,
-                               long following, String major, long posts, String profile_photo,
-                               String username, String website, long year) {
+    public UserAccountSettings(String description, String display_name, String major,
+                               long posts, String profile_photo, String username,
+                               String website, String year, long hashtags) {
         this.description = description;
         this.display_name = display_name;
-        this.followers = followers;
-        this.following = following;
         this.major = major;
         this.posts = posts;
         this.profile_photo = profile_photo;
         this.username = username;
         this.website = website;
         this.year = year;
+        this.hashtags = hashtags;
     }
 
     public UserAccountSettings() {
@@ -46,22 +44,6 @@ public class UserAccountSettings {
 
     public void setDisplay_name(String display_name) {
         this.display_name = display_name;
-    }
-
-    public long getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(long followers) {
-        this.followers = followers;
-    }
-
-    public long getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(long following) {
-        this.following = following;
     }
 
     public String getMajor() {
@@ -104,11 +86,34 @@ public class UserAccountSettings {
         this.website = website;
     }
 
-    public long getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(long year) {
+    public void setYear(String year) {
         this.year = year;
+    }
+
+    public long getHashtags() {
+        return hashtags;
+    }
+
+    public void setHashtags(long hashtags) {
+        this.hashtags = hashtags;
+    }
+
+    @Override
+    public String toString() {
+        return "UserAccountSettings{" +
+                "description='" + description + '\'' +
+                ", display_name='" + display_name + '\'' +
+                ", major='" + major + '\'' +
+                ", posts=" + posts +
+                ", profile_photo='" + profile_photo + '\'' +
+                ", username='" + username + '\'' +
+                ", website='" + website + '\'' +
+                ", year='" + year + '\'' +
+                ", hashtags=" + hashtags +
+                '}';
     }
 }

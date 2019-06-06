@@ -70,8 +70,7 @@
                     android:id="@+id/display_name"
                     android:textStyle="bold"
                     android:text="Protato"
-                    android:textSize="16sp"
-                    android:textAlignment="center"/>
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -79,8 +78,7 @@
                     android:id="@+id/profile_year"
                     android:text="Year 2"
                     android:textSize="16sp"
-                    android:layout_marginTop="2dp"
-                    android:textAlignment="center"/>
+                    android:layout_marginTop="2dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -88,8 +86,23 @@
                     android:id="@+id/profile_major"
                     android:text="Bachelor of Computing"
                     android:textSize="16sp"
-                    android:layout_marginTop="2dp"
-                    android:textAlignment="center"/>
+                    android:layout_marginTop="2dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profile_website"
+                    android:text="www.google.com"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profile_description"
+                    android:text="hello!"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"/>
 
             </LinearLayout>
 

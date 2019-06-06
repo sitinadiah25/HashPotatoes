@@ -9,4 +9,10 @@
     <!-- firebase database fields -->
     <string name="dbname_users">users</string>
     <string name="dbname_users_account_settings">users_account_settings</string>
+    <string name="field_username">username</string>
+
+    <!-- intent extras -->
+    <string name="calling_activity">calling_activity</string>
+    <string name="profile_activity">Profile Activity</string>
+
 </resources>

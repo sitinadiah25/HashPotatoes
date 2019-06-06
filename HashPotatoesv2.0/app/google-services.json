@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "665847912147",
-    "firebase_url": "https://hashpotatoes-8691a.firebaseio.com",
-    "project_id": "hashpotatoes-8691a",
-    "storage_bucket": "hashpotatoes-8691a.appspot.com"
+    "project_number": "78925226149",
+    "firebase_url": "https://hashpotatoes-98.firebaseio.com",
+    "project_id": "hashpotatoes-98",
+    "storage_bucket": "hashpotatoes-98.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:665847912147:android:13c3c6a65bcbec53",
+        "mobilesdk_app_id": "1:78925226149:android:13c3c6a65bcbec53",
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
       },
       "oauth_client": [
         {
-          "client_id": "665847912147-0u5v0d4t61l1jd99crr9hq0rfil0f4tt.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.myapplication",
-            "certificate_hash": "8442b88a8ef712b1266c3741ece3b7c7e5dc6b47"
-          }
-        },
-        {
-          "client_id": "665847912147-lt15bcl0ulndaloo86c255pa2fpqm24f.apps.googleusercontent.com",
+          "client_id": "78925226149-qavsuk33kd3qk941r1a4jl58pql7r9ma.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDhaF7Av03aI50pYNAQzfjEbYEAVvLBkFA"
+          "current_key": "AIzaSyDE5p5BqRV0Sc8UzvEcFBPVQqCo0prbruc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "665847912147-lt15bcl0ulndaloo86c255pa2fpqm24f.apps.googleusercontent.com",
+              "client_id": "78925226149-qavsuk33kd3qk941r1a4jl58pql7r9ma.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
