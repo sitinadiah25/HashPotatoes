@@ -35,11 +35,13 @@ public class SignOutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_signout, container,false);
         tvSignout = (TextView) view.findViewById(R.id.tvConfirmSignout);
         mProgressbar = (ProgressBar) view.findViewById(R.id.progressBar);
-        tvSigningout = (TextView) view.findViewById(R.id.tvSigningout) ;
+        tvSigningout = (TextView) view.findViewById(R.id.tvSigningOut) ;
         Button btnConfirmSignout = (Button) view.findViewById(R.id.btnConfirmSignout);
 
         mProgressbar.setVisibility(View.GONE);
         tvSigningout.setVisibility(View.GONE);
+
+        setupFirebaseAuth();
 
         btnConfirmSignout.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -64,7 +66,9 @@ public class SignOutFragment extends Fragment {
      */
     private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
+
         mAuth = FirebaseAuth.getInstance();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
