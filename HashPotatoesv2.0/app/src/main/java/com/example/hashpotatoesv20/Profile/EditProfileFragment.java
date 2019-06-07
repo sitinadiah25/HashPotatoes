@@ -20,8 +20,14 @@ import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
+import com.example.hashpotatoesv20.dialogs.ConfirmPasswordDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +38,66 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class EditProfileFragment extends Fragment {
+import static android.support.constraint.Constraints.TAG;
+
+public class EditProfileFragment extends Fragment implements
+        ConfirmPasswordDialog.OnConfirmPasswordListener{
+
+    @Override
+    public void onConfirmPassword(String password) {
+        Log.d(TAG, "onConfirmPassword: got the password: " + password);
+
+        // Get auth credentials from the user for re-authentication. The example below shows
+        // email and password credentials but there are multiple possible providers,
+        // such as GoogleAuthProvider or FacebookAuthProvider.
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(mAuth.getCurrentUser().getEmail(), password);
+
+        //Prompt the user to re-provide their sign-in credentials
+        mAuth.getCurrentUser().reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG, "User re-authenticated.");
+
+                            //Check if email is already present
+                            mAuth.fetchSignInMethodsForEmail(mEmail.getText().toString()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                                    if (task.isSuccessful()) {
+                                        try {
+                                            Log.d(TAG, "signinSize: " + task.getResult().getSignInMethods().size());
+                                            if (task.getResult().getSignInMethods().size() == 1) {
+                                                Log.d(TAG, "onComplete: That email is already in use.");
+                                                Toast.makeText(getActivity(), "That email is already in use", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Log.d(TAG, "onComplete: That email is available.");
+
+                                                mAuth.getCurrentUser().updateEmail(mEmail.getText().toString())
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Log.d(TAG, "User email address is updated.");
+                                                                    Toast.makeText(getActivity(), "Email is updated.", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        } catch (NullPointerException e) {
+                                            Log.e(TAG, "onComplete: NullPointerException: " + e.getMessage());
+                                        }
+                                    }
+                                }
+                            });
+                        }else{
+                            Log.d(TAG, "onComplete: re-authentication failed.");
+                        }
+
+                    }
+                });
+    }
 
     private static final String TAG = "EditProfileFragment";
 
@@ -100,27 +165,27 @@ public class EditProfileFragment extends Fragment {
         final String description = mDescription.getText().toString();
         final String email = mEmail.getText().toString();
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        //case 1: if user made a change to their username
+        if (!mUserSettings.getUser().getUsername().equals(username)) {
+            Log.d(TAG, "onDataChange: check if username exists");
+            checkIfUsernameExists(username);
+        }
+        //case 2: if user made a change to their email
+        else {
+            //Log.d(TAG, "onDataChange: username exists!");
+            if(!mUserSettings.getUser().getEmail().equals(email)){
+                //Step 1: Re-authenticate
+                     //Confirm the password and email
+                ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
+                dialog.show(getFragmentManager(),getString(R.string.confirm_password_dialog));
+                dialog.setTargetFragment(EditProfileFragment.this,1);
 
-                //case 1: user did not change their username
-                if (!mUserSettings.getUser().getUsername().equals(username)) {
-                    Log.d(TAG, "onDataChange: check if username exists");
-                    checkIfUsernameExists(username);
-                }
-                //case 2: user changed their username, need to check for uniqueness
-                else {
-                    Log.d(TAG, "onDataChange: username exists!");
-                }
-
+                //Step 2: Check if the email already is registered
+                    //'fetchProvidersForEmail
+                //Step 3: Change the email
+                    //Submit the email to the database and authenticate
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        }
     }
 
     /**
