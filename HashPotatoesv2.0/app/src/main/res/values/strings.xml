@@ -23,4 +23,7 @@
     <string name="calling_activity">calling_activity</string>
     <string name="profile_activity">Profile Activity</string>
 
+    <!-- post fields -->
+    <string name="new_post">new_post</string>
+
 </resources>
