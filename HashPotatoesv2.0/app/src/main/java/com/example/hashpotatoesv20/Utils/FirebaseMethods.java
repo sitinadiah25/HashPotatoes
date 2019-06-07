@@ -43,6 +43,49 @@ public class FirebaseMethods {
         }
     }
 
+    public void updateUserAccountSettings(String displayname, String description, String website, String year, String major){
+        if(displayname != null){
+            myRef.child(mContext.getString(R.string.dbname_users_account_settings))
+                    .child(userID)
+                    .child(mContext.getString(R.string.field_displayname))
+                    .setValue(displayname);
+        }
+
+        if(description != null){
+            myRef.child(mContext.getString(R.string.dbname_users_account_settings))
+                    .child(userID)
+                    .child(mContext.getString(R.string.field_description))
+                    .setValue(description);
+        }
+
+        if(website != null){
+            myRef.child(mContext.getString(R.string.dbname_users_account_settings))
+                    .child(userID)
+                    .child(mContext.getString(R.string.field_website))
+                    .setValue(website);
+        }
+
+        if(year != null){
+            myRef.child(mContext.getString(R.string.dbname_users_account_settings))
+                    .child(userID)
+                    .child(mContext.getString(R.string.field_year))
+                    .setValue(year);
+        }
+
+        if(major != null){
+            myRef.child(mContext.getString(R.string.dbname_users_account_settings))
+                    .child(userID)
+                    .child(mContext.getString(R.string.field_major))
+                    .setValue(major);
+        }
+
+    }
+
+
+    /**
+     * update the username in the 'users' and 'users account setting' node in firebase
+     * @param username
+     */
     public void updateUsername(String username) {
         Log.d(TAG, "updateUsername: updating username to: " + username);
 
@@ -54,6 +97,19 @@ public class FirebaseMethods {
                 .child(userID)
                 .child(mContext.getString(R.string.field_username))
                 .setValue(username);
+    }
+
+    /**
+     * update the email in the user's node in firebase
+     * @param email
+     */
+    public void updateEmail(String email) {
+        Log.d(TAG, "updateEmail: updating email to: " + email);
+
+        myRef.child(mContext.getString(R.string.dbname_users))
+                .child(userID)
+                .child(mContext.getString(R.string.field_email))
+                .setValue(email);
     }
 
     /*

@@ -36,6 +36,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.w3c.dom.Text;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.constraint.Constraints.TAG;
@@ -81,6 +83,7 @@ public class EditProfileFragment extends Fragment implements
                                                                 if (task.isSuccessful()) {
                                                                     Log.d(TAG, "User email address is updated.");
                                                                     Toast.makeText(getActivity(), "Email is updated.", Toast.LENGTH_SHORT).show();
+                                                                    mFirebaseMethods.updateEmail(mEmail.getText().toString());
                                                                 }
                                                             }
                                                         });
@@ -110,7 +113,7 @@ public class EditProfileFragment extends Fragment implements
     private String userID;
 
     //EditProfile fragment widgets
-    private EditText mDisplayName, mUsername, mDescription, mWebsite, mEmail;
+    private EditText mDisplayName, mUsername, mDescription, mWebsite, mEmail, mYearOfStudy, mMajor;
     private TextView mChangeProfilePhoto;
     private CircleImageView mProfilePhoto;
 
@@ -128,6 +131,8 @@ public class EditProfileFragment extends Fragment implements
         mWebsite = (EditText) view.findViewById(R.id.website);
         mEmail = (EditText) view.findViewById(R.id.email);
         mChangeProfilePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
+        mYearOfStudy = (EditText) view.findViewById(R.id.year);
+        mMajor = (EditText) view.findViewById(R.id.major);
         mFirebaseMethods = new FirebaseMethods(getActivity());
 
         setupFirebaseAuth();
@@ -164,6 +169,8 @@ public class EditProfileFragment extends Fragment implements
         final String website = mWebsite.getText().toString();
         final String description = mDescription.getText().toString();
         final String email = mEmail.getText().toString();
+        final String yearOfStudy = mYearOfStudy.getText().toString();
+        final String major = mMajor.getText().toString();
 
         //case 1: if user made a change to their username
         if (!mUserSettings.getUser().getUsername().equals(username)) {
@@ -176,14 +183,42 @@ public class EditProfileFragment extends Fragment implements
             if(!mUserSettings.getUser().getEmail().equals(email)){
                 //Step 1: Re-authenticate
                      //Confirm the password and email
+                //Step 2: Check if the email already is registered
+                //'fetchProvidersForEmail
+                //Step 3: Change the email
+                //Submit the email to the database and authenticate
                 ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
                 dialog.show(getFragmentManager(),getString(R.string.confirm_password_dialog));
                 dialog.setTargetFragment(EditProfileFragment.this,1);
+            }
 
-                //Step 2: Check if the email already is registered
-                    //'fetchProvidersForEmail
-                //Step 3: Change the email
-                    //Submit the email to the database and authenticate
+            /**
+             * change non-unique settings
+             */
+            if(!mUserSettings.getSettings().getDisplay_name().equals(displayName)){
+                //update
+                Log.d(TAG, "updateUserAccountSettings: displayname: " + displayName);
+                mFirebaseMethods.updateUserAccountSettings(displayName,null,null,null,null);
+            }
+            if(!mUserSettings.getSettings().getDescription().equals(description)){
+                //update
+                mFirebaseMethods.updateUserAccountSettings(null,description,null,null,null);
+
+            }
+            if(!mUserSettings.getSettings().getWebsite().equals(website)){
+                //update
+                mFirebaseMethods.updateUserAccountSettings(null,null,website,null,null);
+
+            }
+            if(!mUserSettings.getSettings().getYear().equals(yearOfStudy)){
+                //update
+                mFirebaseMethods.updateUserAccountSettings(null,null,null,yearOfStudy,null);
+
+            }
+            if(!mUserSettings.getSettings().getMajor().equals(major)){
+                //update
+                mFirebaseMethods.updateUserAccountSettings(null,null,null,null,major);
+
             }
         }
     }
@@ -239,6 +274,8 @@ public class EditProfileFragment extends Fragment implements
         mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
         mEmail.setText(userSettings.getUser().getEmail());
+        mYearOfStudy.setText(settings.getYear());
+        mMajor.setText((settings.getMajor()));
     }
 
     /*
