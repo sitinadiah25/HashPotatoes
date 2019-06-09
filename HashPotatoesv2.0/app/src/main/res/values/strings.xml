@@ -11,6 +11,7 @@
     <!-- firebase database fields -->
     <string name="dbname_users">users</string>
     <string name="dbname_users_account_settings">users_account_settings</string>
+    <string name="dbname_posts">posts</string>
     <string name="field_username">username</string>
     <string name="field_email">email</string>
     <string name="field_displayname">display_name</string>

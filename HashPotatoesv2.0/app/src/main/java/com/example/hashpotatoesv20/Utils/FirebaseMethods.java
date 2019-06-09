@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
@@ -16,8 +17,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class FirebaseMethods {
 
@@ -29,8 +37,11 @@ public class FirebaseMethods {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private String userID;
+    private String username;
 
     private Context mContext;
+
+    private UserSettings user;
 
     public FirebaseMethods(Context context){
         mAuth = FirebaseAuth.getInstance();
@@ -112,6 +123,14 @@ public class FirebaseMethods {
                 .setValue(email);
     }
 
+    public void uploadPost(String discussion, String tags, String anonymity) {
+
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final DatabaseReference refTemp = FirebaseDatabase.getInstance().getReference("users").child(user_id);
+
+        addPostToDatabase(discussion, tags, anonymity);
+    }
+
     /*
     public boolean checkIfUsernameExists(String username, DataSnapshot dataSnapshot) {
         Log.d(TAG,  "checkIfUsernameExists: checking if " + username + "already exists");
@@ -181,6 +200,47 @@ public class FirebaseMethods {
                         }
                     });
         }
+    }
+
+    /**
+     * Get current time (please recheck to ensure that it is Singapore Timezone)
+     * @return
+     */
+    private String getTimestamp(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+        return sdf.format(new Date());
+    }
+
+    /**
+     * Add post to the database
+     * @param discussion
+     * @param tags
+     * @param anonymity
+     */
+    private void addPostToDatabase(String discussion, String tags, String anonymity) {
+        Log.d(TAG, "addPostToDatabase: adding post to database.");
+
+
+
+        String newPostKey = myRef.child(mContext.getString(R.string.dbname_posts)).push().getKey();
+
+        Post post = new Post();
+
+        post.setDiscussion(discussion);
+        post.setTags(tags);
+        post.setAnonymity(anonymity);
+        post.setDate_created(getTimestamp());
+        post.setPost_id(newPostKey);
+        post.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        //insert into database
+        myRef.child(mContext.getString(R.string.dbname_posts))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(newPostKey)
+                .setValue(post);
+
+        Log.d(TAG, "addPostToDatabase: added post to database.");
     }
 
     /**

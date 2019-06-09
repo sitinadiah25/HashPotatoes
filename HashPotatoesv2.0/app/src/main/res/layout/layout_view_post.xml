@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/relLayout1"
+                android:background="@color/lightBack">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/profilePhoto"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="25dp"
+                    app:civ_border_color="@color/Black"
+                    app:civ_border_width="0.5dp"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="protato"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/username"
+                    android:layout_toRightOf="@+id/profilePhoto"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/Black"
+                    android:textSize="18sp"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

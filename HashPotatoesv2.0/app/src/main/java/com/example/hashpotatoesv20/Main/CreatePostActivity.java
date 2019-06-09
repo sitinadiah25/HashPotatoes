@@ -1,6 +1,7 @@
 package com.example.hashpotatoesv20.Main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.UserAccountSettings;
+import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.Permissions;
@@ -42,6 +46,8 @@ public class CreatePostActivity extends AppCompatActivity {
     //widgets
     private EditText mDiscussion, mTag;
     private SwitchCompat mAnonymity;
+    private TextView tvAnon;
+    private UserSettings userSettings;
 
     //constants
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
@@ -63,8 +69,29 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createpost);
         Log.d(TAG, "onCreate: CreatePost Activity started.");
-        //mFirebaseMethods = new FirebaseMethods(CreatePostActivity.this);
         mDiscussion = (EditText) findViewById(R.id.discussion);
+        mAnonymity = (SwitchCompat) findViewById(R.id.anonymity);
+        mTag = (EditText) findViewById(R.id.searchTag);
+        tvAnon = (TextView) findViewById(R.id.tvAnon);
+        tvAnon.setText("Public");
+        mFirebaseMethods = new FirebaseMethods(CreatePostActivity.this);
+
+        setupFirebaseAuth();
+
+        mAnonymity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Anonymity switch checked");
+                if (mAnonymity.isChecked()) {
+                    Log.d(TAG, "onClick: Anonymous Post.");
+                    tvAnon.setText("Anonymous");
+                }
+                else {
+                    Log.d(TAG, "onClick: Public Post.");
+                    tvAnon.setText("Public");
+                }
+            }
+        });
 
         Button cancel = (Button) findViewById(R.id.btn_cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -82,11 +109,15 @@ public class CreatePostActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: sharing post.");
                 //upload post to firebase
                 Toast.makeText(CreatePostActivity.this, "Attempting to upload post", Toast.LENGTH_SHORT).show();
-                //String discussion = mDiscussion.getText().toString();
-                //String tag = mTag.getText().toString();
 
-                //start here!
-                //mFirebaseMethods.uploadPost(discussion, tag, anonymity);
+                String discussion = mDiscussion.getText().toString();
+                String tag = mTag.getText().toString();
+                String sAnonymity = tvAnon.getText().toString();
+
+                mFirebaseMethods.uploadPost(discussion, tag, sAnonymity);
+
+                Intent intent = new Intent(mContext, MainActivity.class);
+                mContext.startActivity(intent);
             }
         });
 
@@ -97,6 +128,20 @@ public class CreatePostActivity extends AppCompatActivity {
         else {
             verifyPermissions(Permissions.PERMISSIONS);
         }*/
+    }
+
+    private void setupPost(UserSettings userSettings) {
+        UserAccountSettings settings = userSettings.getSettings();
+
+        String username = settings.getUsername();
+
+
+
+    }
+
+    private String getUsername(UserSettings userSettings) {
+        UserAccountSettings settings = userSettings.getSettings();
+        return settings.getUsername();
     }
 
     /**
@@ -158,7 +203,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     /**
      * Setup the firebase auth object
-
+     **/
     private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
         mAuth = FirebaseAuth.getInstance();
@@ -184,6 +229,8 @@ public class CreatePostActivity extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                setupPost(mFirebaseMethods.getUserSettings(dataSnapshot));
 
                 //retrieve user information from the database
 
@@ -212,5 +259,4 @@ public class CreatePostActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-    **/
 }
