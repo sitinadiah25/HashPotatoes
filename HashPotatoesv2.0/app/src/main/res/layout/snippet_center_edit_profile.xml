@@ -202,7 +202,7 @@
                 <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:src="@drawable/ic_email"
+                android:src="@drawable/ic_year"
                 android:layout_centerVertical="true"/>
 
                 <EditText
@@ -228,7 +228,7 @@
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:src="@drawable/ic_displayname"
+                    android:src="@drawable/ic_major"
                     android:layout_centerVertical="true"/>
 
                 <EditText

@@ -6,11 +6,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/lightBack">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/lightBack">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -40,6 +42,137 @@
                     android:textSize="18sp"/>
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@id/relLayout2"
+                android:layout_below="@id/relLayout1"
+                android:background="@color/midBlue"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Insert Discussion from Database"
+                    android:gravity="left|top"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="2dp"
+                    android:id="@+id/discussionPost"
+                    android:textSize="15dp"
+                    android:textColor="@color/Black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TIME"
+                    android:layout_below="@id/discussionPost"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"
+                    android:id="@+id/timestamp"
+                    android:textSize="12sp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relLayout3"
+                android:layout_below="@id/relLayout2"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/lightBack">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_heart_outline"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/btn_heart_outline"
+                    android:visibility="visible"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_heart_red"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/btn_heart_red"
+                    android:visibility="invisible"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_comment"
+                    android:layout_toRightOf="@id/btn_heart_outline"
+                    android:id="@+id/btn_comment"
+                    android:layout_marginLeft="10dp"
+                    android:layout_centerInParent="true"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@id/relLayout4"
+                android:layout_below="@id/relLayout3"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/gray_rounded_border">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comments"
+                    android:gravity="top|left"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="2dp"
+                    android:id="@+id/commentSection"
+                    android:textSize="15sp"
+                    android:textColor="@color/Black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TIME"
+                    android:layout_below="@id/commentSection"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp"
+                    android:id="@+id/timestampComment"
+                    android:textSize="12sp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_like"
+                    android:layout_below="@id/timestampComment"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:id="@+id/btn_like"
+                    android:visibility="visible"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_liked"
+                    android:layout_below="@id/timestamp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:id="@+id/btn_liked"
+                    android:visibility="invisible"/>
+
+            </RelativeLayout>
+
 
         </RelativeLayout>
 
