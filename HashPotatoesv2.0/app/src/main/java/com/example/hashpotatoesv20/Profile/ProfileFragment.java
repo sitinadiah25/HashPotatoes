@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.w3c.dom.Text;
 
@@ -77,6 +79,9 @@ public class ProfileFragment extends Fragment {
         mDescription = (TextView) view.findViewById(R.id.profile_description);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(getActivity());
+
+        UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
+        ImageLoader.getInstance().init(universalImageLoader.getConfig());
 
         setupBottomNavigationView();
         setupToolbar();

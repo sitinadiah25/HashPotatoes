@@ -37,13 +37,14 @@ dependencies {
     //Circle ImageView
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
-    //Universal Image Loader
+    //Universal image loader
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
     //Firebase
     implementation 'com.google.firebase:firebase-core:16.0.9'
     implementation 'com.google.firebase:firebase-database:17.0.0'
     implementation 'com.google.firebase:firebase-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
 
     //Google Play
     implementation 'com.google.android.gms:play-services-auth:16.0.1'

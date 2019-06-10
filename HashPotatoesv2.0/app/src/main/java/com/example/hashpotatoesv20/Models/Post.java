@@ -8,14 +8,20 @@ public class Post {
     String post_id;
     String tags;
     String anonymity;
+    String comments;
+    long likes;
 
-    public Post(String discussion, String date_created, String user_id, String post_id, String tags, String anonymity) {
+    public Post(String discussion, String date_created, String user_id,
+                String post_id, String tags, String anonymity, String comments,
+                long likes) {
         this.discussion = discussion;
         this.date_created = date_created;
         this.user_id = user_id;
         this.post_id = post_id;
         this.tags = tags;
         this.anonymity = anonymity;
+        this.comments = comments;
+        this.likes = likes;
     }
 
     public Post() {
@@ -70,6 +76,22 @@ public class Post {
         this.anonymity = anonymity;
     }
 
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public long getLikes() {
+        return likes;
+    }
+
+    public void setLikes(long likes) {
+        this.likes = likes;
+    }
+
     @Override
     public String toString() {
         return "Post{" +
@@ -79,6 +101,8 @@ public class Post {
                 ", post_id='" + post_id + '\'' +
                 ", tags='" + tags + '\'' +
                 ", anonymity='" + anonymity + '\'' +
+                ", comments='" + comments + '\'' +
+                ", likes=" + likes +
                 '}';
     }
 }

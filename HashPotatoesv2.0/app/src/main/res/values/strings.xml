@@ -23,8 +23,20 @@
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>
     <string name="profile_activity">Profile Activity</string>
+    <string name="selected_image">selected_image</string>
+    <string name="return_to_fragment">return_to_fragment</string>
 
     <!-- post fields -->
     <string name="new_post">new_post</string>
+
+    <!-- strings -->
+    <string name="gallery">GALLERY</string>
+    <string name="photo">PHOTO</string>
+    <string name="string_open_camera">Open Camera</string>
+
+    <string name="string_next">Next</string>
+
+    <!-- photo types -->
+    <string name="profile_photo">profile_photo</string>
 
 </resources>

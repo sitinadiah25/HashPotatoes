@@ -1,5 +1,7 @@
 package com.example.hashpotatoesv20.Profile;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -34,6 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.view.Change;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.w3c.dom.Text;
@@ -120,6 +123,8 @@ public class EditProfileFragment extends Fragment implements
     //variables
     private UserSettings mUserSettings;
 
+    private Context mContext;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -134,6 +139,7 @@ public class EditProfileFragment extends Fragment implements
         mYearOfStudy = (EditText) view.findViewById(R.id.year);
         mMajor = (EditText) view.findViewById(R.id.major);
         mFirebaseMethods = new FirebaseMethods(getActivity());
+        mContext = getActivity();
 
         setupFirebaseAuth();
 
@@ -153,6 +159,16 @@ public class EditProfileFragment extends Fragment implements
             public void onClick(View v) {
                 Log.d(TAG, "onClick: attempting to save changes.");
                 saveProfileSettings();
+            }
+        });
+
+        TextView changePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
+        changePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to ChangeProfilePhoto Activity");
+                Intent intent = new Intent(mContext, ChangeProfilePhotoActivity.class);
+                startActivity(intent);
             }
         });
 
