@@ -12,8 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/relLayout1"
-            android:id="@+id/relLayout2"
-            android:background="@drawable/grey_border_bottom">
+            android:id="@+id/relLayout2">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,7 +32,7 @@
                         android:layout_height="120dp"
                         android:id="@+id/profilePhoto"
                         app:civ_border_color="@color/Black"
-                        app:civ_border_width="2dp"
+                        app:civ_border_width="0.5dp"
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
                         android:layout_marginTop="30dp"/>
@@ -62,7 +61,8 @@
                 android:paddingLeft="40dp"
                 android:paddingBottom="0dp"
                 android:layout_marginBottom="0dp"
-                android:id="@+id/linLayout2">
+                android:id="@+id/linLayout2"
+                android:background="@drawable/grey_border_bottom">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -102,7 +102,8 @@
                     android:id="@+id/profile_description"
                     android:text="hello!"
                     android:textSize="16sp"
-                    android:layout_marginTop="2dp"/>
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="10dp"/>
 
             </LinearLayout>
 
@@ -111,6 +112,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/relLayout3"
                 android:layout_below="@id/linLayout2"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="50dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,9 +17,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
+import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
+import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,9 +31,26 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements ProfileFragment.onListPostSelectedListener {
+    
     private static final String TAG = "ProfileActivity";
     private static final int ACTIVITY_NUM = 3;
+
+    @Override
+    public void onPostSelected(Post post, int activity_number) {
+        Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
+
+        ViewPostFragment fragment = new ViewPostFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.post), post);
+        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_post_fragment));
+        transaction.commit();
+    }
 
     private Context mContext = ProfileActivity.this;
 
