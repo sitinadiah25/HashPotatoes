@@ -1,6 +1,7 @@
 package com.example.hashpotatoesv20.Profile;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -59,6 +60,20 @@ public class PhotoFragment extends Fragment{
             Log.d(TAG, "onActivityResult: done taking a photo.");
             Log.d(TAG, "onActivityResult: attempting to navigate to final screen.");
             //navigate to the final share screen to publish photo
+
+            Bitmap bitmap;
+            bitmap = (Bitmap) data.getExtras().get("data");
+
+            try{
+                Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
+                Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                intent.putExtra(getString(R.string.selected_bitmap), bitmap);
+                intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
+                startActivity(intent);
+                getActivity().finish();
+            }catch (NullPointerException e) {
+                Log.d(TAG, "onActivityResult: NullPointerException: " + e.getMessage());
+            }
         }
     }
 

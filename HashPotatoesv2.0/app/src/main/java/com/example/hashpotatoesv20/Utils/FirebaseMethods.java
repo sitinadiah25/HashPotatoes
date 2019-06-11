@@ -12,6 +12,7 @@ import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
+import com.example.hashpotatoesv20.Profile.AccountSettingsActivity;
 import com.example.hashpotatoesv20.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -63,17 +64,20 @@ public class FirebaseMethods {
         }
     }
 
-    public void uploadProfilePhoto(String photoType, String imgURL) {
+    public void uploadProfilePhoto(String photoType, String imgURL, Bitmap bm) {
         Log.d(TAG, "uploadNewPhoto: uploading new PROFILE photo");
 
         FilePaths filePaths = new FilePaths();
+
+        if (bm == null) {
+            //convert image url to bitmap
+            bm = ImageManager.getBitmap(imgURL);
+        }
 
         String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         StorageReference storageReference = mStorageReference
                 .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/profile_photo");
 
-        //convert image url to bitmap
-        Bitmap bm = ImageManager.getBitmap(imgURL);
         byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
 
         UploadTask uploadTask = null;
@@ -92,6 +96,11 @@ public class FirebaseMethods {
 
                         //insert into 'user_account_settings' node
                         setProfilePhoto(photoLink);
+
+                        ((AccountSettingsActivity)mContext).setViewPager(
+                                (((AccountSettingsActivity)mContext).pagerAdapter
+                                        .getFragmentNumber(mContext.getString(R.string.edit_profile_fragment)))
+                        );
                     }
                 });
 

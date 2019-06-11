@@ -117,7 +117,7 @@ public class EditProfileFragment extends Fragment implements
 
     //EditProfile fragment widgets
     private EditText mDisplayName, mUsername, mDescription, mWebsite, mEmail, mYearOfStudy, mMajor;
-    private TextView mChangeProfilePhoto;
+    private TextView changePhoto;
     private CircleImageView mProfilePhoto;
 
     //variables
@@ -135,7 +135,7 @@ public class EditProfileFragment extends Fragment implements
         mDescription = (EditText) view.findViewById(R.id.description);
         mWebsite = (EditText) view.findViewById(R.id.website);
         mEmail = (EditText) view.findViewById(R.id.email);
-        mChangeProfilePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
+        changePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
         mYearOfStudy = (EditText) view.findViewById(R.id.year);
         mMajor = (EditText) view.findViewById(R.id.major);
         mFirebaseMethods = new FirebaseMethods(getActivity());
@@ -162,13 +162,13 @@ public class EditProfileFragment extends Fragment implements
             }
         });
 
-        TextView changePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to ChangeProfilePhoto Activity");
                 Intent intent = new Intent(mContext, ChangeProfilePhotoActivity.class);
-                startActivity(intent);
+                getActivity().startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -237,6 +237,7 @@ public class EditProfileFragment extends Fragment implements
 
             }
         }
+        getActivity().finish();
     }
 
     /**
