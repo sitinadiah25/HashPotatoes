@@ -58,10 +58,7 @@
                     android:layout_height="wrap_content"
                     android:text="Insert Discussion from Database"
                     android:gravity="left|top"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="2dp"
+                    android:padding="10dp"
                     android:id="@+id/post_discussion"
                     android:textSize="15dp"
                     android:textColor="@color/Black"/>
@@ -127,8 +124,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/relLayout4"
                 android:layout_below="@+id/relLayout3"
-                android:padding="20dp"
-                android:layout_marginBottom="50dp">
+                android:padding="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
