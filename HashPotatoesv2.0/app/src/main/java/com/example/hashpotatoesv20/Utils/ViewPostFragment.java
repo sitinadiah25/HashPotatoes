@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -62,6 +64,8 @@ public class ViewPostFragment extends Fragment {
     private String photoUsername;
     private String photoUrl;
     private UserAccountSettings mUserAccountSettings;
+    private GestureDetector mGestureDetector;
+    private Heart mHeart;
 
     @Nullable
     @Override
@@ -69,13 +73,18 @@ public class ViewPostFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_post, container, false);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mEllipses = (ImageView) view.findViewById(R.id.ivEllipses);
-        mHeartWhite = (ImageView) view.findViewById(R.id.btn_heart_outline);
+        mHeartWhite = (ImageView) view.findViewById(R.id.btn_heart_white);
         mHeartRed = (ImageView) view.findViewById(R.id.btn_heart_red);
         mComment = (ImageView) view.findViewById(R.id.btn_comment);
         mProfileImage = (ImageView) view.findViewById(R.id.profilePhoto);
         mUsername = (TextView) view.findViewById(R.id.username);
         mDiscussion = (TextView) view.findViewById(R.id.discussionPost);
         mTimestamp = (TextView) view.findViewById(R.id.timestamp);
+
+        mHeartRed.setVisibility(View.GONE);
+        mHeartWhite.setVisibility(View.VISIBLE);
+        mHeart = new Heart(mHeartWhite,mHeartRed);
+        mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
 
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
 
@@ -90,10 +99,42 @@ public class ViewPostFragment extends Fragment {
         setupBottomNavigationView();
         getPhotoDetails();
 
+        testToggle();
+
 
         return view;
     }
 
+    //toggle heart
+    private void testToggle(){
+        mHeartRed.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG, "onTouch:  red heart touch detected.");
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
+        mHeartWhite.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG, "onTouch:  white heart touch detected.");
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
+    }
+
+    public class GestureListener extends GestureDetector.SimpleOnGestureListener{
+        @Override
+        public boolean onDown(MotionEvent e){
+            return true;
+        }
+        @Override
+        public boolean onDoubleTap(MotionEvent e){
+            Log.d(TAG, "onDoubleTap:  double tap detected.");
+            mHeart.toggleLike();
+            return true;
+        }
+    }
     private void getPhotoDetails(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference

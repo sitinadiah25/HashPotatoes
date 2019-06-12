@@ -88,29 +88,35 @@
                 android:layout_marginRight="20dp"
                 android:background="@color/lightBack">
 
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_heart_outline"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/btn_heart_outline"
-                    android:visibility="visible"/>
+                <RelativeLayout
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/heartLayout"
+                    android:background="@color/lightBack">
 
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_heart_red"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/btn_heart_red"
-                    android:visibility="invisible"/>
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_heart_white"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/btn_heart_white"
+                        android:visibility="visible"/>
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_heart_red"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/btn_heart_red"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_comment"
-                    android:layout_toRightOf="@id/btn_heart_outline"
+                    android:layout_toRightOf="@id/heartLayout"
                     android:id="@+id/btn_comment"
-                    android:layout_marginLeft="10dp"
                     android:layout_centerInParent="true"/>
 
 
