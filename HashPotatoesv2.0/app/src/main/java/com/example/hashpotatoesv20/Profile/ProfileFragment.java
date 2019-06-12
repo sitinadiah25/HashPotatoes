@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
@@ -43,6 +44,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -137,14 +141,32 @@ public class ProfileFragment extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
-                .child(getString(R.string.dbname_posts))
+                .child(getString(R.string.dbname_user_posts))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    posts.add(singleSnapshot.getValue(Post.class));
+                    Post post = new Post();
+                    Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+
+                    post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
+                    post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
+                    post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
+                    post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
+                    post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
+                    post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
+
+                    List<Like> likesList = new ArrayList<Like>();
+                    for (DataSnapshot dSnapshot : singleSnapshot
+                    .child(getString(R.string.field_likes)).getChildren()){
+                        Like like = new Like();
+                        like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
+                        likesList.add(like);
+                    }
+                    post.setLikes(likesList);
+                    posts.add(post);
                 }
                 //setup list view
                 ArrayList<String> post = new ArrayList<>();

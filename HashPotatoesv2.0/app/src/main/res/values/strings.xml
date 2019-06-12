@@ -13,6 +13,7 @@
     <string name="dbname_users">users</string>
     <string name="dbname_users_account_settings">users_account_settings</string>
     <string name="dbname_posts">posts</string>
+    <string name="dbname_user_posts">user_posts</string>
     <string name="field_username">username</string>
     <string name="field_email">email</string>
     <string name="field_displayname">display_name</string>
@@ -21,6 +22,13 @@
     <string name="field_year">year</string>
     <string name="field_major">major</string>
     <string name="field_user_id">user_id</string>
+    <string name="field_likes">likes</string>
+    <string name="field_discussion">discussion</string>
+    <string name="field_date_created">date_created</string>
+    <string name="field_post_id">post_id</string>
+    <string name="field_tags">tags</string>
+    <string name="field_anonymity">anonymity</string>
+
 
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>

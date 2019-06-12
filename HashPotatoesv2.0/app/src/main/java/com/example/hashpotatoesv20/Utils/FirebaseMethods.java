@@ -302,8 +302,6 @@ public class FirebaseMethods {
     private void addPostToDatabase(String discussion, String tags, String anonymity) {
         Log.d(TAG, "addPostToDatabase: adding post to database.");
 
-
-
         String newPostKey = myRef.child(mContext.getString(R.string.dbname_posts)).push().getKey();
 
         Post post = new Post();
@@ -314,14 +312,11 @@ public class FirebaseMethods {
         post.setDate_created(getTimestamp());
         post.setPost_id(newPostKey);
         post.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        post.setLikes(0);
-        post.setComments("");
 
         //insert into database
-        myRef.child(mContext.getString(R.string.dbname_posts))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(newPostKey)
-                .setValue(post);
+        myRef.child(mContext.getString(R.string.dbname_posts)).child(newPostKey).setValue(post);
+        myRef.child(mContext.getString(R.string.dbname_user_posts))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(newPostKey).setValue(post);
 
         Log.d(TAG, "addPostToDatabase: added post to database.");
     }

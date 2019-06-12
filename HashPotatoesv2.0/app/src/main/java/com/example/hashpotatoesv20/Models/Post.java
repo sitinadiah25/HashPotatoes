@@ -3,31 +3,29 @@ package com.example.hashpotatoesv20.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 public class Post implements Parcelable {
 
-    String discussion;
-    String date_created;
-    String user_id;
-    String post_id;
-    String tags;
-    String anonymity;
-    String comments;
-    long likes;
+    private String discussion;
+    private String date_created;
+    private String user_id;
+    private String post_id;
+    private String tags;
+    private String anonymity;
+    private List<Like> likes;
 
-    public Post(String discussion, String date_created, String user_id,
-                String post_id, String tags, String anonymity, String comments,
-                long likes) {
+    public Post(String discussion, String date_created, String user_id, String post_id, String tags, String anonymity, List<Like> likes) {
         this.discussion = discussion;
         this.date_created = date_created;
         this.user_id = user_id;
         this.post_id = post_id;
         this.tags = tags;
         this.anonymity = anonymity;
-        this.comments = comments;
         this.likes = likes;
     }
 
-    public Post() {
+    public Post(){
 
     }
 
@@ -38,8 +36,21 @@ public class Post implements Parcelable {
         post_id = in.readString();
         tags = in.readString();
         anonymity = in.readString();
-        comments = in.readString();
-        likes = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(discussion);
+        dest.writeString(date_created);
+        dest.writeString(user_id);
+        dest.writeString(post_id);
+        dest.writeString(tags);
+        dest.writeString(anonymity);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -102,67 +113,13 @@ public class Post implements Parcelable {
         this.anonymity = anonymity;
     }
 
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public long getLikes() {
+    public List<Like> getLikes() {
         return likes;
     }
 
-    public void setLikes(long likes) {
+    public void setLikes(List<Like> likes) {
         this.likes = likes;
     }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                "discussion='" + discussion + '\'' +
-                ", date_created='" + date_created + '\'' +
-                ", user_id='" + user_id + '\'' +
-                ", post_id='" + post_id + '\'' +
-                ", tags='" + tags + '\'' +
-                ", anonymity='" + anonymity + '\'' +
-                ", comments='" + comments + '\'' +
-                ", likes=" + likes +
-                '}';
-    }
-
-    /**
-     * Describe the kinds of special objects contained in this Parcelable
-     * instance's marshaled representation. For example, if the object will
-     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
-     * the return value of this method must include the
-     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
-     *
-     * @return a bitmask indicating the set of special object types marshaled
-     * by this Parcelable object instance.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * Flatten this object in to a Parcel.
-     *
-     * @param dest  The Parcel in which the object should be written.
-     * @param flags Additional flags about how the object should be written.
-     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(discussion);
-        dest.writeString(date_created);
-        dest.writeString(user_id);
-        dest.writeString(post_id);
-        dest.writeString(tags);
-        dest.writeString(anonymity);
-        dest.writeString(comments);
-        dest.writeLong(likes);
-    }
 }
+
+
