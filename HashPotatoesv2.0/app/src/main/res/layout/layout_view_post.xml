@@ -62,7 +62,7 @@
                     android:paddingTop="10dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="2dp"
-                    android:id="@+id/discussionPost"
+                    android:id="@+id/post_discussion"
                     android:textSize="15dp"
                     android:textColor="@color/Black"/>
 
@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TIME"
-                    android:layout_below="@id/discussionPost"
+                    android:layout_below="@id/post_discussion"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp"
@@ -189,7 +189,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_liked"
-                    android:layout_below="@id/timestamp"
+                    android:layout_below="@id/timestampComment"
                     android:layout_marginLeft="15dp"
                     android:layout_marginBottom="5dp"
                     android:id="@+id/btn_liked"

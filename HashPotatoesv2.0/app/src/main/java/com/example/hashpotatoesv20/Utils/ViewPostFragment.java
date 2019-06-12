@@ -83,7 +83,7 @@ public class ViewPostFragment extends Fragment {
         mComment = (ImageView) view.findViewById(R.id.btn_comment);
         mProfileImage = (ImageView) view.findViewById(R.id.profilePhoto);
         mUsername = (TextView) view.findViewById(R.id.username);
-        mDiscussion = (TextView) view.findViewById(R.id.discussionPost);
+        mDiscussion = (TextView) view.findViewById(R.id.post_discussion);
         mTimestamp = (TextView) view.findViewById(R.id.timestamp);
         mLikedBy = (TextView) view.findViewById(R.id.post_likes);
 
@@ -298,6 +298,8 @@ public class ViewPostFragment extends Fragment {
         }
         UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(),mProfileImage,null,"");
         mUsername.setText(mUserAccountSettings.getUsername());
+        //Log.d(TAG, "getDiscussion: check discussion: " + mPost.getDiscussion());
+        mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
 
         if(mLikedByCurrentUser) {
