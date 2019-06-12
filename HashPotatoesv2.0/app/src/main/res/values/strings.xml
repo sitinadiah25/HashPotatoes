@@ -20,6 +20,7 @@
     <string name="field_website">website</string>
     <string name="field_year">year</string>
     <string name="field_major">major</string>
+    <string name="field_user_id">user_id</string>
 
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>

@@ -11,10 +11,9 @@ public class UserAccountSettings {
     private String website;
     private String year;
     private long hashtags;
+    private String user_id;
 
-    public UserAccountSettings(String description, String display_name, String major,
-                               long posts, String profile_photo, String username,
-                               String website, String year, long hashtags) {
+    public UserAccountSettings(String description, String display_name, String major, long posts, String profile_photo, String username, String website, String year, long hashtags, String user_id) {
         this.description = description;
         this.display_name = display_name;
         this.major = major;
@@ -24,10 +23,19 @@ public class UserAccountSettings {
         this.website = website;
         this.year = year;
         this.hashtags = hashtags;
+        this.user_id = user_id;
     }
 
     public UserAccountSettings() {
 
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getDescription() {

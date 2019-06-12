@@ -195,51 +195,49 @@ public class EditProfileFragment extends Fragment implements
             Log.d(TAG, "onDataChange: check if username exists");
             checkIfUsernameExists(username);
         }
-        //case 2: if user made a change to their email
-        else {
-            //Log.d(TAG, "onDataChange: username exists!");
-            if(!mUserSettings.getUser().getEmail().equals(email)){
-                //Step 1: Re-authenticate
-                     //Confirm the password and email
-                //Step 2: Check if the email already is registered
-                //'fetchProvidersForEmail
-                //Step 3: Change the email
-                //Submit the email to the database and authenticate
-                ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
-                dialog.show(getFragmentManager(),getString(R.string.confirm_password_dialog));
-                dialog.setTargetFragment(EditProfileFragment.this,1);
-            }
-
-            /**
-             * change non-unique settings
-             */
-            if(!mUserSettings.getSettings().getDisplay_name().equals(displayName)){
-                //update
-                Log.d(TAG, "updateUserAccountSettings: displayname: " + displayName);
-                mFirebaseMethods.updateUserAccountSettings(displayName,null,null,null,null);
-            }
-            if(!mUserSettings.getSettings().getDescription().equals(description)){
-                //update
-                mFirebaseMethods.updateUserAccountSettings(null,description,null,null,null);
-
-            }
-            if(!mUserSettings.getSettings().getWebsite().equals(website)){
-                //update
-                mFirebaseMethods.updateUserAccountSettings(null,null,website,null,null);
-
-            }
-            if(!mUserSettings.getSettings().getYear().equals(yearOfStudy)){
-                //update
-                mFirebaseMethods.updateUserAccountSettings(null,null,null,yearOfStudy,null);
-
-            }
-            if(!mUserSettings.getSettings().getMajor().equals(major)){
-                //update
-                mFirebaseMethods.updateUserAccountSettings(null,null,null,null,major);
-
-            }
+        //case 2: if user made a change to their emaiil
+        //Log.d(TAG, "onDataChange: username exists!");
+        if(!mUserSettings.getUser().getEmail().equals(email)){
+            //Step 1: Re-authenticate
+                 //Confirm the password and email
+            //Step 2: Check if the email already is registered
+            //'fetchProvidersForEmail
+            //Step 3: Change the email
+            //Submit the email to the database and authenticate
+            ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
+            dialog.show(getFragmentManager(),getString(R.string.confirm_password_dialog));
+            dialog.setTargetFragment(EditProfileFragment.this,1);
         }
-        getActivity().finish();
+
+        /**
+         * change non-unique settings
+         */
+        if(!mUserSettings.getSettings().getDisplay_name().equals(displayName)){
+            //update
+            Log.d(TAG, "updateUserAccountSettings: displayname: " + displayName);
+            mFirebaseMethods.updateUserAccountSettings(displayName,null,null,null,null);
+        }
+        if(!mUserSettings.getSettings().getDescription().equals(description)){
+            //update
+            mFirebaseMethods.updateUserAccountSettings(null,description,null,null,null);
+
+        }
+        if(!mUserSettings.getSettings().getWebsite().equals(website)){
+            //update
+            mFirebaseMethods.updateUserAccountSettings(null,null,website,null,null);
+
+        }
+        if(!mUserSettings.getSettings().getYear().equals(yearOfStudy)){
+            //update
+            mFirebaseMethods.updateUserAccountSettings(null,null,null,yearOfStudy,null);
+
+        }
+        if(!mUserSettings.getSettings().getMajor().equals(major)){
+            //update
+            mFirebaseMethods.updateUserAccountSettings(null,null,null,null,major);
+
+        }
+        //getActivity().finish();
     }
 
     /**
