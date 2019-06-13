@@ -1,5 +1,6 @@
 package com.example.hashpotatoesv20.Utils;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.R;
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +45,10 @@ public class ViewPostFragment extends Fragment {
 
     private static final String TAG = "ViewPostFragment";
 
+    public interface OnCommentThreadSelectedListener{
+        void onCommentThreadSelectedListener(Post post);
+    }
+    OnCommentThreadSelectedListener mOnCommentThreadSelectedListener;
     public ViewPostFragment() {
         super();
         setArguments(new Bundle());
@@ -57,7 +63,7 @@ public class ViewPostFragment extends Fragment {
 
     //widgets
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag;
+    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag, mComments;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
 
     //variables
@@ -87,6 +93,8 @@ public class ViewPostFragment extends Fragment {
         mTimestamp = (TextView) view.findViewById(R.id.timestamp);
         mLikedBy = (TextView) view.findViewById(R.id.post_likes);
         mTag = (TextView) view.findViewById(R.id.post_tag);
+        mComment = (ImageView) view.findViewById(R.id.btn_comment);
+        mComments = (TextView) view.findViewById(R.id.more_comments);
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
@@ -105,8 +113,17 @@ public class ViewPostFragment extends Fragment {
         setupFirebaseAuth();
         setupBottomNavigationView();
 
-
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            mOnCommentThreadSelectedListener = (OnCommentThreadSelectedListener) getActivity();
+        }catch (ClassCastException e){
+            Log.e(TAG,"onAttach: ClassCastException: " + e.getMessage());
+        }
     }
 
     private void getLikesString(){
@@ -303,6 +320,21 @@ public class ViewPostFragment extends Fragment {
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
         mTag.setText(mPost.getTags());
+
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+        mComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPost);
+            }
+        });
 
 
         if(mLikedByCurrentUser) {

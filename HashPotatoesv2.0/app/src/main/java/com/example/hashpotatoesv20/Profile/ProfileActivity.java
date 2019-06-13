@@ -21,6 +21,7 @@ import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
+import com.example.hashpotatoesv20.Utils.ViewCommentsFragment;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,10 +32,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-public class ProfileActivity extends AppCompatActivity implements ProfileFragment.onListPostSelectedListener {
+public class ProfileActivity extends AppCompatActivity implements
+        ProfileFragment.onListPostSelectedListener,
+        ViewPostFragment.OnCommentThreadSelectedListener {
     
     private static final String TAG = "ProfileActivity";
     private static final int ACTIVITY_NUM = 3;
+
+    @Override
+    public void onCommentThreadSelectedListener(Post post){
+        Log.d(TAG, "OnCommentThreadSelectedListener: selected a comment thread");
+
+        ViewCommentsFragment fragment = new ViewCommentsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.post),post);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_comments_fragment));
+        transaction.commit();
+    }
 
     @Override
     public void onPostSelected(Post post, int activity_number) {

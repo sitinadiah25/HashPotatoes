@@ -3,8 +3,6 @@ package com.example.hashpotatoesv20.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.w3c.dom.Comment;
-
 import java.util.List;
 
 public class Post implements Parcelable {
@@ -16,6 +14,7 @@ public class Post implements Parcelable {
     private String tags;
     private String anonymity;
     private List<Like> likes;
+    private List<Comment> comments;
 
     public Post(){
 
@@ -29,6 +28,7 @@ public class Post implements Parcelable {
         this.tags = tags;
         this.anonymity = anonymity;
         this.likes = likes;
+        this.comments = comments;
     }
 
     protected Post(Parcel in) {
@@ -123,6 +123,13 @@ public class Post implements Parcelable {
         this.likes = likes;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 }
 
 

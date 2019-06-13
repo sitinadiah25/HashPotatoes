@@ -6,6 +6,7 @@
     <string name="sign_out_fragment">Sign Out</string>
     <string name="profile_fragment">Profile</string>
     <string name="view_post_fragment">View Post</string>
+    <string name="view_comments_fragment">View Comments</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
@@ -28,6 +29,7 @@
     <string name="field_post_id">post_id</string>
     <string name="field_tags">tags</string>
     <string name="field_anonymity">anonymity</string>
+    <string name="field_comments">comments</string>
 
 
     <!-- intent extras -->

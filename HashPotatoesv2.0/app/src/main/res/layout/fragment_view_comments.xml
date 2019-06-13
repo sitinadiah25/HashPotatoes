@@ -52,7 +52,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_checkmark"
-            android:id="@+id/ivPostComment"
+            android:id="@+id/confirm_post_comment"
             android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
