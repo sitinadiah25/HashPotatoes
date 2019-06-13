@@ -57,7 +57,7 @@ public class ViewPostFragment extends Fragment {
 
     //widgets
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy;
+    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
 
     //variables
@@ -86,6 +86,7 @@ public class ViewPostFragment extends Fragment {
         mDiscussion = (TextView) view.findViewById(R.id.post_discussion);
         mTimestamp = (TextView) view.findViewById(R.id.timestamp);
         mLikedBy = (TextView) view.findViewById(R.id.post_likes);
+        mTag = (TextView) view.findViewById(R.id.post_tag);
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
@@ -139,7 +140,7 @@ public class ViewPostFragment extends Fragment {
                             }
                             String[] splitUsers = mUsers.toString().split(",");
 
-                            if(mUsers.toString().contains(mUserAccountSettings.getUsername())){
+                            if(mUsers.toString().contains(mUserAccountSettings.getUsername() + ",")){
                                 mLikedByCurrentUser = true;
                             }else{
                                 mLikedByCurrentUser = false;
@@ -301,6 +302,8 @@ public class ViewPostFragment extends Fragment {
         //Log.d(TAG, "getDiscussion: check discussion: " + mPost.getDiscussion());
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
+        mTag.setText(mPost.getTags());
+
 
         if(mLikedByCurrentUser) {
             mHeartRed.setVisibility(View.VISIBLE);
