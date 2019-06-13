@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gray_rounded_border">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relLayout2"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Comment"
+                android:textSize="15sp"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/Black"
+                android:id="@+id/post_comment"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="username"
+                android:layout_below="@id/post_comment"
+                android:id="@+id/username"
+                android:layout_marginLeft="5dp"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TIME"
+                android:layout_below="@id/username"
+                android:id="@+id/timestamp"
+                android:layout_marginLeft="5dp"
+                android:textSize="12sp"
+                android:layout_marginBottom="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Comment"
+                android:layout_below="@id/username"
+                android:id="@+id/btn_comment"
+                android:layout_alignParentRight="true"
+                android:textSize="12sp"
+                android:layout_marginRight="5dp"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_heart_white_lightblue"
+                android:id="@+id/btn_heart_white"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                android:layout_below="@id/post_comment"
+                android:layout_alignRight="@id/username"
+                android:layout_marginRight="5dp"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_heart_red_lightblue"
+                android:layout_alignParentRight="true"
+                android:id="@+id/btn_heart_red"
+                android:visibility="invisible"
+                android:layout_below="@id/post_comment"
+                android:layout_alignRight="@id/username"
+                android:layout_marginRight="5dp"/>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

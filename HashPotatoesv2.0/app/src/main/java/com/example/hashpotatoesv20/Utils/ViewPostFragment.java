@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -63,8 +65,9 @@ public class ViewPostFragment extends Fragment {
 
     //widgets
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag, mComments;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
+    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag, mComments, mComment;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark;
+    private EditText mCommentText;
 
     //variables
     private Post mPost;
@@ -86,15 +89,15 @@ public class ViewPostFragment extends Fragment {
         mEllipses = (ImageView) view.findViewById(R.id.ivEllipses);
         mHeartWhite = (ImageView) view.findViewById(R.id.btn_heart_white);
         mHeartRed = (ImageView) view.findViewById(R.id.btn_heart_red);
-        mComment = (ImageView) view.findViewById(R.id.btn_comment);
+        mComment = (TextView) view.findViewById(R.id.btn_comment);
         mProfileImage = (ImageView) view.findViewById(R.id.profilePhoto);
         mUsername = (TextView) view.findViewById(R.id.username);
         mDiscussion = (TextView) view.findViewById(R.id.post_discussion);
         mTimestamp = (TextView) view.findViewById(R.id.timestamp);
         mLikedBy = (TextView) view.findViewById(R.id.post_likes);
         mTag = (TextView) view.findViewById(R.id.post_tag);
-        mComment = (ImageView) view.findViewById(R.id.btn_comment);
-        mComments = (TextView) view.findViewById(R.id.more_comments);
+        mCommentText = (EditText) view.findViewById(R.id.add_comment);
+        mCheckmark = (ImageView) view.findViewById(R.id.checkmark);
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
@@ -308,13 +311,8 @@ public class ViewPostFragment extends Fragment {
 
     private void setupWidgets() {
         String timestampDiff = getTimestampDifference();
-        if (!timestampDiff.equals("0")) {
-            mTimestamp.setText(timestampDiff + " DAYS AGO");
-        }
-        else {
-            mTimestamp.setText("TODAY");
-        }
-        UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(),mProfileImage,null,"");
+        mTimestamp.setText(timestampDiff);
+        UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(), mProfileImage,null,"");
         mUsername.setText(mUserAccountSettings.getUsername());
         //Log.d(TAG, "getDiscussion: check discussion: " + mPost.getDiscussion());
         mDiscussion.setText(mPost.getDiscussion());
@@ -332,7 +330,10 @@ public class ViewPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back");
-                mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPost);
+
+                mCommentText.requestFocus();
+
+                //mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPost);
             }
         });
 
@@ -371,7 +372,7 @@ public class ViewPostFragment extends Fragment {
 
         String difference = "";
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd'T'mm:ss'Z'", Locale.CANADA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CANADA);
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         Date today = c.getTime();
         sdf.format(today);
@@ -379,7 +380,27 @@ public class ViewPostFragment extends Fragment {
         final String postTimestamp = mPost.getDate_created();
         try {
             timestamp = sdf.parse(postTimestamp);
-            difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60 / 60 / 24)));
+            difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60)));
+            int tsDiff = Integer.parseInt(difference);
+            String time = "";
+            if (tsDiff == 0) { //less than one minute
+                time = "A FEW SECONDS AGO";
+                return time;
+            }
+            else if (tsDiff < 60) { //less than one hour
+                time = tsDiff + " MINS AGO";
+                return time;
+            }
+            else if (tsDiff < 1440) { //less than one day
+                tsDiff = tsDiff / 60;
+                time = tsDiff + " HOURS AGO";
+                return time;
+            }
+            else { //at least one day
+                tsDiff = tsDiff / 60 / 24;
+                time = tsDiff + " DAYS AGO";
+                return time;
+            }
         }
         catch (ParseException e) {
             Log.e(TAG, "getTimestampDifference: ParseException: " + e.getMessage());

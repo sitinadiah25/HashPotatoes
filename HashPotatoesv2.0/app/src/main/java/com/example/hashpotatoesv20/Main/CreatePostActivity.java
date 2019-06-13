@@ -33,6 +33,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.StringTokenizer;
+
 public class CreatePostActivity extends AppCompatActivity {
     private static final String TAG = "CreatePostActivity";
 
@@ -110,8 +112,16 @@ public class CreatePostActivity extends AppCompatActivity {
                 //upload post to firebase
                 Toast.makeText(CreatePostActivity.this, "Attempting to upload post", Toast.LENGTH_SHORT).show();
 
+                //tokenizing tag string to get the different tags
+                String fullTag = mTag.getText().toString();
+                String delim = " ";
+                StringTokenizer st = new StringTokenizer(fullTag, delim);
+                String tag = "";
+                while (st.hasMoreElements()) {
+                    tag = tag + "#" + st.nextElement() + " ";
+                }
+
                 String discussion = mDiscussion.getText().toString();
-                String tag = mTag.getText().toString();
                 String sAnonymity = tvAnon.getText().toString();
 
                 mFirebaseMethods.uploadPost(discussion, tag, sAnonymity);

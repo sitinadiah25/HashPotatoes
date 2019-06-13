@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.hashpotatoesv20.Models.Like;
@@ -43,10 +44,16 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -71,7 +78,7 @@ public class ProfileFragment extends Fragment {
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private Toolbar toolbar;
-    private ImageView profileMenu;
+    private ImageView profileMenu, heartOutline;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
 
@@ -81,6 +88,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_profile, container,false);
+        View viewList = inflater.inflate(R.layout.layout_post_listview, container, false);
         mDisplayName = (TextView) view.findViewById(R.id.display_name);
         mUsername = (TextView) view.findViewById(R.id.username);
         mYear = (TextView) view.findViewById(R.id.profile_year);
@@ -138,6 +146,7 @@ public class ProfileFragment extends Fragment {
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user posts.");
         final ArrayList<Post> posts = new ArrayList<>();
+        final ArrayList<UserAccountSettings> userAccountSettings = new ArrayList<>();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
@@ -149,6 +158,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     Post post = new Post();
+                    UserAccountSettings userAccountSetting = new UserAccountSettings();
                     Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
                     post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
@@ -170,12 +180,33 @@ public class ProfileFragment extends Fragment {
                 }
                 //setup list view
                 ArrayList<String> post = new ArrayList<>();
+                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                 for (int i = posts.size()-1; i >= 0; i--) {
+                    HashMap<String, String> hm = new HashMap<String, String>();
+
+                    final String postTimestamp = posts.get(i).getDate_created();
+                    String timestampDiff = getTimestampDifference(postTimestamp);
+
+                    hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
+                    hm.put(getString(R.string.field_date_created), timestampDiff);
+                    hm.put(getString(R.string.field_tags), posts.get(i).getTags());
+                    aList.add(hm);
+                    /*
                     String string = posts.get(i).getDiscussion();
                     post.add(string);
+                    */
                     Log.d(TAG, "onDataChange: get: " + posts.get(i).getDiscussion());
                 }
-                ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_activated_1, post);
+
+                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
+                        getString(R.string.field_tags)};
+
+                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
+
+                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+
+
+                //ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_activated_1, post);
                 listView.setAdapter(adapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -191,6 +222,68 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "onCancelled: query cancelled.");
             }
         });
+    }
+
+    /**
+     * Returns a string representing the number of days aho the post was made
+     * @return
+     */
+    private String getTimestampDifference(String postTimestamp) {
+        Log.d(TAG, "getTimestampDifference: getting timestamp difference.");
+
+        String difference = "";
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CANADA);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+        Date today = c.getTime();
+        sdf.format(today);
+        Date timestamp;
+
+        try {
+            timestamp = sdf.parse(postTimestamp);
+            difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60)));
+
+            int tsDiff = Integer.parseInt(difference);
+            String time = "";
+            if (tsDiff == 0) { //less than one minute
+                time = "A FEW SECONDS AGO";
+                return time;
+            }
+            else if (tsDiff < 60) { //less than one hour
+                if (tsDiff == 1) {
+                    time = tsDiff + " MIN AGO";
+                }
+                else {
+                    time = tsDiff + " MINS AGO";
+                }
+                return time;
+            }
+            else if (tsDiff < 1440) { //less than one day
+                tsDiff = tsDiff / 60;
+                if (tsDiff == 1) {
+                    time = tsDiff + " HOUR AGO";
+                }
+                else {
+                    time = tsDiff + " HOURS AGO";
+                }
+                return time;
+            }
+            else {
+                tsDiff = tsDiff / 60/ 24;
+                if (tsDiff == 1) {
+                    time = tsDiff + " DAY AGO";
+                }
+                else {
+                    time = tsDiff + " DAYS AGO";
+                }
+                return time;
+            }
+        }
+        catch (ParseException e) {
+            Log.e(TAG, "getTimestampDifference: ParseException: " + e.getMessage());
+            difference = "0";
+        }
+        return difference;
     }
 
     private void setProfileWidgets(UserSettings userSettings) {

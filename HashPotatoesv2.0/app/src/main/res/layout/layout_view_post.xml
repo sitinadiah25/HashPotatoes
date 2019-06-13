@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="50dp">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -11,7 +12,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/lightBack">
 
             <RelativeLayout
@@ -48,42 +49,69 @@
                 android:layout_height="wrap_content"
                 android:id="@id/relLayout2"
                 android:layout_below="@id/relLayout1"
-                android:background="@color/midBlue"
+                android:background="@color/lightBlue"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp">
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Insert Discussion from Database"
-                    android:gravity="left|top"
-                    android:padding="10dp"
-                    android:id="@+id/post_discussion"
-                    android:textSize="15dp"
-                    android:textColor="@color/Black"/>
+                    android:text="Discussion"
+                    android:textSize="15sp"
+                    android:textColor="@color/Black"
+                    android:id="@+id/post_discussion"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TIME"
-                    android:layout_below="@id/post_discussion"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:layout_below="@id/post_tag"
                     android:paddingBottom="5dp"
                     android:id="@+id/timestamp"
                     android:textSize="12sp"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/post_discussion"
-                    android:layout_toRightOf="@id/timestamp"
                     android:text="#Tag"
                     android:textSize="12sp"
-                    android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:paddingBottom="5dp"
                     android:id="@+id/post_tag"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Comment"
+                    android:layout_below="@id/post_tag"
+                    android:id="@+id/btn_comment"
+                    android:layout_alignParentRight="true"
+                    android:textSize="12sp"
+                    android:layout_marginRight="5dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_heart_white_lightblue"
+                    android:id="@+id/btn_heart_white"
+                    android:layout_alignParentRight="true"
+                    android:visibility="visible"
+                    android:layout_below="@id/post_discussion"
+                    android:layout_alignRight="@id/post_tag"
+                    android:layout_marginRight="5dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_heart_red_lightblue"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/btn_heart_red"
+                    android:visibility="invisible"
+                    android:layout_below="@id/post_discussion"
+                    android:layout_alignRight="@id/post_tag"
+                    android:layout_marginRight="5dp"/>
 
             </RelativeLayout>
 
@@ -91,135 +119,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/relLayout3"
-                android:layout_below="@id/relLayout2"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/lightBack">
-
-                <RelativeLayout
-                    android:layout_width="45dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/heartLayout"
-                    android:background="@color/lightBack">
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/ic_heart_white"
-                        android:layout_marginLeft="10dp"
-                        android:id="@+id/btn_heart_white"
-                        android:visibility="visible"/>
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/ic_heart_red"
-                        android:layout_marginLeft="10dp"
-                        android:id="@+id/btn_heart_red"
-                        android:visibility="invisible"/>
-                </RelativeLayout>
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_comment"
-                    android:layout_toRightOf="@id/heartLayout"
-                    android:id="@+id/btn_comment"
-                    android:layout_centerInParent="true"/>
-
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/relLayout4"
-                android:layout_below="@+id/relLayout3"
-                android:padding="20dp">
+                android:layout_below="@+id/relLayout2"
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Liked by Mitch, Tom, Mohammed and 30 others"
                     android:textColor="@color/Black"
-                    android:textSize="18sp"
-                    android:id="@+id/post_likes"/>
+                    android:textSize="15sp"
+                    android:id="@+id/post_likes"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"/>
 
             </RelativeLayout>
 
-
-            <RelativeLayout
+            <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@id/relLayout5"
-                android:layout_below="@id/relLayout4"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/gray_rounded_border">
+                android:layout_below="@id/relLayout3"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:verticalSpacing="1dp"
+                android:horizontalSpacing="1dp"
+                android:stretchMode="columnWidth"
+                android:gravity="center"
+                android:id="@+id/comment_list">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View all comments"
-                    android:textSize="12sp"
-                    android:textColor="@color/Gray"
-                    android:id="@+id/more_comments"
-                    android:paddingLeft="15dp"
-                    android:paddingTop="10dp"
-                    android:paddingRight="15dp"
-                    android:paddingBottom="2dp"
-                    />
-                <TextView
-                    android:id="@+id/commentSection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/more_comments"
-                    android:gravity="top|left"
-                    android:paddingLeft="15dp"
-                    android:paddingTop="5dp"
-                    android:paddingRight="15dp"
-                    android:paddingBottom="2dp"
-                    android:text="Comments"
-                    android:textColor="@color/Black"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TIME"
-                    android:layout_below="@id/commentSection"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingBottom="5dp"
-                    android:id="@+id/timestampComment"
-                    android:textSize="12sp"/>
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_like"
-                    android:layout_below="@id/timestampComment"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:id="@+id/btn_like"
-                    android:visibility="visible"/>
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_liked"
-                    android:layout_below="@id/timestampComment"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:id="@+id/btn_liked"
-                    android:visibility="invisible"/>
-
-            </RelativeLayout>
-
+            </ListView>
 
         </RelativeLayout>
 
     </ScrollView>
+
+    <include layout="@layout/layout_bottom_comment_bar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
