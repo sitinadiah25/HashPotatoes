@@ -63,7 +63,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             convertView = mInflater.inflate(layoutResource, parent, false);
             holder = new ViewHolder();
 
-            holder.comment = (TextView) convertView.findViewById(R.id.comment);
+            holder.comment = (TextView) convertView.findViewById(R.id.post_comment);
             holder.username = (TextView) convertView.findViewById(R.id.comment_username);
             holder.timestamp = (TextView) convertView.findViewById(R.id.comment_time_posted);
             holder.reply = (TextView) convertView.findViewById(R.id.comment_reply);

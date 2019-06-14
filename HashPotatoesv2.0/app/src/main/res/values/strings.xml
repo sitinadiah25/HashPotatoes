@@ -30,6 +30,7 @@
     <string name="field_tags">tags</string>
     <string name="field_anonymity">anonymity</string>
     <string name="field_comments">comments</string>
+    <string name="field_comment">comment</string>
 
 
     <!-- intent extras -->

@@ -179,7 +179,6 @@ public class ProfileFragment extends Fragment {
                     posts.add(post);
                 }
                 //setup list view
-                ArrayList<String> post = new ArrayList<>();
                 List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                 for (int i = posts.size()-1; i >= 0; i--) {
                     HashMap<String, String> hm = new HashMap<String, String>();

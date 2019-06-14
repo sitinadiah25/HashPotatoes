@@ -85,6 +85,7 @@ public class ViewCommentsFragment extends Fragment {
 
 
         try {
+            Log.d(TAG, "onCreateView: Setting up Comment View");
             mPost = getPostFromBundle();
             setupFirebaseAuth();
         }
@@ -97,7 +98,7 @@ public class ViewCommentsFragment extends Fragment {
 
     private void setupWidgets(){
 
-        CommentListAdapter adapter = new CommentListAdapter(getActivity(),R.layout.layout_comment,mComments);
+        CommentListAdapter adapter = new CommentListAdapter(getActivity(), R.layout.layout_comment, mComments);
         mListView.setAdapter(adapter);
 
         mCheckMark.setOnClickListener(new View.OnClickListener() {

@@ -1,10 +1,12 @@
 package com.example.hashpotatoesv20.Utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,10 +18,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
@@ -28,6 +36,7 @@ import com.example.hashpotatoesv20.R;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,13 +44,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewPostFragment extends Fragment {
 
@@ -56,6 +76,10 @@ public class ViewPostFragment extends Fragment {
         setArguments(new Bundle());
     }
 
+    private static class ViewHolder{
+        String comment, username, timestamp;
+    }
+
     //Firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -65,9 +89,10 @@ public class ViewPostFragment extends Fragment {
 
     //widgets
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag, mComments, mComment;
+    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag, mComment;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark;
     private EditText mCommentText;
+    private ListView mListView;
 
     //variables
     private Post mPost;
@@ -80,6 +105,8 @@ public class ViewPostFragment extends Fragment {
     private boolean mLikedByCurrentUser;
     private StringBuilder mUsers;
     private String mLikesString = "";
+    private ArrayList<Comment> mComments;
+    private Context mContext;
 
     @Nullable
     @Override
@@ -98,6 +125,8 @@ public class ViewPostFragment extends Fragment {
         mTag = (TextView) view.findViewById(R.id.post_tag);
         mCommentText = (EditText) view.findViewById(R.id.add_comment);
         mCheckmark = (ImageView) view.findViewById(R.id.checkmark);
+        mListView = (ListView) view.findViewById(R.id.comment_list);
+        mContext = getActivity();
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
@@ -310,7 +339,8 @@ public class ViewPostFragment extends Fragment {
     }
 
     private void setupWidgets() {
-        String timestampDiff = getTimestampDifference();
+        final String postTimestamp = mPost.getDate_created();
+        String timestampDiff = getTimestampDifference(postTimestamp);
         mTimestamp.setText(timestampDiff);
         UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(), mProfileImage,null,"");
         mUsername.setText(mUserAccountSettings.getUsername());
@@ -318,6 +348,26 @@ public class ViewPostFragment extends Fragment {
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
         mTag.setText(mPost.getTags());
+
+        //setup list for comments
+        setupListView();
+
+        //checkmark for comment
+        mCheckmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mCommentText.getText().toString().equals("")) {
+                    Log.d(TAG, "onClick: attempting to submit new comment.");
+                    addNewComment(mCommentText.getText().toString());
+
+                    mCommentText.setText("");
+                    closeKeyboard();
+                } else {
+                    //Toast.makeText(getActivity(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+                    closeKeyboard();
+                }
+            }
+        });
 
         mBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -363,11 +413,167 @@ public class ViewPostFragment extends Fragment {
 
     }
 
+    private void closeKeyboard(){
+        View view = getActivity().getCurrentFocus();
+        if(view != null){
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
+    }
+
+    private void setupListView() {
+        Log.d(TAG, "setupListView: Setting up list of user comments.");
+        final ViewHolder viewHolder;
+        final ArrayList<ViewHolder> mViewHolder = new ArrayList<>();
+        final HashSet<ViewHolder> hashSet = new HashSet<ViewHolder>();
+        //final ArrayList<UserAccountSettings> userAccountSettings = new ArrayList<>();
+        Log.d(TAG,"Test: " + mPost.getPost_id());
+
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        reference.child(mContext.getString(R.string.dbname_posts))
+                .child(mPost.getPost_id())
+                .child(mContext.getString(R.string.field_comments))
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Query query = reference
+                                .child(mContext.getString(R.string.dbname_posts))
+                                .child(mPost.getPost_id())
+                                .child(mContext.getString(R.string.field_comments));
+
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+                                    final ViewHolder viewHolder = new ViewHolder();
+                                    Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+
+                                    Query query = reference
+                                            .child(mContext.getString(R.string.dbname_users_account_settings))
+                                            .orderByChild(mContext.getString(R.string.field_user_id))
+                                            .equalTo(objectMap.get(mContext.getString(R.string.field_user_id)).toString());
+
+                                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                                                mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
+                                                Log.d(TAG, "onDataChange: comment username: " + singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Log.d(TAG, "onCancelled: query cancelled.");
+                                        }
+                                    });
+
+                                    viewHolder.username = (mUserAccountSettings.getUsername());
+                                    viewHolder.comment = objectMap.get(mContext.getString(R.string.field_comment)).toString();
+                                    viewHolder.timestamp = objectMap.get(mContext.getString(R.string.field_date_created)).toString();
+
+                                    //comment.setComment(objectMap.get(mContext.getString(R.string.field_comment)).toString());
+                                    //comment.setDate_created(objectMap.get(mContext.getString(R.string.field_date_created)).toString());
+
+                                    mViewHolder.add(viewHolder);
+                                }
+                                //setup list view
+                                Log.d(TAG, "onDataChange: viewholdersize: " + mViewHolder.size());
+                                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+
+                                for (int i = mViewHolder.size()-1; i >= 0; i--) {
+                                    HashMap<String, String> hm = new HashMap<String, String>();
+
+                                    final String postTimestamp = mViewHolder.get(i).timestamp;
+                                    String timestampDiff = getTimestampDifference(postTimestamp);
+
+                                    hm.put(mContext.getString(R.string.field_comments), mViewHolder.get(i).comment);
+                                    hm.put(mContext.getString(R.string.field_username), mViewHolder.get(i).username);
+                                    hm.put(mContext.getString(R.string.field_date_created), timestampDiff);
+                                    aList.add(hm);
+                                }
+
+                                String[] from = {mContext.getString(R.string.field_comments), mContext.getString(R.string.field_username),
+                                        mContext.getString(R.string.field_date_created)};
+
+                                int[] to = {R.id.post_comment, R.id.username, R.id.timestamp};
+
+                                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_comment_listview, from, to);
+                                //CommentListAdapter adapter = new CommentListAdapter(getActivity(), R.layout.layout_comment_listview, comments);
+                                //ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_activated_1, post);
+                                mListView.setAdapter(adapter);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.d(TAG, "onCancelled: query cancelled.");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void addNewComment(String newComment){
+        Log.d(TAG, "addNewComment: adding new Comment: " + newComment);
+
+        String commentID = myRef.push().getKey();
+
+        Comment comment = new Comment();
+        comment.setComment(newComment);
+        comment.setDate_created(getTimestamp());
+        comment.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        myRef.child(getString(R.string.dbname_posts))
+                .child(mPost.getPost_id())
+                .child(getString(R.string.field_comments))
+                .child(commentID)
+                .setValue(comment);
+
+        myRef.child(getString(R.string.dbname_user_posts))
+                .child(mPost.getUser_id())
+                .child(mPost.getPost_id())
+                .child(getString(R.string.field_comments))
+                .child(commentID)
+                .setValue(comment);
+    }
+
+    /**
+     * Get current time (please recheck to ensure that it is Singapore Timezone)
+     * @return
+     */
+    private String getTimestamp(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+        return sdf.format(new Date());
+    }
+
     /**
      * Returns a string representing the number of days aho the post was made
      * @return
      */
-    private String getTimestampDifference() {
+    private String getTimestampDifference(String postTimestamp) {
         Log.d(TAG, "getTimestampDifference: getting timestamp difference.");
 
         String difference = "";
@@ -377,7 +583,7 @@ public class ViewPostFragment extends Fragment {
         Date today = c.getTime();
         sdf.format(today);
         Date timestamp;
-        final String postTimestamp = mPost.getDate_created();
+        //final String postTimestamp = mPost.getDate_created();
         try {
             timestamp = sdf.parse(postTimestamp);
             difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60)));
