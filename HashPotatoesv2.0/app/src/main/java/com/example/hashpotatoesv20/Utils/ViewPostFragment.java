@@ -136,6 +136,7 @@ public class ViewPostFragment extends Fragment {
         try {
             mPost = getPostFromBundle();
             mActivityNumber = getActivityNumFromBundle();
+            Log.d(TAG, "onCreateView: Viewing post id: " + mPost.getPost_id());
             getPhotoDetails();
             getLikesString();
         }
@@ -461,7 +462,7 @@ public class ViewPostFragment extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                                                 mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
-                                                Log.d(TAG, "onDataChange: comment username: " + singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                                                //Log.d(TAG, "onDataChange: comment username: " + singleSnapshot.getValue(UserAccountSettings.class).getUsername());
                                             }
                                         }
                                         @Override
@@ -480,7 +481,7 @@ public class ViewPostFragment extends Fragment {
                                     mViewHolder.add(viewHolder);
                                 }
                                 //setup list view
-                                Log.d(TAG, "onDataChange: viewholdersize: " + mViewHolder.size());
+                                //Log.d(TAG, "onDataChange: viewholdersize: " + mViewHolder.size());
                                 List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
                                 for (int i = mViewHolder.size()-1; i >= 0; i--) {
@@ -574,7 +575,7 @@ public class ViewPostFragment extends Fragment {
      * @return
      */
     private String getTimestampDifference(String postTimestamp) {
-        Log.d(TAG, "getTimestampDifference: getting timestamp difference.");
+        //Log.d(TAG, "getTimestampDifference: getting timestamp difference.");
 
         String difference = "";
         Calendar c = Calendar.getInstance();

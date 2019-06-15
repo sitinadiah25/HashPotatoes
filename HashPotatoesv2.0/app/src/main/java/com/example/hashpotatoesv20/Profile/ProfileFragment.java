@@ -181,6 +181,7 @@ public class ProfileFragment extends Fragment {
                 //setup list view
                 List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                 for (int i = posts.size()-1; i >= 0; i--) {
+                //for (int i = 0; i < posts.size(); i++) {
                     HashMap<String, String> hm = new HashMap<String, String>();
 
                     final String postTimestamp = posts.get(i).getDate_created();
@@ -211,7 +212,9 @@ public class ProfileFragment extends Fragment {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mOnListPostSelectedListener.onPostSelected(posts.get(position), ACTIVITY_NUM);
+                        int actPosition = posts.size() - position - 1;
+                        Log.d(TAG, "onItemClick: position:" + actPosition);
+                        mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
                     }
                 });
             }
