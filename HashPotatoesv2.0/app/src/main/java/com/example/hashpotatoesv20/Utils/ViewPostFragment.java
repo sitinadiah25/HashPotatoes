@@ -447,41 +447,22 @@ public class ViewPostFragment extends Fragment {
                             @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mViewHolder.clear();
                                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
 
                                     final ViewHolder viewHolder = new ViewHolder();
                                     Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
-                                    Query query = reference
-                                            .child(mContext.getString(R.string.dbname_users_account_settings))
-                                            .orderByChild(mContext.getString(R.string.field_user_id))
-                                            .equalTo(objectMap.get(mContext.getString(R.string.field_user_id)).toString());
+                                    String uName = getCommmentUserDetails(mContext.getString(R.string.field_user_id));
 
-                                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                                                mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
-                                                //Log.d(TAG, "onDataChange: comment username: " + singleSnapshot.getValue(UserAccountSettings.class).getUsername());
-                                            }
-                                        }
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                            Log.d(TAG, "onCancelled: query cancelled.");
-                                        }
-                                    });
-
-                                    viewHolder.username = (mUserAccountSettings.getUsername());
+                                    viewHolder.username = (uName);
                                     viewHolder.comment = objectMap.get(mContext.getString(R.string.field_comment)).toString();
                                     viewHolder.timestamp = objectMap.get(mContext.getString(R.string.field_date_created)).toString();
 
-                                    //comment.setComment(objectMap.get(mContext.getString(R.string.field_comment)).toString());
-                                    //comment.setDate_created(objectMap.get(mContext.getString(R.string.field_date_created)).toString());
 
                                     mViewHolder.add(viewHolder);
                                 }
                                 //setup list view
-                                //Log.d(TAG, "onDataChange: viewholdersize: " + mViewHolder.size());
                                 List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
                                 for (int i = mViewHolder.size()-1; i >= 0; i--) {
@@ -558,6 +539,29 @@ public class ViewPostFragment extends Fragment {
                 .child(getString(R.string.field_comments))
                 .child(commentID)
                 .setValue(comment);
+    }
+
+    private String getCommmentUserDetails(String uID){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users_account_settings))
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(uID);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: query cancelled.");
+            }
+        });
+        return mUserAccountSettings.getUsername();
     }
 
     /**
