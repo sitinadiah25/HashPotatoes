@@ -7,6 +7,7 @@
     <string name="profile_fragment">Profile</string>
     <string name="view_post_fragment">View Post</string>
     <string name="view_comments_fragment">View Comments</string>
+    <string name="view_profile_fragment">View Profile</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
@@ -36,8 +37,10 @@
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>
     <string name="profile_activity">Profile Activity</string>
+    <string name="feature_activity">Feature Activity</string>
     <string name="selected_image">selected_image</string>
     <string name="return_to_fragment">return_to_fragment</string>
+    <string name="intent_user">user</string>
     <string name="selected_bitmap">selected_bitmap</string>
 
     <!-- bundle args extra -->

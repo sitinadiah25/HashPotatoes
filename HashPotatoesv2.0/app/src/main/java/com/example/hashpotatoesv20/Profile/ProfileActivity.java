@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
 import com.example.hashpotatoesv20.Models.Post;
@@ -23,6 +24,7 @@ import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
 import com.example.hashpotatoesv20.Utils.ViewCommentsFragment;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
+import com.example.hashpotatoesv20.Utils.ViewProfileFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -89,65 +91,38 @@ public class ProfileActivity extends AppCompatActivity implements
 
         init();
 
-        /*mProgressBar = (ProgressBar) findViewById(R.id.profileProgressBar);
-        mProgressBar.setVisibility(View.GONE);*/
-
-        /*setupBottomNavigationView();
-        setupToolbar();
-        setupActivityWidgets();
-        setProfileImage();*/
     }
 
-    private void init(){
+    private void init() {
         Log.d(TAG, "init: inflating" + getString(R.string.profile_fragment));
 
-        ProfileFragment fragment = new ProfileFragment();
-        FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container,fragment);
-        transaction.addToBackStack(getString(R.string.profile_fragment));
-        transaction.commit();
-    }
+        Intent intent = getIntent();
+        if (intent.hasExtra(getString(R.string.calling_activity))) {
+            Log.d(TAG, "init: searching for user object attached as intent extra");
+            if (intent.hasExtra(getString(R.string.intent_user))) {
+                Log.d(TAG, "init: inflating view profile");
+                ViewProfileFragment fragment = new ViewProfileFragment();
+                Bundle args = new Bundle();
+                args.putParcelable(getString(R.string.intent_user),
+                        intent.getParcelableExtra(getString(R.string.intent_user)));
+                fragment.setArguments(args);
 
-    /*private void setProfileImage(){
-        Log.d(TAG, "setProfileImage: setting profile photo");
-        String imgUrl = "https://cdn.shopify.com/s/files/1/0553/1817/products/Whistle_Flute_KawaiiCat_FlatBrimCap_2048x2048.png?v=1514921387";
-        UniversalImageLoader.setImage(imgUrl, profilePhoto, mProgressBar, "");
-    }
-
-    private void setupActivityWidgets() {
-        mProgressBar = (ProgressBar) findViewById(R.id.profileProgressBar);
-        mProgressBar.setVisibility(View.GONE);
-        profilePhoto = (ImageView) findViewById(R.id.profilePhoto);
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.profileToolBar);
-        setSupportActionBar(toolbar);
-
-        ImageView profileMenu = (ImageView) findViewById(R.id.profileMenu);
-        profileMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating to account settings.");
-                Intent intent = new Intent(mContext, AccountSettingsActivity.class);
-                startActivity(intent);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.view_profile_fragment));
+                transaction.commit();
+            } else {
+                Toast.makeText(mContext, "something went wrong", Toast.LENGTH_SHORT).show();
             }
-        });
-    }
 
-    *//**
-     * BottomNavigationView setup
-     *//*
-    private void setupBottomNavigationView() {
-        Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
-        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
-        BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
-        Menu menu = bottomNavigationViewEx.getMenu();
-        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
-        menuItem.setChecked(true);
+        } else {
+            Log.d(TAG, "init: inflating profile");
+            ProfileFragment fragment = new ProfileFragment();
+            FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, fragment);
+            transaction.addToBackStack(getString(R.string.profile_fragment));
+            transaction.commit();
+        }
     }
-*/
-
 
 }
