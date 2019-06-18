@@ -16,6 +16,8 @@
     <string name="dbname_users_account_settings">users_account_settings</string>
     <string name="dbname_posts">posts</string>
     <string name="dbname_user_posts">user_posts</string>
+    <string name="dbname_tags">tags</string>
+    <string name="dbname_user_tags">user_tags</string>
     <string name="field_username">username</string>
     <string name="field_email">email</string>
     <string name="field_displayname">display_name</string>
@@ -32,6 +34,10 @@
     <string name="field_anonymity">anonymity</string>
     <string name="field_comments">comments</string>
     <string name="field_comment">comment</string>
+    <string name="field_tag_id">tag_id</string>
+    <string name="field_tag_name">tag_name</string>
+    <string name="field_tag_description">tag_description</string>
+    <string name="field_privacy">privacy</string>
 
 
     <!-- intent extras -->
@@ -41,6 +47,7 @@
     <string name="selected_image">selected_image</string>
     <string name="return_to_fragment">return_to_fragment</string>
     <string name="intent_user">user</string>
+    <string name="intent_tag">tag</string>
     <string name="selected_bitmap">selected_bitmap</string>
 
     <!-- bundle args extra -->

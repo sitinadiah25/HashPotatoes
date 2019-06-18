@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.hashpotatoesv20.Models.Post;
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
@@ -24,12 +25,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -204,6 +207,14 @@ public class FirebaseMethods {
                 .setValue(email);
     }
 
+    public void createTag(final String tagName, final String tagDescription, final String privacy) {
+        //check if tag name exists
+        Log.d(TAG, "createTag: checking if tag name already exists.");
+
+        //add tag to database
+        addTagToDatabase(tagName, tagDescription, privacy);
+    }
+
     public void uploadPost(String discussion, String tags, String anonymity) {
 
         String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -211,26 +222,6 @@ public class FirebaseMethods {
 
         addPostToDatabase(discussion, tags, anonymity);
     }
-
-    /*
-    public boolean checkIfUsernameExists(String username, DataSnapshot dataSnapshot) {
-        Log.d(TAG,  "checkIfUsernameExists: checking if " + username + "already exists");
-
-        User user = new User();
-
-        for (DataSnapshot ds:dataSnapshot.child(userID).getChildren()){
-            Log.d(TAG, "checkIfUsernameExists: datasnapshot: " + ds);
-
-            user.setUsername(ds.getValue(User.class).getUsername());
-            Log.d(TAG, "checkIfUsernameExists: username: " + user.getUsername());
-
-            if(StringManipulation.expandUsername(user.getUsername()).equals(username)){
-                Log.d(TAG, "checkIfUsernameExists: FOUND A MATCH: " +  user.getUsername());
-                return true;
-            }
-        }
-        return false;
-    }*/
 
     /**
      * Register a new email and password to Firebase authentication
@@ -321,6 +312,31 @@ public class FirebaseMethods {
         Log.d(TAG, "addPostToDatabase: added post to database.");
     }
 
+    public void addTagToDatabase(String tag_name, String tag_desc, String privacy) {
+        Log.d(TAG, "addPostToDatabase: adding post to database.");
+
+        String newTagKey = myRef.child(mContext.getString(R.string.dbname_tags)).push().getKey();
+
+        Tag tag = new Tag();
+
+        tag.setOwner_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        tag.setTag_name(tag_name);
+        tag.setTag_description(tag_desc);
+        tag.setTag_id(newTagKey);
+        tag.setPrivacy(privacy);
+        ArrayList<String> whitelist = new ArrayList<>();
+        ArrayList<String> post_id = new ArrayList<>();
+        tag.setPost_ids(post_id);
+        tag.setWhitelist(whitelist);
+
+        //insert into database
+        myRef.child(mContext.getString(R.string.dbname_tags)).child(newTagKey).setValue(tag);
+        myRef.child(mContext.getString(R.string.dbname_user_tags))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(newTagKey).setValue(tag);
+
+        Log.d(TAG, "addTagToDatabase: added tag to database.");
+    }
+
     /**
      * Add information to the users nodes
      * Add information to the user_account_settings node
@@ -333,6 +349,7 @@ public class FirebaseMethods {
      */
     public void addNewUser(String email, String username, String description,
                            String website, String profile_photo, String major) {
+        username = username.toLowerCase();
         User user = new User(userID, StringManipulation.condenseUsername(username), email);
 
         myRef.child(mContext.getString(R.string.dbname_users))

@@ -4,14 +4,16 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.hashpotatoesv20.Models.User;
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.R;
 import com.google.firebase.database.DataSnapshot;
@@ -24,27 +26,26 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+public class TagListAdapter extends ArrayAdapter<Tag> {
 
-public class UserListAdapter extends ArrayAdapter<User> {
-    private static final String TAG = "UserListAdapter";
+    private static final String TAG = "TagListAdapter";
 
     private LayoutInflater mInflater;
-    private List<User> mUsers;
+    private List<Tag> mTags;
     private int layoutResource;
     private Context mContext;
 
-    public UserListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<User> objects){
+    public TagListAdapter(@NonNull Context context, @LayoutRes int resource,@NonNull List<Tag> objects) {
         super(context, resource, objects);
         mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutResource = resource;
-        this.mUsers = objects;
+        this.mTags = objects;
     }
 
-    private static class ViewHolder{
-        TextView username, email;
-        CircleImageView profileImage;
+    private static class ViewHolder {
+        TextView tag_name, tag_desc;
+        ImageView tag_photo_priv, tag_photo_pub;
     }
 
     @NonNull
@@ -53,38 +54,42 @@ public class UserListAdapter extends ArrayAdapter<User> {
         final ViewHolder holder;
 
         if(convertView == null){
+            Log.d(TAG, "getView: inserting info into holder.");
             convertView = mInflater.inflate(layoutResource, parent, false);
-            holder = new ViewHolder();
+            holder = new TagListAdapter.ViewHolder();
 
-            holder.username = (TextView) convertView.findViewById(R.id.username);
-            holder.email = (TextView) convertView.findViewById(R.id.email);
-            holder.profileImage = (CircleImageView) convertView.findViewById(R.id.profile_image);
+            holder.tag_name = (TextView) convertView.findViewById(R.id.tag_name);
+            holder.tag_desc = (TextView) convertView.findViewById(R.id.tag_desc);
+            holder.tag_photo_priv = (ImageView) convertView.findViewById(R.id.ivPrivate);
+            holder.tag_photo_pub = (ImageView) convertView.findViewById(R.id.ivPublic);
 
             convertView.setTag(holder);
         }
-        else{
-            holder = (ViewHolder) convertView.getTag();
+        else {
+            holder = (TagListAdapter.ViewHolder) convertView.getTag();
         }
-        holder.username.setText(getItem(position).getUsername());
-        holder.email.setText(getItem(position).getEmail());
+        Log.d(TAG, "getView: setting testviews and imageviews");
+        holder.tag_name.setText(getItem(position).getTag_name());
+        holder.tag_desc.setText(getItem(position).getTag_description());
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child(mContext.getString(R.string.dbname_users_account_settings))
-                .orderByChild(mContext.getString(R.string.field_user_id))
-                .equalTo(getItem(position).getUser_id());
+        Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                .orderByChild(mContext.getString(R.string.field_tag_id))
+                .equalTo(getItem(position).getTag_id());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    Log.d(TAG, "onDataChange: found user: " +
-                            singleSnapshot.getValue(UserAccountSettings.class).toString());
+                    Log.d(TAG, "onDataChange: found tag: " + singleSnapshot.getValue(Tag.class).toString());
 
-                    UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
-                    ImageLoader.getInstance().init(universalImageLoader.getConfig());
-                    ImageLoader imageLoader = ImageLoader.getInstance();
-
-                    imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
-                            holder.profileImage);
+                    String privacy = singleSnapshot.getValue(Tag.class).getPrivacy();
+                    if (privacy.equals("Private")) {
+                        holder.tag_photo_priv.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        holder.tag_photo_pub.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -93,6 +98,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
             }
         });
+
         return convertView;
     }
 }

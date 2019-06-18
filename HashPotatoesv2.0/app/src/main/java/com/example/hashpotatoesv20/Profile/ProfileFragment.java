@@ -83,6 +83,7 @@ public class ProfileFragment extends Fragment {
     private ListView listView;
 
     private Context mContext;
+    private UserAccountSettings mUserAccountSettings;
 
     @Nullable
     @Override
@@ -127,6 +128,17 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        TextView createTag = (TextView) view.findViewById(R.id.textCreate);
+        createTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to CreateTagActivity");
+                Intent intent = new Intent(getActivity(), CreateTagActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
+
         Log.d(TAG, "onCreateView: Started.");
 
         return view;
@@ -146,7 +158,6 @@ public class ProfileFragment extends Fragment {
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user posts.");
         final ArrayList<Post> posts = new ArrayList<>();
-        final ArrayList<UserAccountSettings> userAccountSettings = new ArrayList<>();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
@@ -158,7 +169,6 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     Post post = new Post();
-                    UserAccountSettings userAccountSetting = new UserAccountSettings();
                     Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
                     post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
@@ -224,6 +234,29 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "onCancelled: query cancelled.");
             }
         });
+    }
+
+    private String getCommmentUserDetails(String uID){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users_account_settings))
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(uID);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: query cancelled.");
+            }
+        });
+        return mUserAccountSettings.getUsername();
     }
 
     /**

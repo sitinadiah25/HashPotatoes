@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/lightBack">
+
+    <!-- top tool bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@id/relLayout1">
+
+        <include layout="@layout/layout_top_taps"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="25sp"
+            style="@style/RibeyeMarrowRegular"
+            android:text="@string/app_name"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:id="@+id/top_Potatoes" />
+
+    </RelativeLayout>
+
+    <!-- middle section -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/relLayout2"
+        android:layout_below="@id/relLayout1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Create Hashtag"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textColor="@color/Black"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:id="@+id/tvCreateHashtag"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/relLayout2"
+        android:id="@+id/relLayout3"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:layout_width ="match_parent"
+            android:layout_height ="wrap_content"
+            android:layout_weight ="1"
+            android:gravity="center|left"
+            android:hint="Hashtag Name"
+            android:textSize="15sp"
+            android:paddingLeft="10dp"
+            android:background="@color/lightBlue"
+            android:inputType="textCapSentences|textMultiLine"
+            android:id="@+id/tag_name"
+            android:scrollHorizontally="false"/>
+
+    </LinearLayout>
+
+    <!-- search tag section -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_below="@id/relLayout3"
+        android:id="@+id/relLayout4"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|left"
+            android:paddingTop="5dp"
+            android:paddingLeft="10dp"
+            android:hint="Description of Hashtag"
+            android:textSize="15sp"
+            android:background="@color/lightBlue"
+            android:inputType="textCapSentences|textMultiLine"
+            android:id="@+id/tagDescription"/>
+
+    </RelativeLayout>
+
+    <!-- anonymity section -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/relLayout4"
+        android:id="@+id/relLayout5"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|left"
+            android:paddingLeft="10dp"
+            android:textStyle="normal"
+            android:textColor="@color/Black"
+            android:textSize="15sp"
+            android:background="@color/lightBlue"
+            android:inputType="text"
+            android:text="Public"
+            android:id="@+id/tvPrivacy"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/privacy"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relLayout5">
+
+        <include layout="@layout/layout_bottom_create_bar"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

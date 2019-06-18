@@ -21,6 +21,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
@@ -39,6 +40,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -103,12 +105,14 @@ public class ViewProfileFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.listView);
 
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
+        //ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
 
         try{
             mUser = getUserFromBundle();
             init();
-        }catch (NullPointerException e){
+        }
+        catch (NullPointerException e){
             Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage());
             Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
             getActivity().getSupportFragmentManager().popBackStack();
@@ -160,11 +164,13 @@ public class ViewProfileFragment extends Fragment {
 
             }
         });
-        //get user profile photos
+        //get user profile photo
         DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
         Query query2 = reference2
                 .child(getString(R.string.dbname_user_posts))
                 .child(mUser.getUser_id());
+
+        Log.d(TAG, "init: user profile: " + mUser.getUser_id());
 
         query2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -175,22 +181,40 @@ public class ViewProfileFragment extends Fragment {
                     UserAccountSettings userAccountSetting = new UserAccountSettings();
                     Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
-                    post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
-                    post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
-                    post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
-                    post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
-                    post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
-                    post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
+                    try {
+                        post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
+                        post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
+                        post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
+                        post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
+                        post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
+                        post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
 
-                    List<Like> likesList = new ArrayList<Like>();
-                    for (DataSnapshot dSnapshot : singleSnapshot
-                            .child(getString(R.string.field_likes)).getChildren()){
-                        Like like = new Like();
-                        like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
-                        likesList.add(like);
+                        ArrayList<Comment> comments = new ArrayList<Comment>();
+                        for (DataSnapshot dSnapshot : singleSnapshot
+                                .child(getString(R.string.field_comments)).getChildren()){
+                            Comment comment = new Comment();
+                            comment.setUser_id(dSnapshot.getValue(Comment.class).getUser_id());
+                            comment.setComment(dSnapshot.getValue(Comment.class).getComment());
+                            comment.setDate_created(dSnapshot.getValue(Comment.class).getDate_created());
+                            comments.add(comment);
+                        }
+
+                        post.setComments(comments);
+
+                        List<Like> likesList = new ArrayList<Like>();
+                        for (DataSnapshot dSnapshot : singleSnapshot
+                                .child(getString(R.string.field_likes)).getChildren()){
+                            Like like = new Like();
+                            like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
+                            likesList.add(like);
+                        }
+                        Log.d(TAG, "onDataChange: comments: " + comments.size());
+                        post.setLikes(likesList);
+                        posts.add(post);
                     }
-                    post.setLikes(likesList);
-                    posts.add(post);
+                    catch (NullPointerException e) {
+                        Log.e(TAG, "onDataChange: Null Pointer Exception: " + e.getMessage() );
+                    }
                 }
                 setupListGrid(posts);
             }
@@ -216,10 +240,6 @@ public class ViewProfileFragment extends Fragment {
             hm.put(getString(R.string.field_date_created), timestampDiff);
             hm.put(getString(R.string.field_tags), posts.get(i).getTags());
             aList.add(hm);
-                    /*
-                    String string = posts.get(i).getDiscussion();
-                    post.add(string);
-                    */
             Log.d(TAG, "onDataChange: get: " + posts.get(i).getDiscussion());
         }
 
@@ -229,17 +249,20 @@ public class ViewProfileFragment extends Fragment {
         int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
 
         SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
-
-
-        //ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_activated_1, post);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int actPosition = posts.size() - position - 1;
-                Log.d(TAG, "onItemClick: position:" + actPosition);
-                mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                try {
+                    int actPosition = posts.size() - position - 1;
+                    Log.d(TAG, "onItemClick: position:" + actPosition);
+                    mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "onItemClick: NullPointerException View Post " + e.getLocalizedMessage() );
+                }
+
             }
         });
     }
@@ -247,9 +270,10 @@ public class ViewProfileFragment extends Fragment {
         Log.d(TAG, "getUserFromBundle: arguments: " + getArguments());
 
         Bundle bundle = this.getArguments();
-        if(bundle != null){
+        if (bundle != null) {
             return bundle.getParcelable(getString(R.string.intent_user));
-        }else{
+        }
+        else {
             return null;
         }
     }

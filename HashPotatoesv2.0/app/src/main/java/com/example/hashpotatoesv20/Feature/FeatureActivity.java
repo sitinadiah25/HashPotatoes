@@ -17,10 +17,12 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
+import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.UserListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,18 +44,22 @@ public class FeatureActivity extends AppCompatActivity {
 
     //widgets
     private EditText mSearchParam;
-    private ListView mListView;
+    private ListView mListViewUser;
+    private ListView mListViewTag;
 
     //Vars
     private List<User> mUserList;
-    private UserListAdapter mAdapter;
+    private List<Tag> mTagList;
+    private UserListAdapter mUAdapter;
+    private TagListAdapter mTAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         mSearchParam = (EditText) findViewById(R.id.search);
-        mListView = (ListView) findViewById(R.id.search_listview);
+        mListViewUser = (ListView) findViewById(R.id.search_listview);
+        mListViewTag = (ListView) findViewById(R.id.search_listview_tag);
         Log.d(TAG, "onCreate: started.");
 
         hideSoftKeyboard();
@@ -65,6 +71,7 @@ public class FeatureActivity extends AppCompatActivity {
         Log.d(TAG,"initTextListener: initializing");
 
         mUserList = new ArrayList<>();
+        mTagList = new ArrayList<>();
 
         mSearchParam.addTextChangedListener(new TextWatcher() {
             @Override
@@ -79,7 +86,7 @@ public class FeatureActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String text = mSearchParam.getText().toString().toLowerCase(Locale.getDefault());
+                String text = mSearchParam.getText().toString();
                 searchForMatch(text);
             }
         });
@@ -88,14 +95,15 @@ public class FeatureActivity extends AppCompatActivity {
     private void searchForMatch(String keyword){
         Log.d(TAG, "searchForMatch: searching for a match: " + keyword);
         mUserList.clear();
+        mTagList.clear();
         //update the users list
         if(keyword.length() == 0){
 
         }else{
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            Query query = reference.child(getString(R.string.dbname_users))
+            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+            Query query1 = reference1.child(getString(R.string.dbname_users))
                     .orderByChild(getString(R.string.field_username)).equalTo(keyword);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
+            query1.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
@@ -112,16 +120,57 @@ public class FeatureActivity extends AppCompatActivity {
 
                 }
             });
+            DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+            Query query2 = reference2.child(getString(R.string.dbname_tags))
+                    .orderByChild(getString(R.string.field_tag_name))
+                    .equalTo(keyword);
+            query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                        Log.d(TAG, "onDataChange: found tag: " + singleSnapshot.getValue(Tag.class).toString());
+
+                        mTagList.add(singleSnapshot.getValue(Tag.class));
+                        //update the users list view
+                        updateTagList();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
+    }
+
+    private void updateTagList() {
+        Log.d(TAG, "updateTagList: updating tags list");
+
+        mTAdapter = new TagListAdapter(FeatureActivity.this, R.layout.layout_tag_listitem, mTagList);
+
+        mListViewTag.setAdapter(mTAdapter);
+        mListViewTag.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemClick: selected user: " +  mTagList.get(position).toString());
+
+                //navigate to profile activity
+//                Intent intent = new Intent(FeatureActivity.this, ProfileActivity.class);
+//                intent.putExtra(getString(R.string.calling_activity),getString(R.string.feature_activity));
+//                intent.putExtra(getString(R.string.intent_tag), mTagList.get(position));
+//                startActivity(intent);
+            }
+        });
     }
 
     private void updateUserList(){
         Log.d(TAG, "updateUserList: updating users list");
 
-        mAdapter = new UserListAdapter(FeatureActivity.this, R.layout.layout_user_listitem, mUserList);
+        mUAdapter = new UserListAdapter(FeatureActivity.this, R.layout.layout_user_listitem, mUserList);
 
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListViewUser.setAdapter(mUAdapter);
+        mListViewUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: selected user: " +  mUserList.get(position).toString());

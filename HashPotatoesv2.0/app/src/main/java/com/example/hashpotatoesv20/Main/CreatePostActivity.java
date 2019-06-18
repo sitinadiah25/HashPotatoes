@@ -144,9 +144,6 @@ public class CreatePostActivity extends AppCompatActivity {
         UserAccountSettings settings = userSettings.getSettings();
 
         String username = settings.getUsername();
-
-
-
     }
 
     private String getUsername(UserSettings userSettings) {
