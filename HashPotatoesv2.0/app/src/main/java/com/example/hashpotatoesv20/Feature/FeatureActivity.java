@@ -35,8 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class FeatureActivity extends AppCompatActivity {
     private static final String TAG = "FeatureActivity";
@@ -130,10 +132,16 @@ public class FeatureActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
-                        Log.d(TAG, "onDataChange: found tag: " + singleSnapshot.getValue(Tag.class).toString());
+                        Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                        Tag tag = new Tag();
+                        tag.setPrivacy(objectMap.get(mContext.getString(R.string.field_privacy)).toString());
+                        tag.setTag_name(objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        tag.setTag_id(objectMap.get(mContext.getString(R.string.field_tag_id)).toString());
+                        tag.setTag_description(objectMap.get(mContext.getString(R.string.field_tag_description)).toString());
+                        tag.setOwner_id(objectMap.get(mContext.getString(R.string.field_owner_id)).toString());
 
-                        mTagList.add(singleSnapshot.getValue(Tag.class));
-                        //update the users list view
+                        mTagList.add(tag);
+                        //update the tags list view
                         updateTagList();
                     }
                 }
@@ -159,10 +167,10 @@ public class FeatureActivity extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: selected user: " +  mTagList.get(position).toString());
 
                 //navigate to profile activity
-//                Intent intent = new Intent(FeatureActivity.this, ProfileActivity.class);
-//                intent.putExtra(getString(R.string.calling_activity),getString(R.string.feature_activity));
-//                intent.putExtra(getString(R.string.intent_tag), mTagList.get(position));
-//                startActivity(intent);
+                Intent intent = new Intent(FeatureActivity.this, ProfileActivity.class);
+                intent.putExtra(getString(R.string.calling_activity),getString(R.string.feature_activity));
+                intent.putExtra(getString(R.string.intent_tag), mTagList.get(position));
+                startActivity(intent);
             }
         });
     }

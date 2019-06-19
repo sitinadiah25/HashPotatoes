@@ -15,9 +15,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/relLayout1"
-        android:id="@+id/relLayout2">
+        android:id="@+id/relLayout2"
+        android:background="@color/lightBack">
 
         <include layout="@layout/layout_center_view_tag"/>
 
@@ -26,7 +27,7 @@
     <ProgressBar
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:id="@+id/profileProgressBar"
+        android:id="@+id/progressBar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"/>
 

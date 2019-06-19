@@ -25,6 +25,7 @@ import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
 import com.example.hashpotatoesv20.Utils.ViewCommentsFragment;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.example.hashpotatoesv20.Utils.ViewProfileFragment;
+import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +37,9 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class ProfileActivity extends AppCompatActivity implements
         ProfileFragment.onListPostSelectedListener,
-        ViewPostFragment.OnCommentThreadSelectedListener {
+        ViewPostFragment.OnCommentThreadSelectedListener,
+        ViewTagFragment.onListPostSelectedListener,
+        ViewProfileFragment.onListPostSelectedListener{
     
     private static final String TAG = "ProfileActivity";
     private static final int ACTIVITY_NUM = 3;
@@ -111,7 +114,20 @@ public class ProfileActivity extends AppCompatActivity implements
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack(getString(R.string.view_profile_fragment));
                 transaction.commit();
-            } else {
+            }
+            else if (intent.hasExtra(getString(R.string.intent_tag))) {
+                ViewTagFragment fragment = new ViewTagFragment();
+                Bundle args = new Bundle();
+                args.putParcelable(getString(R.string.intent_tag),
+                        intent.getParcelableExtra(getString(R.string.intent_tag)));
+                fragment.setArguments(args);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.view_tag_fragment));
+                transaction.commit();
+
+            }
+            else {
                 Toast.makeText(mContext, "something went wrong", Toast.LENGTH_SHORT).show();
             }
 

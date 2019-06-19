@@ -159,83 +159,104 @@ public class ProfileFragment extends Fragment {
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user posts.");
         final ArrayList<Post> posts = new ArrayList<>();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            final Query query = reference
+                    .child(getString(R.string.dbname_user_posts))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference
-                .child(getString(R.string.dbname_user_posts))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    try {
+                        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                            Post post = new Post();
+                            Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                            Log.d(TAG, "onDataChange: snapshot profile: " + objectMap.get(getString(R.string.field_discussion)).toString());
+                            post.setDiscussion(objectMap.get(mContext.getString(R.string.field_discussion)).toString());
+                            post.setDate_created(objectMap.get(mContext.getString(R.string.field_date_created)).toString());
+                            post.setUser_id(objectMap.get(mContext.getString(R.string.field_user_id)).toString());
+                            post.setPost_id(objectMap.get(mContext.getString(R.string.field_post_id)).toString());
+                            post.setTags(objectMap.get(mContext.getString(R.string.field_tags)).toString());
+                            post.setAnonymity(objectMap.get(mContext.getString(R.string.field_anonymity)).toString());
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    Post post = new Post();
-                    Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                            List<Like> likesList = new ArrayList<Like>();
+                            for (DataSnapshot dSnapshot : singleSnapshot
+                                    .child(getString(R.string.field_likes)).getChildren()){
+                                Like like = new Like();
+                                like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
+                                likesList.add(like);
+                            }
+                            post.setLikes(likesList);
+                            posts.add(post);
+                        }
+                        //setup list view
+                        mPosts.setText(Integer.toString(posts.size()));
+                        final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                        for (int i = posts.size()-1; i >= 0; i--) {
+                            //for (int i = 0; i < posts.size(); i++) {
+                            final HashMap<String, String> hm = new HashMap<String, String>();
 
-                    post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
-                    post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
-                    post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
-                    post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
-                    post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
-                    post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
+                            final String postTimestamp = posts.get(i).getDate_created();
+                            String timestampDiff = getTimestampDifference(postTimestamp);
+                            hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
+                            hm.put(getString(R.string.field_date_created), timestampDiff);
+                            hm.put(getString(R.string.field_tags), posts.get(i).getTags());
+                            final String anon = posts.get(i).getAnonymity();
 
-                    List<Like> likesList = new ArrayList<Like>();
-                    for (DataSnapshot dSnapshot : singleSnapshot
-                    .child(getString(R.string.field_likes)).getChildren()){
-                        Like like = new Like();
-                        like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
-                        likesList.add(like);
+                            DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+                            Query query2 = reference2
+                                    .child(getString(R.string.dbname_users_account_settings))
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (anon.equals("Anonymous")) {
+                                        hm.put(getString(R.string.field_username), "Anonymous");
+                                    }
+                                    else {
+                                        hm.put(getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
+                                    }
+                                    aList.add(hm);
+                                    String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
+                                            getString(R.string.field_tags), getString(R.string.field_username)};
+
+                                    int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
+
+                                    SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+
+                                    listView.setAdapter(adapter);
+                                    setListViewHeightBasedOnChildren(listView);
+
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            int actPosition = posts.size() - position - 1;
+                                            Log.d(TAG, "onItemClick: position:" + actPosition);
+                                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
                     }
-                    post.setLikes(likesList);
-                    posts.add(post);
-                }
-                //setup list view
-                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                for (int i = posts.size()-1; i >= 0; i--) {
-                //for (int i = 0; i < posts.size(); i++) {
-                    HashMap<String, String> hm = new HashMap<String, String>();
-
-                    final String postTimestamp = posts.get(i).getDate_created();
-                    String timestampDiff = getTimestampDifference(postTimestamp);
-
-                    hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
-                    hm.put(getString(R.string.field_date_created), timestampDiff);
-                    hm.put(getString(R.string.field_tags), posts.get(i).getTags());
-                    aList.add(hm);
-                    /*
-                    String string = posts.get(i).getDiscussion();
-                    post.add(string);
-                    */
-                    Log.d(TAG, "onDataChange: get: " + posts.get(i).getDiscussion());
-                }
-
-                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-                        getString(R.string.field_tags)};
-
-                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
-
-                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
-
-
-                //ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_activated_1, post);
-                listView.setAdapter(adapter);
-                setListViewHeightBasedOnChildren(listView);
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        int actPosition = posts.size() - position - 1;
-                        Log.d(TAG, "onItemClick: position:" + actPosition);
-                        mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                    catch (NullPointerException e) {
+                        Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage() );
                     }
-                });
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: query cancelled.");
-            }
-        });
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(TAG, "onCancelled: query cancelled.");
+                }
+            });
     }
 
     private static void setListViewHeightBasedOnChildren (ListView listView) {
@@ -361,7 +382,7 @@ public class ProfileFragment extends Fragment {
         mUsername.setText(settings.getUsername());
         mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
-        mPosts.setText(String.valueOf(settings.getPosts()));
+        //mPosts.setText(String.valueOf(settings.getPosts()));
         mHashtags.setText(String.valueOf(settings.getHashtags()));
         mYear.setText(settings.getYear());
         mMajor.setText(String.valueOf(settings.getMajor()));

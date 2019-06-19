@@ -8,6 +8,7 @@
     <string name="view_post_fragment">View Post</string>
     <string name="view_comments_fragment">View Comments</string>
     <string name="view_profile_fragment">View Profile</string>
+    <string name="view_tag_fragment">View Tag</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
@@ -38,6 +39,9 @@
     <string name="field_tag_name">tag_name</string>
     <string name="field_tag_description">tag_description</string>
     <string name="field_privacy">privacy</string>
+    <string name="field_post_ids">post_ids</string>
+    <string name="field_whitelist">whitelist</string>
+    <string name="field_owner_id">owner_id</string>
 
 
     <!-- intent extras -->

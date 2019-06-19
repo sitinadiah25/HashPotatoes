@@ -3,6 +3,7 @@ package com.example.hashpotatoesv20.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Post implements Parcelable {
@@ -15,12 +16,13 @@ public class Post implements Parcelable {
     private String anonymity;
     private List<Like> likes;
     private List<Comment> comments;
+    private ArrayList<String> tag_list;
 
     public Post(){
-
     }
 
-    public Post(String discussion, String date_created, String user_id, String post_id, String tags, String anonymity, List<Like> likes, List<Comment> comments) {
+    public Post(String discussion, String date_created, String user_id, String post_id, String tags,
+                String anonymity, List<Like> likes, List<Comment> comments, ArrayList<String> tag_list) {
         this.discussion = discussion;
         this.date_created = date_created;
         this.user_id = user_id;
@@ -29,6 +31,7 @@ public class Post implements Parcelable {
         this.anonymity = anonymity;
         this.likes = likes;
         this.comments = comments;
+        this.tag_list = tag_list;
     }
 
     protected Post(Parcel in) {
@@ -38,6 +41,7 @@ public class Post implements Parcelable {
         post_id = in.readString();
         tags = in.readString();
         anonymity = in.readString();
+        tag_list = in.createStringArrayList();
     }
 
     @Override
@@ -48,6 +52,7 @@ public class Post implements Parcelable {
         dest.writeString(post_id);
         dest.writeString(tags);
         dest.writeString(anonymity);
+        dest.writeStringList(tag_list);
     }
 
     @Override
@@ -129,6 +134,18 @@ public class Post implements Parcelable {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public ArrayList<String> getTag_list() {
+        return tag_list;
+    }
+
+    public void setTag_list(ArrayList<String> tag_list) {
+        this.tag_list = tag_list;
+    }
+
+    public static Creator<Post> getCREATOR() {
+        return CREATOR;
     }
 }
 

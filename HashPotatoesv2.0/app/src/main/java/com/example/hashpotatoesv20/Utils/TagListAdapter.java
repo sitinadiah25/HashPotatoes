@@ -24,6 +24,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class TagListAdapter extends ArrayAdapter<Tag> {
@@ -81,9 +82,9 @@ public class TagListAdapter extends ArrayAdapter<Tag> {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    Log.d(TAG, "onDataChange: found tag: " + singleSnapshot.getValue(Tag.class).toString());
+                    HashMap<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
-                    String privacy = singleSnapshot.getValue(Tag.class).getPrivacy();
+                    String privacy = objectMap.get(mContext.getString(R.string.field_privacy)).toString();
                     if (privacy.equals("Private")) {
                         holder.tag_photo_priv.setVisibility(View.VISIBLE);
                     }

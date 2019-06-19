@@ -59,7 +59,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ViewProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
-    private static final int ACTIVITY_NUM = 3;
+    private static final int ACTIVITY_NUM = 1;
 
     public interface onListPostSelectedListener {
         void onPostSelected(Post post, int activity_number);
@@ -106,7 +106,6 @@ public class ViewProfileFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.listView);
 
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
-        //ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
 
         try{
@@ -268,6 +267,7 @@ public class ViewProfileFragment extends Fragment {
             }
         });
     }
+
     private User getUserFromBundle(){
         Log.d(TAG, "getUserFromBundle: arguments: " + getArguments());
 

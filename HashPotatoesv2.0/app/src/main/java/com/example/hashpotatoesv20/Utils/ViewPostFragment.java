@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.R;
@@ -348,6 +349,7 @@ public class ViewPostFragment extends Fragment {
         //Log.d(TAG, "getDiscussion: check discussion: " + mPost.getDiscussion());
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
+        //String joinedTags = String.join(" ", tags.);
         mTag.setText(mPost.getTags());
 
         //setup list for comments
@@ -449,11 +451,12 @@ public class ViewPostFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 mViewHolder.clear();
                                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-
                                     final ViewHolder viewHolder = new ViewHolder();
+                                    Comment comment = singleSnapshot.getValue(Comment.class);
+                                    Log.d(TAG, "onDataChange: datasnapshot: " + comment.getUser_id());
                                     Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
-                                    String uName = getCommmentUserDetails(mContext.getString(R.string.field_user_id));
+                                    String uName = getCommmentUserDetails(comment.getUser_id());
 
                                     viewHolder.username = (uName);
                                     viewHolder.comment = objectMap.get(mContext.getString(R.string.field_comment)).toString();
@@ -483,8 +486,6 @@ public class ViewPostFragment extends Fragment {
                                 int[] to = {R.id.post_comment, R.id.username, R.id.timestamp};
 
                                 SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_comment_listview, from, to);
-                                //CommentListAdapter adapter = new CommentListAdapter(getActivity(), R.layout.layout_comment_listview, comments);
-                                //ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_activated_1, post);
                                 mListView.setAdapter(adapter);
                             }
 

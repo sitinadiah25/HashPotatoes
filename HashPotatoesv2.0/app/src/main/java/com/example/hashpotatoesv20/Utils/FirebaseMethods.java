@@ -23,9 +23,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -34,7 +37,11 @@ import com.google.firebase.storage.UploadTask;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 public class FirebaseMethods {
@@ -293,9 +300,22 @@ public class FirebaseMethods {
     private void addPostToDatabase(String discussion, String tags, String anonymity) {
         Log.d(TAG, "addPostToDatabase: adding post to database.");
 
-        String newPostKey = myRef.child(mContext.getString(R.string.dbname_posts)).push().getKey();
+        final String newPostKey = myRef.child(mContext.getString(R.string.dbname_posts)).push().getKey();
 
-        Post post = new Post();
+        //tokenizing tag string to get the different tags
+        StringTokenizer st = new StringTokenizer(tags);
+        ArrayList<String> tagList = new ArrayList<>();
+        Log.d(TAG, "addPostToDatabase: tokens: " + st.countTokens());
+        if (st.countTokens() == 1) {
+            tagList.add(tags);
+        }
+        else {
+            while (st.hasMoreElements()) {
+                tagList.add(st.nextElement().toString());
+            }
+        }
+
+        final Post post = new Post();
 
         post.setDiscussion(discussion);
         post.setTags(tags);
@@ -303,6 +323,39 @@ public class FirebaseMethods {
         post.setDate_created(getTimestamp());
         post.setPost_id(newPostKey);
         post.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        post.setTag_list(tagList);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        for (int i = 0; i < tagList.size(); i++) {
+            Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                    .orderByChild(mContext.getString(R.string.field_tag_id));
+            final String currTag = tagList.get(i);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "onDataChange: currTag: " + currTag);
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Map<String,Object> objectMap = (HashMap<String, Object>) ds.getValue();
+                        String tag_name = objectMap.get(mContext.getString(R.string.field_tag_name)).toString();
+                        if (tag_name.equals(currTag)) {
+                            Log.d(TAG, "onDataChange: tag name exists: " + currTag);
+                            String tagID = objectMap.get(mContext.getString(R.string.field_tag_id)).toString();
+                            myRef.child(mContext.getString(R.string.dbname_tags))
+                                        .child(tagID)
+                                        .child(mContext.getString(R.string.field_post_ids))
+                                        .child(newPostKey)
+                                        .setValue(post);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    throw databaseError.toException();
+                }
+            });
+
+        }
 
         //insert into database
         myRef.child(mContext.getString(R.string.dbname_posts)).child(newPostKey).setValue(post);
