@@ -18,21 +18,20 @@
 
         </RelativeLayout>
 
-        <ListView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/search_listview"
             android:layout_below="@id/relLayout1">
 
-        </ListView>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/search_listview_tag"
-            android:layout_below="@id/search_listview">
+                <include layout="@layout/layout_search_list"/>
 
-        </ListView>
+            </RelativeLayout>
+
+        </ScrollView>
 
     </RelativeLayout>
 

@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.hashpotatoesv20.Models.Tag;
@@ -150,6 +152,7 @@ public class FeatureActivity extends AppCompatActivity {
         mTAdapter = new TagListAdapter(FeatureActivity.this, R.layout.layout_tag_listitem, mTagList);
 
         mListViewTag.setAdapter(mTAdapter);
+        setListViewHeightBasedOnChildren(mListViewTag);
         mListViewTag.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -170,6 +173,7 @@ public class FeatureActivity extends AppCompatActivity {
         mUAdapter = new UserListAdapter(FeatureActivity.this, R.layout.layout_user_listitem, mUserList);
 
         mListViewUser.setAdapter(mUAdapter);
+        setListViewHeightBasedOnChildren(mListViewUser);
         mListViewUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -182,6 +186,33 @@ public class FeatureActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private static void setListViewHeightBasedOnChildren (ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) return;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0) view.setLayoutParams(new
+                    ViewGroup.LayoutParams(desiredWidth,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+
+        int width = listAdapter.getCount() - 1;
+
+        params.height = totalHeight + (listView.getDividerHeight() * (width));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
     private void hideSoftKeyboard(){

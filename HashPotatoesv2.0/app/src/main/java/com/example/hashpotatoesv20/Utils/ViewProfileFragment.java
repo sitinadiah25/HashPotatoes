@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -250,6 +251,7 @@ public class ViewProfileFragment extends Fragment {
 
         SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
         listView.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(listView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -369,6 +371,33 @@ public class ViewProfileFragment extends Fragment {
         mMajor.setText(String.valueOf(settings.getMajor()));
 
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    private static void setListViewHeightBasedOnChildren (ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) return;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0) view.setLayoutParams(new
+                    ViewGroup.LayoutParams(desiredWidth,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+
+        int width = listAdapter.getCount() - 1;
+
+        params.height = totalHeight + (listView.getDividerHeight() * (width));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
     /**
