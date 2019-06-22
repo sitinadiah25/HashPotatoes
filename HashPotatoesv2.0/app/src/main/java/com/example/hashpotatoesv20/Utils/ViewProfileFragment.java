@@ -370,6 +370,19 @@ public class ViewProfileFragment extends Fragment {
         mYear.setText(settings.getYear());
         mMajor.setText(String.valueOf(settings.getMajor()));
 
+        if (settings.getWebsite().isEmpty()) {
+            mWebsite.setVisibility(View.GONE);
+        }
+        if (settings.getYear().isEmpty()) {
+            mYear.setVisibility(View.GONE);
+        }
+        if (settings.getMajor().isEmpty()) {
+            mMajor.setVisibility(View.GONE);
+        }
+        if (settings.getDescription().isEmpty()) {
+            mDescription.setVisibility(View.GONE);
+        }
+
         mProgressBar.setVisibility(View.GONE);
     }
 

@@ -19,6 +19,9 @@
     <string name="dbname_user_posts">user_posts</string>
     <string name="dbname_tags">tags</string>
     <string name="dbname_user_tags">user_tags</string>
+    <string name="dbname_user_following">user_following</string>
+    <string name="dbname_tag_followers">tag_followers</string>
+    <string name="dbname_tag_post">tag_post</string>
     <string name="field_username">username</string>
     <string name="field_email">email</string>
     <string name="field_displayname">display_name</string>
@@ -42,6 +45,8 @@
     <string name="field_post_ids">post_ids</string>
     <string name="field_whitelist">whitelist</string>
     <string name="field_owner_id">owner_id</string>
+    <string name="field_hashtags">hashtags</string>
+
 
 
     <!-- intent extras -->

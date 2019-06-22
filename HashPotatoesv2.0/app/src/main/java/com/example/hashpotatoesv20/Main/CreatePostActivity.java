@@ -109,6 +109,9 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: sharing post.");
+
+                //check if tags exists
+
                 //upload post to firebase
                 Toast.makeText(CreatePostActivity.this, "Attempting to upload post", Toast.LENGTH_SHORT).show();
 
@@ -117,8 +120,13 @@ public class CreatePostActivity extends AppCompatActivity {
                 String delim = " ";
                 StringTokenizer st = new StringTokenizer(fullTag, delim);
                 String tag = "";
-                while (st.hasMoreElements()) {
-                    tag = tag + "#" + st.nextElement() + " ";
+                if (st.countTokens() == 1) {
+                    tag = tag + st.nextElement();
+                }
+                else {
+                    while (st.hasMoreElements()) {
+                        tag = tag + st.nextElement() + " ";
+                    }
                 }
 
                 String discussion = mDiscussion.getText().toString();

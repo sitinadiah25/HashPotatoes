@@ -35,10 +35,11 @@
                     android:orientation="vertical"
                     android:layout_below="@id/linLayout"
                     android:paddingTop="5dp"
-                    android:paddingLeft="35dp"
+                    android:paddingLeft="30dp"
                     android:paddingBottom="0dp"
                     android:layout_marginBottom="0dp"
-                    android:id="@+id/linLayout2">
+                    android:id="@+id/linLayout2"
+                    android:paddingRight="30dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -58,6 +59,25 @@
                     android:layout_marginBottom="50dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp">
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:src="@drawable/ic_private"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/locked"
+                        android:visibility="invisible"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Locked"
+                        android:layout_below="@id/locked"
+                        android:textColor="@color/Black"
+                        android:textSize="25dp"
+                        android:id="@+id/tvLocked"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="invisible"/>
 
                     <ListView
                         android:layout_width="match_parent"

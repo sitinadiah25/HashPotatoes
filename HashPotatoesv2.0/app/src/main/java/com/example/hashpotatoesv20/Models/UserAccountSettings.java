@@ -1,5 +1,7 @@
 package com.example.hashpotatoesv20.Models;
 
+import java.util.List;
+
 public class UserAccountSettings {
 
     private String description;
@@ -13,7 +15,9 @@ public class UserAccountSettings {
     private long hashtags;
     private String user_id;
 
-    public UserAccountSettings(String description, String display_name, String major, long posts, String profile_photo, String username, String website, String year, long hashtags, String user_id) {
+    public UserAccountSettings(String description, String display_name, String major, long posts,
+                               String profile_photo, String username, String website, String year,
+                               long hashtags, String user_id) {
         this.description = description;
         this.display_name = display_name;
         this.major = major;
@@ -28,14 +32,6 @@ public class UserAccountSettings {
 
     public UserAccountSettings() {
 
-    }
-
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
     }
 
     public String getDescription() {
@@ -110,18 +106,11 @@ public class UserAccountSettings {
         this.hashtags = hashtags;
     }
 
-    @Override
-    public String toString() {
-        return "UserAccountSettings{" +
-                "description='" + description + '\'' +
-                ", display_name='" + display_name + '\'' +
-                ", major='" + major + '\'' +
-                ", posts=" + posts +
-                ", profile_photo='" + profile_photo + '\'' +
-                ", username='" + username + '\'' +
-                ", website='" + website + '\'' +
-                ", year='" + year + '\'' +
-                ", hashtags=" + hashtags +
-                '}';
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 }

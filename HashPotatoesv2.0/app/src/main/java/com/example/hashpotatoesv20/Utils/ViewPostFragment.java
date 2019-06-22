@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -133,6 +134,9 @@ public class ViewPostFragment extends Fragment {
         mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
 
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
+
+        UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
+        ImageLoader.getInstance().init(universalImageLoader.getConfig());
 
         try {
             mPost = getPostFromBundle();
@@ -344,8 +348,14 @@ public class ViewPostFragment extends Fragment {
         final String postTimestamp = mPost.getDate_created();
         String timestampDiff = getTimestampDifference(postTimestamp);
         mTimestamp.setText(timestampDiff);
-        UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(), mProfileImage,null,"");
-        mUsername.setText(mUserAccountSettings.getUsername());
+        if (mPost.getAnonymity().equals("Anonymous")) {
+            mUsername.setText("Anonymous");
+            UniversalImageLoader.setImage("", mProfileImage,null,"");
+        }
+        else {
+            mUsername.setText(mUserAccountSettings.getUsername());
+            UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(), mProfileImage,null,"");
+        }
         //Log.d(TAG, "getDiscussion: check discussion: " + mPost.getDiscussion());
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
@@ -426,10 +436,8 @@ public class ViewPostFragment extends Fragment {
 
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user comments.");
-        final ViewHolder viewHolder;
         final ArrayList<ViewHolder> mViewHolder = new ArrayList<>();
         final HashSet<ViewHolder> hashSet = new HashSet<ViewHolder>();
-        //final ArrayList<UserAccountSettings> userAccountSettings = new ArrayList<>();
         Log.d(TAG,"Test: " + mPost.getPost_id());
 
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -450,45 +458,67 @@ public class ViewPostFragment extends Fragment {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 mViewHolder.clear();
-                                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                                    final ViewHolder viewHolder = new ViewHolder();
+                                for (final DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                                     Comment comment = singleSnapshot.getValue(Comment.class);
+                                    final Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
                                     Log.d(TAG, "onDataChange: datasnapshot: " + comment.getUser_id());
-                                    Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                                    final ViewHolder viewHolder = new ViewHolder();
+                                    mViewHolder.clear();
+                                    Query query = reference
+                                            .child(getString(R.string.dbname_users))
+                                            .orderByChild(getString(R.string.field_user_id))
+                                            .equalTo(comment.getUser_id());
 
-                                    String uName = getCommmentUserDetails(comment.getUser_id());
+                                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            //mViewHolder.clear();
+                                            for (DataSnapshot ds: dataSnapshot.getChildren()){
+                                                viewHolder.username = (ds.getValue(User.class).getUsername());
+                                                viewHolder.comment = objectMap.get(mContext.getString(R.string.field_comment)).toString();
+                                                viewHolder.timestamp = objectMap.get(mContext.getString(R.string.field_date_created)).toString();
+                                                Log.d(TAG, "onDataChange: timestamp: " + viewHolder.timestamp);
+                                                Log.d(TAG, "onDataChange: comment: " + viewHolder.comment);
+                                            }
+                                            mViewHolder.add(viewHolder);
+                                    //setup list view
+                                    Log.d(TAG, "onDataChange: mviewholder.size(): " + mViewHolder.size());
+                                    double num = Math.sqrt(mViewHolder.size());
+                                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                                    try {
+                                        for (int i = mViewHolder.size()-1; i >= mViewHolder.size()-num; i--) {
+                                            HashMap<String, String> hm = new HashMap<String, String>();
+                                            Log.d(TAG, "onDataChange: mviewholder.size(): " + mViewHolder.size());
+                                            Log.d(TAG, "onDataChange: timestamp: " + mViewHolder.get(i).timestamp);
+                                            final String postTimestamp = mViewHolder.get(i).timestamp;
+                                            String timestampDiff = getTimestampDifference(postTimestamp);
 
-                                    viewHolder.username = (uName);
-                                    viewHolder.comment = objectMap.get(mContext.getString(R.string.field_comment)).toString();
-                                    viewHolder.timestamp = objectMap.get(mContext.getString(R.string.field_date_created)).toString();
+                                            hm.put(mContext.getString(R.string.field_comments), mViewHolder.get(i).comment);
+                                            hm.put(mContext.getString(R.string.field_username), mViewHolder.get(i).username);
+                                            hm.put(mContext.getString(R.string.field_date_created), timestampDiff);
+                                            aList.add(hm);
+                                        }
+                                    }
+                                    catch (NullPointerException e) {
+                                        Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage());
+                                    }
 
+                                    String[] from = {mContext.getString(R.string.field_comments), mContext.getString(R.string.field_username),
+                                            mContext.getString(R.string.field_date_created)};
 
-                                    mViewHolder.add(viewHolder);
+                                    int[] to = {R.id.post_comment, R.id.username, R.id.timestamp};
+
+                                    SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_comment_listview, from, to);
+                                    mListView.setAdapter(adapter);
+                                    setListViewHeightBasedOnChildren(mListView);
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 }
-                                //setup list view
-                                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-
-                                for (int i = mViewHolder.size()-1; i >= 0; i--) {
-                                    HashMap<String, String> hm = new HashMap<String, String>();
-
-                                    final String postTimestamp = mViewHolder.get(i).timestamp;
-                                    String timestampDiff = getTimestampDifference(postTimestamp);
-
-                                    hm.put(mContext.getString(R.string.field_comments), mViewHolder.get(i).comment);
-                                    hm.put(mContext.getString(R.string.field_username), mViewHolder.get(i).username);
-                                    hm.put(mContext.getString(R.string.field_date_created), timestampDiff);
-                                    aList.add(hm);
-                                }
-
-                                String[] from = {mContext.getString(R.string.field_comments), mContext.getString(R.string.field_username),
-                                        mContext.getString(R.string.field_date_created)};
-
-                                int[] to = {R.id.post_comment, R.id.username, R.id.timestamp};
-
-                                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_comment_listview, from, to);
-                                mListView.setAdapter(adapter);
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.d(TAG, "onCancelled: query cancelled.");
@@ -518,6 +548,33 @@ public class ViewPostFragment extends Fragment {
                 });
     }
 
+    private static void setListViewHeightBasedOnChildren (ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) return;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0) view.setLayoutParams(new
+                    ViewGroup.LayoutParams(desiredWidth,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+
+        int width = listAdapter.getCount() - 1;
+
+        params.height = totalHeight + (listView.getDividerHeight() * (width));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
     private void addNewComment(String newComment){
         Log.d(TAG, "addNewComment: adding new Comment: " + newComment);
 
@@ -542,18 +599,21 @@ public class ViewPostFragment extends Fragment {
                 .setValue(comment);
     }
 
-    private String getCommmentUserDetails(String uID){
+    private String getCommmentUserDetails(final String uID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
-                .child(getString(R.string.dbname_users_account_settings))
+                .child(getString(R.string.dbname_users))
                 .orderByChild(getString(R.string.field_user_id))
                 .equalTo(uID);
+
+        final User user = new User();
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
+                    //user = singleSnapshot.getValue(User.class);
                 }
             }
 

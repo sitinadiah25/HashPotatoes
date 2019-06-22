@@ -61,6 +61,7 @@ public class FirebaseMethods {
     private double mPhotoUploadProgress = 0;
 
     private UserSettings user;
+    private User cUser;
 
     public FirebaseMethods(Context context){
         mAuth = FirebaseAuth.getInstance();
@@ -327,33 +328,11 @@ public class FirebaseMethods {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         for (int i = 0; i < tagList.size(); i++) {
-            Query query = reference.child(mContext.getString(R.string.dbname_tags))
-                    .orderByChild(mContext.getString(R.string.field_tag_id));
-            final String currTag = tagList.get(i);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onDataChange: currTag: " + currTag);
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Map<String,Object> objectMap = (HashMap<String, Object>) ds.getValue();
-                        String tag_name = objectMap.get(mContext.getString(R.string.field_tag_name)).toString();
-                        if (tag_name.equals(currTag)) {
-                            Log.d(TAG, "onDataChange: tag name exists: " + currTag);
-                            String tagID = objectMap.get(mContext.getString(R.string.field_tag_id)).toString();
-                            myRef.child(mContext.getString(R.string.dbname_tags))
-                                        .child(tagID)
-                                        .child(mContext.getString(R.string.field_post_ids))
-                                        .child(newPostKey)
-                                        .setValue(post);
-                        }
-                    }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    throw databaseError.toException();
-                }
-            });
+            myRef.child(mContext.getString(R.string.dbname_tag_post))
+                    .child(tagList.get(i))
+                    .child(newPostKey)
+                    .setValue(post);
 
         }
 
@@ -377,15 +356,25 @@ public class FirebaseMethods {
         tag.setTag_description(tag_desc);
         tag.setTag_id(newTagKey);
         tag.setPrivacy(privacy);
-        ArrayList<String> whitelist = new ArrayList<>();
-        ArrayList<String> post_id = new ArrayList<>();
+        ArrayList<User> whitelist = new ArrayList<>();
+        ArrayList<Post> post_id = new ArrayList<>();
         tag.setPost_ids(post_id);
         tag.setWhitelist(whitelist);
 
         //insert into database
         myRef.child(mContext.getString(R.string.dbname_tags)).child(newTagKey).setValue(tag);
         myRef.child(mContext.getString(R.string.dbname_user_tags))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(newTagKey).setValue(tag);
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(newTagKey)
+                .setValue(tag);
+        myRef.child(mContext.getString(R.string.dbname_tag_followers))
+                .child(newTagKey)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .setValue(FirebaseAuth.getInstance().getCurrentUser());
+        myRef.child(mContext.getString(R.string.dbname_user_following))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(newTagKey)
+                .setValue(tag);
 
         Log.d(TAG, "addTagToDatabase: added tag to database.");
     }
@@ -409,22 +398,44 @@ public class FirebaseMethods {
                 .child(userID)
                 .setValue(user);
 
-        UserAccountSettings settings = new UserAccountSettings(
-                description,
-                username,
-                major,
-                0,
-                profile_photo,
-                StringManipulation.condenseUsername(username),
-                website,
-                "",
-                0,
-                userID
-        );
+        UserAccountSettings settings = new UserAccountSettings();
+        settings.setDescription(description);
+        settings.setDisplay_name(username);
+        settings.setMajor(major);
+        settings.setPosts(0);
+        settings.setProfile_photo(profile_photo);
+        settings.setUsername(StringManipulation.condenseUsername(username));
+        settings.setWebsite(website);
+        settings.setYear("");
+        settings.setUser_id(userID);
 
         myRef.child(mContext.getString(R.string.dbname_users_account_settings))
                 .child(userID)
                 .setValue(settings);
+    }
+
+    public User getCurrentUser() {
+        cUser = new User();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(mContext.getString(R.string.dbname_users));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: ds: " + ds.getValue());
+                    if (ds.getValue().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        cUser = ds.getValue(User.class);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return cUser;
     }
 
     /**

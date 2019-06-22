@@ -70,7 +70,8 @@ public class TagListAdapter extends ArrayAdapter<Tag> {
             holder = (TagListAdapter.ViewHolder) convertView.getTag();
         }
         Log.d(TAG, "getView: setting testviews and imageviews");
-        holder.tag_name.setText(getItem(position).getTag_name());
+        String tagname = "#" + getItem(position).getTag_name();
+        holder.tag_name.setText(tagname);
         holder.tag_desc.setText(getItem(position).getTag_description());
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();

@@ -11,10 +11,11 @@ public class Tag implements Parcelable {
     String tag_name;
     String tag_description;
     String owner_id;
-    List<String> post_ids;
-    List<String> whitelist;
+    List<Post> post_ids; //posts that used the tag
+    List<User> whitelist; //followers
 
-    public Tag(String privacy, String tag_id, String tag_name, String tag_description, String owner_id, List<String> post_ids, List<String> whitelist) {
+    public Tag(String privacy, String tag_id, String tag_name, String tag_description,
+               String owner_id, List<Post> post_ids, List<User> whitelist) {
         this.privacy = privacy;
         this.tag_id = tag_id;
         this.tag_name = tag_name;
@@ -34,8 +35,8 @@ public class Tag implements Parcelable {
         tag_name = in.readString();
         tag_description = in.readString();
         owner_id = in.readString();
-        post_ids = in.createStringArrayList();
-        whitelist = in.createStringArrayList();
+        post_ids = in.createTypedArrayList(Post.CREATOR);
+        whitelist = in.createTypedArrayList(User.CREATOR);
     }
 
     public static final Creator<Tag> CREATOR = new Creator<Tag>() {
@@ -90,33 +91,20 @@ public class Tag implements Parcelable {
         this.owner_id = owner_id;
     }
 
-    public List<String> getPost_ids() {
+    public List<Post> getPost_ids() {
         return post_ids;
     }
 
-    public void setPost_ids(List<String> post_ids) {
+    public void setPost_ids(List<Post> post_ids) {
         this.post_ids = post_ids;
     }
 
-    public List<String> getWhitelist() {
+    public List<User> getWhitelist() {
         return whitelist;
     }
 
-    public void setWhitelist(List<String> whitelist) {
+    public void setWhitelist(List<User> whitelist) {
         this.whitelist = whitelist;
-    }
-
-    @Override
-    public String toString() {
-        return "Tag{" +
-                "privacy='" + privacy + '\'' +
-                ", tag_id='" + tag_id + '\'' +
-                ", tag_name='" + tag_name + '\'' +
-                ", tag_description='" + tag_description + '\'' +
-                ", owner_id='" + owner_id + '\'' +
-                ", post_ids=" + post_ids +
-                ", whitelist=" + whitelist +
-                '}';
     }
 
     /**
@@ -148,8 +136,8 @@ public class Tag implements Parcelable {
         dest.writeString(tag_name);
         dest.writeString(tag_description);
         dest.writeString(owner_id);
-        dest.writeStringList(post_ids);
-        dest.writeStringList(whitelist);
+        dest.writeTypedList(post_ids);
+        dest.writeTypedList(whitelist);
     }
 }
 

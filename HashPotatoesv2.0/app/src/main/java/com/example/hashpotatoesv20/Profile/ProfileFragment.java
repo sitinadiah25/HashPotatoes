@@ -75,7 +75,7 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
 
-    private TextView mPosts, mHashtags, mDisplayName, mYear, mMajor, mUsername, mWebsite, mDescription;
+    private TextView mPosts, mHashtags, mDisplayName, mYear, mMajor, mUsername, mWebsite, mDescription, tvYear;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private Toolbar toolbar;
@@ -85,6 +85,8 @@ public class ProfileFragment extends Fragment {
 
     private Context mContext;
     private UserAccountSettings mUserAccountSettings;
+    private int mPostsCount = 0;
+    private int mTagsCount = 0;
 
     @Nullable
     @Override
@@ -104,6 +106,7 @@ public class ProfileFragment extends Fragment {
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mWebsite = (TextView) view.findViewById(R.id.profile_website);
         mDescription = (TextView) view.findViewById(R.id.profile_description);
+        tvYear = (TextView) view.findViewById(R.id.tv_year);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(getActivity());
         listView = (ListView) view.findViewById(R.id.listView);
@@ -156,9 +159,52 @@ public class ProfileFragment extends Fragment {
         super.onAttach(context);
     }
 
+    private void getCounts() {
+        mPostsCount = 0;
+        mTagsCount = 0;
+
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+        Query query1 = reference1.child(getString(R.string.dbname_user_posts))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found post: " + ds.getValue());
+                    mPostsCount++;
+                }
+                mPosts.setText(String.valueOf(mPostsCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+        Query query2 = reference2.child(getString(R.string.dbname_user_following))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found post: " + ds.getValue());
+                    mTagsCount++;
+                }
+                mHashtags.setText(String.valueOf(mTagsCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user posts.");
-        final ArrayList<Post> posts = new ArrayList<>();
+//        final ArrayList<Post> posts = new ArrayList<>();
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             final Query query = reference
                     .child(getString(R.string.dbname_user_posts))
@@ -167,6 +213,7 @@ public class ProfileFragment extends Fragment {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    final ArrayList<Post> posts = new ArrayList<>();
                     try {
                         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                             Post post = new Post();
@@ -189,67 +236,63 @@ public class ProfileFragment extends Fragment {
                             post.setLikes(likesList);
                             posts.add(post);
                         }
-                        //setup list view
-                        mPosts.setText(Integer.toString(posts.size()));
-                        final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                        for (int i = posts.size()-1; i >= 0; i--) {
-                            //for (int i = 0; i < posts.size(); i++) {
-                            final HashMap<String, String> hm = new HashMap<String, String>();
-
-                            final String postTimestamp = posts.get(i).getDate_created();
-                            String timestampDiff = getTimestampDifference(postTimestamp);
-                            hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
-                            hm.put(getString(R.string.field_date_created), timestampDiff);
-                            hm.put(getString(R.string.field_tags), posts.get(i).getTags());
-                            final String anon = posts.get(i).getAnonymity();
-
-                            DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
-                            Query query2 = reference2
-                                    .child(getString(R.string.dbname_users_account_settings))
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            query2.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (anon.equals("Anonymous")) {
-                                        hm.put(getString(R.string.field_username), "Anonymous");
-                                    }
-                                    else {
-                                        hm.put(getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
-                                    }
-                                    aList.add(hm);
-                                    String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-                                            getString(R.string.field_tags), getString(R.string.field_username)};
-
-                                    int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
-
-                                    SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
-
-                                    listView.setAdapter(adapter);
-                                    setListViewHeightBasedOnChildren(listView);
-
-                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            int actPosition = posts.size() - position - 1;
-                                            Log.d(TAG, "onItemClick: position:" + actPosition);
-                                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
                     }
                     catch (NullPointerException e) {
                         Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage() );
                     }
+                    //setup list view
+                    //mPosts.setText(Integer.toString(posts.size()));
+                    final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                    for (int i = posts.size()-1; i >= 0; i--) {
+                        final HashMap<String, String> hm = new HashMap<String, String>();
 
+                        final String postTimestamp = posts.get(i).getDate_created();
+                        String timestampDiff = getTimestampDifference(postTimestamp);
+                        hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
+                        hm.put(getString(R.string.field_date_created), timestampDiff);
+                        hm.put(getString(R.string.field_tags), posts.get(i).getTags());
+                        final String anon = posts.get(i).getAnonymity();
 
+                        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+                        Query query2 = reference2
+                                .child(getString(R.string.dbname_users_account_settings))
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (anon.equals("Anonymous")) {
+                                    hm.put(getString(R.string.field_username), "Anonymous");
+                                }
+                                else {
+                                    hm.put(getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
+                                }
+                                aList.add(hm);
+                                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
+                                        getString(R.string.field_tags), getString(R.string.field_username)};
 
+                                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
+
+                                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+
+                                listView.setAdapter(adapter);
+                                setListViewHeightBasedOnChildren(listView);
+
+                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        int actPosition = posts.size() - position - 1;
+                                        Log.d(TAG, "onItemClick: position:" + actPosition);
+                                        mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -284,29 +327,6 @@ public class ProfileFragment extends Fragment {
 
         listView.setLayoutParams(params);
         listView.requestLayout();
-    }
-
-    private String getCommmentUserDetails(String uID){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference
-                .child(getString(R.string.dbname_users_account_settings))
-                .orderByChild(getString(R.string.field_user_id))
-                .equalTo(uID);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: query cancelled.");
-            }
-        });
-        return mUserAccountSettings.getUsername();
     }
 
     /**
@@ -382,12 +402,25 @@ public class ProfileFragment extends Fragment {
         mUsername.setText(settings.getUsername());
         mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
-        //mPosts.setText(String.valueOf(settings.getPosts()));
-        mHashtags.setText(String.valueOf(settings.getHashtags()));
         mYear.setText(settings.getYear());
         mMajor.setText(String.valueOf(settings.getMajor()));
 
+        if (settings.getWebsite().isEmpty()) {
+            mWebsite.setVisibility(View.GONE);
+        }
+        if (settings.getYear().isEmpty()) {
+            mYear.setVisibility(View.GONE);
+            tvYear.setVisibility(View.GONE);
+        }
+        if (settings.getMajor().isEmpty()) {
+            mMajor.setVisibility(View.GONE);
+        }
+        if (settings.getDescription().isEmpty()) {
+            mDescription.setVisibility(View.GONE);
+        }
+
         mProgressBar.setVisibility(View.GONE);
+        getCounts();
     }
 
     /**

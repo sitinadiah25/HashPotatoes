@@ -3,6 +3,7 @@ package com.example.hashpotatoesv20.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.autofill.Dataset;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -25,6 +27,8 @@ import android.widget.Toast;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
+import com.example.hashpotatoesv20.Models.User;
+import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Profile.AccountSettingsActivity;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
@@ -63,17 +67,21 @@ public class ViewTagFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseMethods mFirebaseMethods;
 
-    private TextView mTagName, mTagDesc, mPostNum, mPost, mTagNameBar;
+    private TextView mTagName, mTagDesc, mPostNum, mPost, mTagNameBar, tvLocked;
     private ProgressBar mProgressBar;
     private Toolbar toolbar;
-    private ImageView mPrivate, mPublic, profileMenu;
+    private ImageView mPrivate, mPublic, profileMenu, mLocked;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
+    private Button mFollow, mUnfollow;
 
     //vars
     private Tag mTag;
     private Context mContext;
+    private int mPostsCount = 0;
+    private User user;
 
     @Nullable
     @Override
@@ -91,7 +99,12 @@ public class ViewTagFragment extends Fragment {
         mPrivate = (ImageView) view.findViewById(R.id.ivPrivate);
         mPublic = (ImageView) view.findViewById(R.id.ivPublic);
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
+        mFollow = (Button) view.findViewById(R.id.btn_follow);
+        mUnfollow = (Button) view.findViewById(R.id.btn_unfollow);
+        mLocked = (ImageView) view.findViewById(R.id.locked);
+        tvLocked = (TextView) view.findViewById(R.id.tvLocked);
         mContext = getActivity();
+        mFirebaseMethods = new FirebaseMethods(getActivity());
 
         try{
             mTag = getTagFromBundle();
@@ -109,6 +122,95 @@ public class ViewTagFragment extends Fragment {
         setupFirebaseAuth();
         setupToolbar();
 
+        isFollowing();
+        getPostsCount();
+
+        mFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: now following: " + mTag.getTag_name());
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(mContext.getString(R.string.dbname_tag_followers))
+                        .child(mTag.getTag_id())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .setValue(FirebaseAuth.getInstance().getCurrentUser());
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(mContext.getString(R.string.dbname_user_following))
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(mTag.getTag_id())
+                        .setValue(mTag);
+                setFollowing();
+
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                        .child(mTag.getTag_id());
+                Log.d(TAG, "setWidgets: checking privacy");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.getValue().equals("Private")) {
+                                //send notification to owner
+
+                                mLocked.setVisibility(View.GONE);
+                                tvLocked.setVisibility(View.GONE);
+                                listView.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+        mUnfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: now unfollowing: " + mTag.getTag_name());
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.dbname_tag_followers))
+                        .child(mTag.getTag_id())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .removeValue();
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.dbname_user_following))
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(mTag.getTag_id())
+                        .removeValue();
+                setUnfollowing();
+
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                        .child(mTag.getTag_id());
+                Log.d(TAG, "setWidgets: checking privacy");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.getValue().equals("Private")) {
+                                mLocked.setVisibility(View.VISIBLE);
+                                tvLocked.setVisibility(View.VISIBLE);
+                                listView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
         return view;
     }
 
@@ -123,14 +225,57 @@ public class ViewTagFragment extends Fragment {
         super.onAttach(context);
     }
 
-    private void setWidgets(Tag tag) {
-        mTagName.setText(tag.getTag_name());
+    private void setWidgets(final Tag tag) {
+        String tag_name = "#" + tag.getTag_name();
+        mTagName.setText(tag_name);
         mTagNameBar.setText(tag.getTag_name());
         mTagDesc.setText(tag.getTag_description());
         String privacy = tag.getPrivacy();
         if (privacy.equals("Private")) {
             mPrivate.setVisibility(View.VISIBLE);
             mPublic.setVisibility(View.INVISIBLE);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                    .child(tag.getTag_id());
+            Log.d(TAG, "setWidgets: checking privacy");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if (ds.getValue().equals("Private")) {
+
+                            DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference();
+                            Query query1 = ref1.child(mContext.getString(R.string.dbname_tag_followers))
+                                    .child(tag.getTag_id())
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        Log.d(TAG, "onDataChange: ds tagfollow: " + ds.getValue());
+                                        if (!ds.getValue().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                            mLocked.setVisibility(View.VISIBLE);
+                                            tvLocked.setVisibility(View.VISIBLE);
+                                            listView.setVisibility(View.GONE);
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
         else {
             mPublic.setVisibility(View.VISIBLE);
@@ -151,19 +296,67 @@ public class ViewTagFragment extends Fragment {
         }
     }
 
+    private void isFollowing() {
+        Log.d(TAG, "isFollowing: checking if user is already following this tag");
+        setUnfollowing();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_user_following))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Tag tag = ds.getValue(Tag.class);
+                    if (tag.getTag_id().equals(mTag.getTag_id())) {
+                        setFollowing();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getPostsCount() {
+        mPostsCount = 0;
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_tag_post))
+                .child(mTag.getTag_name());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found post: " + ds.getValue());
+                    mPostsCount++;
+                }
+                mPostNum.setText(String.valueOf(mPostsCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user posts.");
         final ArrayList<Post> posts = new ArrayList<>();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
-                .child(getString(R.string.dbname_tags))
-                .child(mTag.getTag_id())
-                .child(getString(R.string.field_post_ids));
+                .child(getString(R.string.dbname_tag_post))
+                .child(mTag.getTag_name());
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String username = "";
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     Post post = new Post();
                     Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
@@ -186,9 +379,9 @@ public class ViewTagFragment extends Fragment {
                     posts.add(post);
                 }
                 //setup list view
-                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                 for (int i = posts.size()-1; i >= 0; i--) {
-                    HashMap<String, String> hm = new HashMap<String, String>();
+                    final HashMap<String, String> hm = new HashMap<String, String>();
 
                     final String postTimestamp = posts.get(i).getDate_created();
                     String timestampDiff = getTimestampDifference(postTimestamp);
@@ -197,33 +390,73 @@ public class ViewTagFragment extends Fragment {
                     hm.put(getString(R.string.field_date_created), timestampDiff);
                     hm.put(getString(R.string.field_tags), posts.get(i).getTags());
                     aList.add(hm);
+                    final String anon = posts.get(i).getAnonymity();
+
+                    DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+                    Query query2 = reference2
+                            .child(getString(R.string.dbname_users_account_settings))
+                            .child(posts.get(i).getUser_id());
+                    aList.clear();
+                    query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (anon.equals("Anonymous")) {
+                                hm.put(getString(R.string.field_username), "Anonymous");
+                            }
+                            else {
+                                hm.put(getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
+                            }
+                            aList.add(hm);
+                            String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
+                                    getString(R.string.field_tags), getString(R.string.field_username)};
+
+                            int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
+
+                            SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+
+                            listView.setAdapter(adapter);
+                            setListViewHeightBasedOnChildren(listView);
+
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    int actPosition = posts.size() - position - 1;
+                                    Log.d(TAG, "onItemClick: position:" + actPosition);
+                                    mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
-                mPostNum.setText(Integer.toString(posts.size()));
-
-                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-                        getString(R.string.field_tags)};
-
-                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
-
-                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
-
-                listView.setAdapter(adapter);
-                setListViewHeightBasedOnChildren(listView);
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        try {
-                            int actPosition = posts.size() - position - 1;
-                            Log.d(TAG, "onItemClick: position:" + actPosition);
-                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
-                        }
-                        catch (NullPointerException e) {
-                            Log.e(TAG, "onItemClick: NullPointerException: " + e.getMessage() );
-                        }
-                    }
-                });
+//                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
+//                        getString(R.string.field_tags)};
+//
+//                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
+//
+//                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+//
+//                listView.setAdapter(adapter);
+//                setListViewHeightBasedOnChildren(listView);
+//
+//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        try {
+//                            int actPosition = posts.size() - position - 1;
+//                            Log.d(TAG, "onItemClick: position:" + actPosition);
+//                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+//                        }
+//                        catch (NullPointerException e) {
+//                            Log.e(TAG, "onItemClick: NullPointerException: " + e.getMessage() );
+//                        }
+//                    }
+//                });
             }
 
             @Override
@@ -350,6 +583,18 @@ public class ViewTagFragment extends Fragment {
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
+    }
+
+    private void setFollowing() {
+        Log.d(TAG, "setFollowing: updating UI for unfollowing this tag");
+        mFollow.setVisibility(View.GONE);
+        mUnfollow.setVisibility(View.VISIBLE);
+    }
+
+    private void setUnfollowing() {
+        Log.d(TAG, "setUnfollowing: updating UI for following this tag");
+        mFollow.setVisibility(View.VISIBLE);
+        mUnfollow.setVisibility(View.GONE);
     }
 
     /*
