@@ -305,7 +305,7 @@ public class FirebaseMethods {
 
         //tokenizing tag string to get the different tags
         StringTokenizer st = new StringTokenizer(tags);
-        ArrayList<String> tagList = new ArrayList<>();
+        final ArrayList<String> tagList = new ArrayList<>();
         Log.d(TAG, "addPostToDatabase: tokens: " + st.countTokens());
         if (st.countTokens() == 1) {
             tagList.add(tags);
@@ -328,11 +328,36 @@ public class FirebaseMethods {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         for (int i = 0; i < tagList.size(); i++) {
+            final String currTagName = tagList.get(i);
 
-            myRef.child(mContext.getString(R.string.dbname_tag_post))
-                    .child(tagList.get(i))
-                    .child(newPostKey)
-                    .setValue(post);
+            Query query = reference.child(mContext.getString(R.string.dbname_tags));
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: createpost tag value: " + ds.getValue(Tag.class).getTag_name());
+                        if (ds.getValue(Tag.class).getTag_name().equals(currTagName)) {
+                            myRef.child(mContext.getString(R.string.dbname_tag_post))
+                                    .child(ds.getValue(Tag.class).getTag_id())
+                                    .child(newPostKey)
+                                    .setValue(post);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+//            myRef.child(mContext.getString(R.string.dbname_tag_post))
+//                    .child(tagList.get(i))
+//                    .child(newPostKey)
+//                    .setValue(post);
 
         }
 

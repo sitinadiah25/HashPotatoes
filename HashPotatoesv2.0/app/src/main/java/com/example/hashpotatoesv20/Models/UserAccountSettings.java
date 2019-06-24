@@ -1,8 +1,11 @@
 package com.example.hashpotatoesv20.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class UserAccountSettings {
+public class UserAccountSettings implements Parcelable {
 
     private String description;
     private String display_name;
@@ -33,6 +36,31 @@ public class UserAccountSettings {
     public UserAccountSettings() {
 
     }
+
+    protected UserAccountSettings(Parcel in) {
+        description = in.readString();
+        display_name = in.readString();
+        major = in.readString();
+        posts = in.readLong();
+        profile_photo = in.readString();
+        username = in.readString();
+        website = in.readString();
+        year = in.readString();
+        hashtags = in.readLong();
+        user_id = in.readString();
+    }
+
+    public static final Creator<UserAccountSettings> CREATOR = new Creator<UserAccountSettings>() {
+        @Override
+        public UserAccountSettings createFromParcel(Parcel in) {
+            return new UserAccountSettings(in);
+        }
+
+        @Override
+        public UserAccountSettings[] newArray(int size) {
+            return new UserAccountSettings[size];
+        }
+    };
 
     public String getDescription() {
         return description;
@@ -112,5 +140,41 @@ public class UserAccountSettings {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    /**
+     * Describe the kinds of special objects contained in this Parcelable
+     * instance's marshaled representation. For example, if the object will
+     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
+     * the return value of this method must include the
+     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
+     *
+     * @return a bitmask indicating the set of special object types marshaled
+     * by this Parcelable object instance.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(description);
+        dest.writeString(display_name);
+        dest.writeString(major);
+        dest.writeLong(posts);
+        dest.writeString(profile_photo);
+        dest.writeString(username);
+        dest.writeString(website);
+        dest.writeString(year);
+        dest.writeLong(hashtags);
+        dest.writeString(user_id);
     }
 }

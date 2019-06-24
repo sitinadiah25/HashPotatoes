@@ -12,6 +12,7 @@
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
+
     <!-- firebase database fields -->
     <string name="dbname_users">users</string>
     <string name="dbname_users_account_settings">users_account_settings</string>
@@ -47,12 +48,11 @@
     <string name="field_owner_id">owner_id</string>
     <string name="field_hashtags">hashtags</string>
 
-
-
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>
     <string name="profile_activity">Profile Activity</string>
     <string name="feature_activity">Feature Activity</string>
+    <string name="main_activity">Main Activity</string>
     <string name="selected_image">selected_image</string>
     <string name="return_to_fragment">return_to_fragment</string>
     <string name="intent_user">user</string>
@@ -61,6 +61,8 @@
 
     <!-- bundle args extra -->
     <string name="activity_number">activity_number</string>
+    <string name="bundle_post">bundle_post</string>
+    <string name="bundle_user_account_settings">bundle_user_account_settings</string>
 
     <!-- post fields -->
     <string name="new_post">new_post</string>

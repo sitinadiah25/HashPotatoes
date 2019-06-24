@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
+import com.example.hashpotatoesv20.Models.Post;
+import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Profile.AccountSettingsActivity;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
@@ -27,6 +30,7 @@ import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.SectionsPagerAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
+import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
@@ -46,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,22 @@ public class MainActivity extends AppCompatActivity {
 
         initImageLoader();
         setupBottomNavigationView();
-        //setupViewPager();
+        setupViewPager();
+    }
+
+    public void onPostThreadSelected(Post post, UserAccountSettings settings) {
+        Log.d(TAG, "onPostThreadSelected: selected a post thread");
+
+        ViewPostFragment fragment = new ViewPostFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.bundle_post), post);
+        args.putParcelable(getString(R.string.bundle_user_account_settings), settings);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_post_fragment));
+        transaction.commit();
     }
 
     private void initImageLoader(){

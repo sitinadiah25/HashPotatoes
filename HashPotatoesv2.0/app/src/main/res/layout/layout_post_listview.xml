@@ -90,6 +90,26 @@
                 android:layout_alignRight="@id/username"
                 android:layout_marginRight="5dp"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="3"
+                android:layout_toLeftOf="@id/btn_heart_red"
+                android:layout_below="@id/post_tag"
+                android:layout_marginRight="3dp"
+                android:id="@+id/tvLikes"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="3"
+                android:layout_toLeftOf="@id/btn_comment"
+                android:layout_below="@id/username"
+                android:layout_marginRight="3dp"
+                android:id="@+id/tvComments"
+                android:textSize="12sp"/>
+
 
         </RelativeLayout>
 
