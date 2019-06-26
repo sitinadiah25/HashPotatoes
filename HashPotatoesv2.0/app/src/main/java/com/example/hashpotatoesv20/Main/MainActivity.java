@@ -17,7 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
@@ -38,14 +40,21 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        ViewPostFragment.OnCommentThreadSelectedListener {
 
     private static final String TAG = "MainActivity";
     private static final int ACTIVITY_NUM = 0;
+    private static final int MAIN_FRAGMENT = 0;
 
     private Context mContext = MainActivity.this;
 
     private ImageView createPost;
+
+    //widgets
+    private ViewPager mViewPager;
+    private FrameLayout mFrameLayout;
+    private RelativeLayout mRelativeLayout;
 
     //firebase
     private FirebaseAuth mAuth;
@@ -57,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.d(TAG, "onCreate: starting.");
+
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mFrameLayout = (FrameLayout) findViewById(R.id.main_container);
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
 
         //add icon to navigate to CreatePostActivity
         ImageView createPost = (ImageView) findViewById(R.id.createPost);
@@ -76,13 +89,12 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager();
     }
 
-    public void onPostThreadSelected(Post post, UserAccountSettings settings) {
-        Log.d(TAG, "onPostThreadSelected: selected a post thread");
+    public void onCommentThreadSelectedListener(Post post) {
+        Log.d(TAG, "OnCommentThreadSelectedListener: selected a post thread");
 
         ViewPostFragment fragment = new ViewPostFragment();
         Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.bundle_post), post);
-        args.putParcelable(getString(R.string.bundle_user_account_settings), settings);
+        args.putParcelable(getString(R.string.post), post);
         fragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -123,6 +135,26 @@ public class MainActivity extends AppCompatActivity {
         return view;
     }*/
 
+    public void hideLayout() {
+        Log.d(TAG, "hideLayout: hiding layout");
+        mRelativeLayout.setVisibility(View.GONE);
+        mFrameLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void showLayout() {
+        Log.d(TAG, "hideLayout: hiding layout");
+        mRelativeLayout.setVisibility(View.VISIBLE);
+        mFrameLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mFrameLayout.getVisibility() == View.VISIBLE) {
+            showLayout();
+        }
+    }
+
     /**
      * Responsible for adding the top tab: Home
      */
@@ -131,11 +163,10 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new MainFragment());
         //adapter.addFragment(new CreatePostFragment());
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(adapter);
+        mViewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(mViewPager);
 
         //tabLayout.getTabAt(1).setIcon(R.drawable.ic_createpost);
     }
@@ -196,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
+        mViewPager.setCurrentItem(MAIN_FRAGMENT);
         mAuth.addAuthStateListener(mAuthListener);
         checkCurrentUser(mAuth.getCurrentUser());
     }

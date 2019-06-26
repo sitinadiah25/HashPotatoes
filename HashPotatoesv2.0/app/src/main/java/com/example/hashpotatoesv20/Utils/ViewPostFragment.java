@@ -508,6 +508,7 @@ public class ViewPostFragment extends Fragment {
 
                                     int[] to = {R.id.post_comment, R.id.username, R.id.timestamp};
 
+                                            Log.d(TAG, "onDataChange: viewing post screen");
                                     SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_comment_listview, from, to);
                                     mListView.setAdapter(adapter);
                                     setListViewHeightBasedOnChildren(mListView);

@@ -116,9 +116,10 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: loading post thread for " + getItem(position).getPost_id());
-                ((MainActivity)mContext).onPostThreadSelected(getItem(position), holder.settings);
+                ((MainActivity)mContext).onCommentThreadSelectedListener(getItem(position));
 
                 //going to need to do something else?
+                ((MainActivity)mContext).showLayout();
             }
         });
 
@@ -168,7 +169,9 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
                         holder.comment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                ((MainActivity)mContext).onPostThreadSelected(getItem(position), holder.settings);
+                                ((MainActivity)mContext).onCommentThreadSelectedListener(getItem(position));
+
+                                ((MainActivity)mContext).hideLayout();
                             }
                         });
                     }
