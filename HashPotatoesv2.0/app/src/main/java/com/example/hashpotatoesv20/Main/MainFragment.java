@@ -34,14 +34,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.security.auth.login.LoginException;
+
 public class MainFragment extends Fragment{
     private static final String TAG = "MainFragment";
 
     //vars
     private ArrayList<Post> mPosts;
+    private ArrayList<Post> mPaginatedPosts;
     private ArrayList<String> mFollowing;
     private ListView mListView;
     private MainfeedListAdapter mAdapter;
+    private int mResults;
 
     @Nullable
     @Override
@@ -70,6 +74,7 @@ public class MainFragment extends Fragment{
 
                     mFollowing.add(ds.child(getString(R.string.field_tag_id)).getValue().toString());
                 }
+                mFollowing.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 //get posts
                 getPosts();
             }
@@ -115,16 +120,19 @@ public class MainFragment extends Fragment{
                         //find the one with comments pls lol
 
                         post.setLikes(likesList);
-                        if (mPosts.isEmpty()) {
+                        mPosts.add(post);
+                        /*if (mPosts.isEmpty()) {
                             mPosts.add(post);
                         }
                         else {
                             for (int j = 0; j < mPosts.size(); j++) {
                                 if (!mPosts.get(j).getPost_id().equals(post.getPost_id())) {
                                     mPosts.add(post);
+                                    Log.d(TAG, "check post id match: mPosts no." + j + ": " + mPosts.get(j).getPost_id());
+                                    Log.d(TAG, "check post id match: currentPosts: " + post.getPost_id());
                                 }
                             }
-                        }
+                        }*/
                     }
                     if (count >= mFollowing.size() - 1) {
                         displayPosts();
@@ -141,15 +149,62 @@ public class MainFragment extends Fragment{
     }
 
     private void displayPosts() {
+        mPaginatedPosts = new ArrayList<>();
         if (mPosts != null) {
-            Collections.sort(mPosts, new Comparator<Post>() {
-                @Override
-                public int compare(Post o1, Post o2) {
-                    return o2.getDate_created().compareTo(o1.getDate_created());
+            try {
+                Collections.sort(mPosts, new Comparator<Post>() {
+                    @Override
+                    public int compare(Post o1, Post o2) {
+                        return o2.getDate_created().compareTo(o1.getDate_created());
+                    }
+                });
+
+                int iteration = mPosts.size();
+                Log.d(TAG, "displayPosts: Checking post size: " + mPosts.size());
+
+                if (iteration > 10){
+                    iteration = 10;
                 }
-            });
-            mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPosts);
-            mListView.setAdapter(mAdapter);
+                mResults = 10;
+                for (int i = 0; i < iteration; i ++){
+                    mPaginatedPosts.add(mPosts.get(i));
+                }
+                mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPaginatedPosts);
+                mListView.setAdapter(mAdapter);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "displayPosts: NullPointerException: " + e.getMessage());
+            } catch (IndexOutOfBoundsException e) {
+                Log.e(TAG, "displayPosts: IndexOutOfBoundsException: " + e.getMessage());
+            }
+        }
+    }
+
+    public void displayMorePhotos(){
+        Log.d(TAG, "displayMorePhotos: displaying more photos");
+        try{
+
+            if(mPosts.size() > mResults && mPosts.size() > 0){
+                int iterations;
+                if(mPosts.size() > (mResults + 10)) {
+                    Log.d(TAG, "displayMorePhotos: there are greater than 10 more photos");
+                    iterations = 10;
+                }else{
+                    Log.d(TAG, "displayMorePhotos: there is less than 10 more photos");
+                    iterations = mPosts.size() - mResults;
+                }
+
+                //add the new posts to the paginated results
+                for (int i = mResults; i < mResults + iterations; i++){
+                    mPaginatedPosts.add(mPosts.get(i));
+                }
+                mResults = mResults + iterations;
+                mAdapter.notifyDataSetChanged();
+            }
+
+        }catch (NullPointerException e) {
+            Log.e(TAG, "displayPosts: NullPointerException: " + e.getMessage());
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "displayPosts: IndexOutOfBoundsException: " + e.getMessage());
         }
     }
 

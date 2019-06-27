@@ -42,6 +42,10 @@ import java.util.TimeZone;
 
 public class MainfeedListAdapter extends ArrayAdapter<Post> {
 
+    public interface OnLoadMoreItemsListener{
+        void onLoadMoreItems();
+    }
+    OnLoadMoreItemsListener mOnLoadMoreItemsListener;
     private static final String TAG = "MainfeedListAdapter";
 
     private LayoutInflater mInflater;
@@ -204,7 +208,28 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             }
         });
 
+        if(reachedEndOfList(position)){
+            loadMoreData();
+        }
+
         return convertView;
+    }
+
+    private boolean reachedEndOfList(int position){
+        return position == getCount() - 1;
+    }
+    private void loadMoreData(){
+        try{
+            mOnLoadMoreItemsListener = (OnLoadMoreItemsListener) getContext();
+        }catch(ClassCastException e){
+            Log.e(TAG, "loadMoreData: ClassCastException: " + e.getMessage() );
+        }
+
+        try{
+            mOnLoadMoreItemsListener.onLoadMoreItems();
+        }catch(NullPointerException e){
+            Log.e(TAG, "loadMoreData: NullPointerException: " + e.getMessage() );
+        }
     }
 
 

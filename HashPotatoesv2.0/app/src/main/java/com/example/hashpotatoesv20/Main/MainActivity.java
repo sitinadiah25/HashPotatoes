@@ -30,6 +30,7 @@ import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
+import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.SectionsPagerAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
@@ -41,7 +42,18 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements
-        ViewPostFragment.OnCommentThreadSelectedListener {
+        ViewPostFragment.OnCommentThreadSelectedListener, MainfeedListAdapter.OnLoadMoreItemsListener {
+
+    @Override
+    public void onLoadMoreItems() {
+        Log.d(TAG, "onLoadMoreItems: displaying more photos");
+        MainFragment fragment = (MainFragment)getSupportFragmentManager()
+                .findFragmentByTag("android:switcher: " + R.id.container + ":" + mViewPager.getCurrentItem());
+        if(fragment != null){
+            Log.d(TAG, "onLoadMoreItems: fragment not empty.");
+            fragment.displayMorePhotos();
+        }
+    }
 
     private static final String TAG = "MainActivity";
     private static final int ACTIVITY_NUM = 0;
@@ -107,33 +119,6 @@ public class MainActivity extends AppCompatActivity implements
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
     }
-
-    /*
-    @Nullable
-    //@Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container,false);
-
-        //setupFirebaseAuth();
-
-        //back arrow for navigating back to "Profile Activity"
-        ImageView createPost = (ImageView) view.findViewById(R.id.createPost);
-        createPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating back to ProfileActivity");
-                Intent intent = new Intent(mContext, CreatePostFragment.class);
-                startActivity(intent);
-            }
-        });
-
-        setupFirebaseAuth();
-
-        //initImageLoader();
-        setupBottomNavigationView();
-
-        return view;
-    }*/
 
     public void hideLayout() {
         Log.d(TAG, "hideLayout: hiding layout");
@@ -239,4 +224,6 @@ public class MainActivity extends AppCompatActivity implements
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
+
 }
