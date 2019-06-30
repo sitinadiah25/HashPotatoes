@@ -308,7 +308,9 @@ public class ViewTagFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Tag tag = ds.getValue(Tag.class);
+                    Log.d(TAG, "onDataChange: tags: " + tag.getTag_id());
                     if (tag.getTag_id().equals(mTag.getTag_id())) {
+                        Log.d(TAG, "onDataChange: is following " + tag.getTag_id());
                         setFollowing();
                     }
                 }
@@ -433,30 +435,6 @@ public class ViewTagFragment extends Fragment {
                         }
                     });
                 }
-
-//                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-//                        getString(R.string.field_tags)};
-//
-//                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
-//
-//                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
-//
-//                listView.setAdapter(adapter);
-//                setListViewHeightBasedOnChildren(listView);
-//
-//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        try {
-//                            int actPosition = posts.size() - position - 1;
-//                            Log.d(TAG, "onItemClick: position:" + actPosition);
-//                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
-//                        }
-//                        catch (NullPointerException e) {
-//                            Log.e(TAG, "onItemClick: NullPointerException: " + e.getMessage() );
-//                        }
-//                    }
-//                });
             }
 
             @Override
@@ -589,12 +567,22 @@ public class ViewTagFragment extends Fragment {
         Log.d(TAG, "setFollowing: updating UI for unfollowing this tag");
         mFollow.setVisibility(View.GONE);
         mUnfollow.setVisibility(View.VISIBLE);
+        if (mTag.getPrivacy().equals("Private")) {
+            mLocked.setVisibility(View.GONE);
+            tvLocked.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setUnfollowing() {
         Log.d(TAG, "setUnfollowing: updating UI for following this tag");
         mFollow.setVisibility(View.VISIBLE);
         mUnfollow.setVisibility(View.GONE);
+        if (mTag.getPrivacy().equals("Private")) {
+            mLocked.setVisibility(View.VISIBLE);
+            tvLocked.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
     }
 
     /*
