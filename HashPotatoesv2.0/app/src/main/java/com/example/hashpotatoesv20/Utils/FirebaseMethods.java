@@ -316,33 +316,42 @@ public class FirebaseMethods {
             }
         }
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         final Post post = new Post();
-
         post.setDiscussion(discussion);
         post.setTags(tags);
         post.setAnonymity(anonymity);
         post.setDate_created(getTimestamp());
         post.setPost_id(newPostKey);
         post.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        post.setTag_list(tagList);
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        //get list of tag ids
+        final ArrayList<String> tagIDList = new ArrayList<>();
         for (int i = 0; i < tagList.size(); i++) {
-            final String currTagName = tagList.get(i);
-
-            Query query = reference.child(mContext.getString(R.string.dbname_tags));
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
+            final String currTag = tagList.get(i);
+            Query query1 = reference.child(mContext.getString(R.string.dbname_tags))
+                    .orderByChild(mContext.getString(R.string.field_tag_id));
+            query1.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Log.d(TAG, "onDataChange: createpost tag value: " + ds.getValue(Tag.class).getTag_name());
-                        if (ds.getValue(Tag.class).getTag_name().equals(currTagName)) {
-                            myRef.child(mContext.getString(R.string.dbname_tag_post))
-                                    .child(ds.getValue(Tag.class).getTag_id())
-                                    .child(newPostKey)
-                                    .setValue(post);
+                        Log.d(TAG, "onDataChange: child value n: " + ds.getValue(Tag.class).getTag_name() + " " + currTag);
+                        if (currTag.equals(ds.getValue(Tag.class).getTag_name())) {
+                            Log.d(TAG, "onDataChange: success get tag");
+                            tagIDList.add(ds.getValue(Tag.class).getTag_id());
                         }
+                    }
+                    post.setTag_list(tagIDList);
+                    Log.d(TAG, "onDataChange: tagidlist size: " + tagIDList.size());
+                    //insert into database
+                    for (int i = 0; i < tagIDList.size(); i++) {
+                        final String currTagID = tagIDList.get(i);
+                        Log.d(TAG, "addPostToDatabase: tag id: " + currTagID);
 
+                        myRef.child(mContext.getString(R.string.dbname_tag_post))
+                                .child(currTagID)
+                                .child(newPostKey)
+                                .setValue(post);
                     }
                 }
 
@@ -351,17 +360,8 @@ public class FirebaseMethods {
 
                 }
             });
-
-
-
-//            myRef.child(mContext.getString(R.string.dbname_tag_post))
-//                    .child(tagList.get(i))
-//                    .child(newPostKey)
-//                    .setValue(post);
-
         }
 
-        //insert into database
         myRef.child(mContext.getString(R.string.dbname_posts)).child(newPostKey).setValue(post);
         myRef.child(mContext.getString(R.string.dbname_user_posts))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(newPostKey).setValue(post);

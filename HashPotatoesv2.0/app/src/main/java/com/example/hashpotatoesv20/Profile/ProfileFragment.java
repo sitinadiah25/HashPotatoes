@@ -22,8 +22,10 @@ import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
@@ -226,6 +228,13 @@ public class ProfileFragment extends Fragment {
                             post.setTags(objectMap.get(mContext.getString(R.string.field_tags)).toString());
                             post.setAnonymity(objectMap.get(mContext.getString(R.string.field_anonymity)).toString());
 
+                            ArrayList<String> tagIDList = new ArrayList<>();
+                            for (DataSnapshot dataSnapshot1 : singleSnapshot
+                                    .child(getString(R.string.field_tag_list)).getChildren()) {
+                                Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue(Tag.class).getTag_id());
+                                tagIDList.add(dataSnapshot1.getValue(Tag.class).getTag_id());
+                            }
+
                             List<Like> likesList = new ArrayList<Like>();
                             for (DataSnapshot dSnapshot : singleSnapshot
                                     .child(getString(R.string.field_likes)).getChildren()){
@@ -233,6 +242,18 @@ public class ProfileFragment extends Fragment {
                                 like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                                 likesList.add(like);
                             }
+
+                            List<Comment> commentList = new ArrayList<>();
+                            for (DataSnapshot dataSnapshot1 :
+                                    singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
+                                Comment comment = new Comment();
+                                comment.setUser_id(dataSnapshot1.getValue(Comment.class).getUser_id());
+                                comment.setComment(dataSnapshot1.getValue(Comment.class).getComment());
+                                comment.setDate_created(dataSnapshot1.getValue(Comment.class).getDate_created());
+                            }
+
+                            post.setTag_list(tagIDList);
+                            post.setComments(commentList);
                             post.setLikes(likesList);
                             posts.add(post);
                         }
@@ -240,7 +261,7 @@ public class ProfileFragment extends Fragment {
                     catch (NullPointerException e) {
                         Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage() );
                     }
-                    //setup list view
+                    //setup list view (change to custom adapter when made)
                     //mPosts.setText(Integer.toString(posts.size()));
                     final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                     for (int i = posts.size()-1; i >= 0; i--) {

@@ -277,6 +277,15 @@ public class ViewPostFragment extends Fragment {
                                     .child(getString(R.string.field_likes))
                                     .child(KeyID)
                                     .removeValue();
+                            ArrayList<String> tagIDList = mPost.getTag_list();
+                            for (int i = 0; i < tagIDList.size(); i++) {
+                                myRef.child(mContext.getString(R.string.dbname_tag_post))
+                                        .child(tagIDList.get(i))
+                                        .child(mPost.getPost_id())
+                                        .child(mContext.getString(R.string.field_likes))
+                                        .child(KeyID)
+                                        .removeValue();
+                            }
 
                             mHeart.toggleLike();
                             getLikesString();
@@ -319,6 +328,15 @@ public class ViewPostFragment extends Fragment {
                 .child(getString(R.string.field_likes))
                 .child(newLikeID)
                 .setValue(like);
+        ArrayList<String> tagIDList = mPost.getTag_list();
+        for (int i = 0; i < tagIDList.size(); i++) {
+            myRef.child(mContext.getString(R.string.dbname_tag_post))
+                    .child(tagIDList.get(i))
+                    .child(mPost.getPost_id())
+                    .child(mContext.getString(R.string.field_likes))
+                    .child(newLikeID)
+                    .setValue(like);
+        }
         mHeart.toggleLike();
         getLikesString();
     }
