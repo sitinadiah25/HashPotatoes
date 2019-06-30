@@ -38,7 +38,7 @@ Through this application, we hope that everyone can have a better learning envir
     * EDIT PROFILE - This page is for general change of personal information such as username or email.
 * COMMENT AND LIKE SYSTEM - USers can comment on the posts and like the post if they feel that a post is helpful to them.
 
-####New Features planned for milestone 3 / Bugs to be fixed / Features to be improved
+#### New Features planned for milestone 3 / Bugs to be fixed / Features to be improved
 * LOGIN PAGE - This is planned for change to NUSNET ID, email and password will be hidden or removed if needed.
 * REGISTRATION PAGE - If the above feature is functional, this page may be hidden or removed as well.
 * HOME FEED - Upon reaching the end of the page, another 10 posts should be loaded until all posts have been viewed.
@@ -53,12 +53,12 @@ Through this application, we hope that everyone can have a better learning envir
 
 ##### For more bugs, please refer to this link:https://docs.google.com/spreadsheets/d/1SvC7wvhWR5oNn7IT9efshCH_Tthl4medI6pe2t1cDqk/edit?usp=sharing
 
-####Features removed from project planned
+#### Features removed from project planned
 Features removed for milestone 3 are as listed below, we decided to remove them as they are not of high priority and we feel that other features plays a more important role in our application. 
 * Module planner
 * Personal project page
 
-####Problems encountered
+#### Problems encountered
 * New bugs all the time
 * Obsolete code in tutorials
 
