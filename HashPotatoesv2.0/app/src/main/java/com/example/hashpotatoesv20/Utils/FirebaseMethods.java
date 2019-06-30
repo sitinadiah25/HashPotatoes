@@ -353,6 +353,9 @@ public class FirebaseMethods {
                                 .child(newPostKey)
                                 .setValue(post);
                     }
+                    myRef.child(mContext.getString(R.string.dbname_posts)).child(newPostKey).setValue(post);
+                    myRef.child(mContext.getString(R.string.dbname_user_posts))
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(newPostKey).setValue(post);
                 }
 
                 @Override
@@ -361,10 +364,6 @@ public class FirebaseMethods {
                 }
             });
         }
-
-        myRef.child(mContext.getString(R.string.dbname_posts)).child(newPostKey).setValue(post);
-        myRef.child(mContext.getString(R.string.dbname_user_posts))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(newPostKey).setValue(post);
 
         Log.d(TAG, "addPostToDatabase: added post to database.");
     }

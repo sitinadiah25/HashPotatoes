@@ -326,7 +326,7 @@ public class ViewTagFragment extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference.child(getString(R.string.dbname_tag_post))
-                .child(mTag.getTag_name());
+                .child(mTag.getTag_id());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
