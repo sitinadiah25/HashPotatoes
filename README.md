@@ -7,7 +7,7 @@
 
 ## Project Overview
 
-###Proposed Level of Achievement
+### Proposed Level of Achievement
 Project Gemini
 
 ### Motivation
