@@ -47,6 +47,8 @@
     <string name="field_whitelist">whitelist</string>
     <string name="field_owner_id">owner_id</string>
     <string name="field_hashtags">hashtags</string>
+    <string name="field_tag_list">hashtags</string>
+    <string name="field_like_id">hashtags</string>
 
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>

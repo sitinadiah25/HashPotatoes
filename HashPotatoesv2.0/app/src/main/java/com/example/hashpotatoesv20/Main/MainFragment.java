@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
@@ -109,6 +111,13 @@ public class MainFragment extends Fragment{
                         post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
                         post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
 
+                        ArrayList<String> tagIDList = new ArrayList<>();
+                        for (DataSnapshot dataSnapshot1 : singleSnapshot
+                                .child(getString(R.string.field_tag_list)).getChildren()) {
+                            Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue(Tag.class).getTag_id());
+                            tagIDList.add(dataSnapshot1.getValue(Tag.class).getTag_id());
+                        }
+
                         List<Like> likesList = new ArrayList<Like>();
                         for (DataSnapshot dSnapshot : singleSnapshot
                                 .child(getString(R.string.field_likes)).getChildren()){
@@ -118,21 +127,31 @@ public class MainFragment extends Fragment{
                         }
 
                         //find the one with comments pls lol
+                        List<Comment> commentList = new ArrayList<>();
+                        for (DataSnapshot dataSnapshot1 :
+                                singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
+                            Comment comment = new Comment();
+                            comment.setUser_id(dataSnapshot1.getValue(Comment.class).getUser_id());
+                            comment.setComment(dataSnapshot1.getValue(Comment.class).getComment());
+                            comment.setDate_created(dataSnapshot1.getValue(Comment.class).getDate_created());
+                        }
 
+                        post.setTag_list(tagIDList);
+                        post.setComments(commentList);
                         post.setLikes(likesList);
-                        mPosts.add(post);
-                        /*if (mPosts.isEmpty()) {
+
+                        boolean duplicate = false;
+
+                        //check for duplicates (not efficient, need a more efficient way)
+                        for (int j = 0; j < mPosts.size(); j++) {
+                            if (mPosts.get(j).getPost_id().equals(post.getPost_id())) {
+                                duplicate = true;
+                            }
+                        }
+
+                        if (!duplicate) {
                             mPosts.add(post);
                         }
-                        else {
-                            for (int j = 0; j < mPosts.size(); j++) {
-                                if (!mPosts.get(j).getPost_id().equals(post.getPost_id())) {
-                                    mPosts.add(post);
-                                    Log.d(TAG, "check post id match: mPosts no." + j + ": " + mPosts.get(j).getPost_id());
-                                    Log.d(TAG, "check post id match: currentPosts: " + post.getPost_id());
-                                }
-                            }
-                        }*/
                     }
                     if (count >= mFollowing.size() - 1) {
                         displayPosts();

@@ -33,6 +33,7 @@ import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,11 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
     private Context mContext;
     private DatabaseReference mReference;
     private String currentUsername = "";
+
+    private ArrayList<String> tagIDList;
+    private int numLikes;
+    private int numComment;
+
 
     public MainfeedListAdapter(Context context, int resource, List<Post> objects) {
         super(context, resource, objects);
@@ -114,8 +120,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             holder.likesNum.setVisibility(View.GONE);
         }
 
-//        List<Comment> comments = getItem(position).getComments();
-//        holder.commentNum.setText(comments.size());
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,6 +216,30 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             loadMoreData();
         }
 
+        //set tagidlist
+        tagIDList = getItem(position).getTag_list();
+
+        likedByUser(holder);
+
+        numLikes = holder.post.getLikes().size();
+        numComment = holder.post.getComments().size();
+
+        if (numLikes == 0) {
+            holder.likesNum.setVisibility(View.GONE);
+        }
+        else {
+            holder.likesNum.setVisibility(View.VISIBLE);
+            holder.likesNum.setText(String.valueOf(numLikes));
+        }
+
+        if (numComment == 0) {
+            holder.commentNum.setVisibility(View.GONE);
+        }
+        else {
+            holder.commentNum.setVisibility(View.VISIBLE);
+            holder.commentNum.setText(String.valueOf(numComment));
+        }
+
         return convertView;
     }
 
@@ -230,6 +258,31 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
         }catch(NullPointerException e){
             Log.e(TAG, "loadMoreData: NullPointerException: " + e.getMessage() );
         }
+    }
+
+    private void likedByUser(final ViewHolder holder) {
+        Query query = mReference.child(mContext.getString(R.string.dbname_posts))
+                .child(holder.post.getPost_id())
+                .child(mContext.getString(R.string.field_likes))
+                .orderByChild(mContext.getString(R.string.field_like_id));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: checking if current user liked the post");
+                    Log.d(TAG, "onDataChange: user: " + ds.getValue(Like.class).getUser_id());
+                    if (ds.getValue(Like.class).getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        holder.likeByCurrentUser = true;
+                        setupLikesButton(holder);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -273,7 +326,23 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
                                     .child(mContext.getString(R.string.field_likes))
                                     .child(KeyID)
                                     .removeValue();
+                            for (int i = 0; i < tagIDList.size(); i++) {
+                                mReference.child(mContext.getString(R.string.dbname_tag_post))
+                                        .child(tagIDList.get(i))
+                                        .child(mHolder.post.getPost_id())
+                                        .child(mContext.getString(R.string.field_likes))
+                                        .child(KeyID)
+                                        .removeValue();
+                            }
 
+                            numLikes--;
+                            if (numLikes <= 0) {
+                                mHolder.likesNum.setVisibility(View.GONE);
+                            }
+                            else {
+                                mHolder.likesNum.setVisibility(View.VISIBLE);
+                                mHolder.likesNum.setText(String.valueOf(numLikes));
+                            }
                             mHolder.heart.toggleLike();
                             //getLikesString();
                         }
@@ -315,6 +384,22 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
                 .child(mContext.getString(R.string.field_likes))
                 .child(newLikeID)
                 .setValue(like);
+        for (int i = 0; i < tagIDList.size(); i++) {
+            mReference.child(mContext.getString(R.string.dbname_tag_post))
+                    .child(tagIDList.get(i))
+                    .child(holder.post.getPost_id())
+                    .child(mContext.getString(R.string.field_likes))
+                    .child(newLikeID)
+                    .setValue(like);
+        }
+        numLikes++;
+        if (numLikes <= 0) {
+            holder.likesNum.setVisibility(View.GONE);
+        }
+        else {
+            holder.likesNum.setVisibility(View.VISIBLE);
+            holder.likesNum.setText(String.valueOf(numLikes));
+        }
         holder.heart.toggleLike();
         //getLikesString();
         setupLikesButton(holder);
@@ -369,7 +454,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
     }
 
     private String getTimestampDifference(String postTimestamp) {
-        //Log.d(TAG, "getTimestampDifference: getting timestamp difference.");
 
         String difference = "";
         Calendar c = Calendar.getInstance();
