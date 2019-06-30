@@ -20,6 +20,7 @@ import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
+import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -159,14 +160,13 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        //currentUsername = ds.getValue(UserAccountSettings.class).getUsername();
                         Log.d(TAG, "onDataChange: found user: " + ds.getValue(UserAccountSettings.class).getUsername());
                         holder.username.setText(ds.getValue(UserAccountSettings.class).getUsername());
                         holder.username.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Log.d(TAG, "onClick: navigating to profile of: " + holder.user.getUsername());
-                                Intent intent = new Intent();
+                                Intent intent = new Intent(mContext, ProfileActivity.class);
                                 intent.putExtra(mContext.getString(R.string.calling_activity),
                                         mContext.getString(R.string.main_activity));
                                 intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
