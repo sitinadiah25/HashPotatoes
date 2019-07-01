@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.hashpotatoesv20.Models.Comment;
@@ -190,6 +191,7 @@ public class MainFragment extends Fragment{
                 }
                 mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPaginatedPosts);
                 mListView.setAdapter(mAdapter);
+                setListViewHeightBasedOnChildren(mListView);
             } catch (NullPointerException e) {
                 Log.e(TAG, "displayPosts: NullPointerException: " + e.getMessage());
             } catch (IndexOutOfBoundsException e) {
@@ -225,6 +227,33 @@ public class MainFragment extends Fragment{
         } catch (IndexOutOfBoundsException e) {
             Log.e(TAG, "displayPosts: IndexOutOfBoundsException: " + e.getMessage());
         }
+    }
+
+    private static void setListViewHeightBasedOnChildren (ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) return;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0) view.setLayoutParams(new
+                    ViewGroup.LayoutParams(desiredWidth,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+
+        int width = listAdapter.getCount() - 1;
+
+        params.height = totalHeight + (listView.getDividerHeight() * (width));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
 }

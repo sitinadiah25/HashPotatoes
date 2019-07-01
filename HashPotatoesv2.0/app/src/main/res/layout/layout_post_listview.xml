@@ -98,7 +98,8 @@
                 android:layout_below="@id/post_tag"
                 android:layout_marginRight="3dp"
                 android:id="@+id/tvLikes"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -108,7 +109,8 @@
                 android:layout_below="@id/username"
                 android:layout_marginRight="3dp"
                 android:id="@+id/tvComments"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:visibility="gone"/>
 
 
         </RelativeLayout>

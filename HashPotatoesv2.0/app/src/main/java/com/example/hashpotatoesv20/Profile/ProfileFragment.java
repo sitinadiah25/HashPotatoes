@@ -270,8 +270,17 @@ public class ProfileFragment extends Fragment {
                         final String postTimestamp = posts.get(i).getDate_created();
                         String timestampDiff = getTimestampDifference(postTimestamp);
                         hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
+
+                        String tag = posts.get(i).getTags();
+                        String[] tokens = tag.split(" ");
+                        String newTag = "";
+                        int tokenCount = tokens.length;
+                        for (int j = 0; j < tokenCount; j++) {
+                            newTag = newTag + "#" + tokens[j] + " ";
+                        }
+
                         hm.put(getString(R.string.field_date_created), timestampDiff);
-                        hm.put(getString(R.string.field_tags), posts.get(i).getTags());
+                        hm.put(getString(R.string.field_tags), newTag);
                         final String anon = posts.get(i).getAnonymity();
 
                         DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
