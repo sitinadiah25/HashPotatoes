@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements
     private void checkCurrentUser(FirebaseUser user) {
         Log.d(TAG, "checkCurrentUser: checking if user is logged in.");
 
+        Log.d(TAG, "checkCurrentUser: user: " + user);
         if (user == null) {
             Intent intent = new Intent(mContext, LoginActivity.class);
             startActivity(intent);

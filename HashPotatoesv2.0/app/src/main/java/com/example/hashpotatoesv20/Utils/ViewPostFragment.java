@@ -109,7 +109,7 @@ public class ViewPostFragment extends Fragment {
     private String mLikesString = "";
     private ArrayList<Comment> mComments;
     private Context mContext;
-
+    private User mCurrentUser;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -142,8 +142,8 @@ public class ViewPostFragment extends Fragment {
             mPost = getPostFromBundle();
             mActivityNumber = getActivityNumFromBundle();
             Log.d(TAG, "onCreateView: Viewing post id: " + mPost.getPost_id());
-            getPhotoDetails();
-            getLikesString();
+            getPostDetails();
+            getCurrentUser();
         }
         catch (NullPointerException e) {
             Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage());
@@ -177,7 +177,6 @@ public class ViewPostFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers = new StringBuilder();
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-
                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                     Query query = reference
                             .child(getString(R.string.dbname_users))
@@ -186,7 +185,6 @@ public class ViewPostFragment extends Fragment {
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            mUsers = new StringBuilder();
                             for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                                 Log.d(TAG, "onDataChange: found like: " +
                                         singleSnapshot.getValue(User.class).getUsername());
@@ -195,11 +193,13 @@ public class ViewPostFragment extends Fragment {
                             }
                             String[] splitUsers = mUsers.toString().split(",");
 
-                            if(mUsers.toString().contains(mUserAccountSettings.getUsername() + ",")){
+                            if(mUsers.toString().contains(mCurrentUser.getUsername() + ",")){
                                 mLikedByCurrentUser = true;
                             }else{
                                 mLikedByCurrentUser = false;
                             }
+
+                            Log.d(TAG, "onDataChange: likedbycurrentuser: " + mLikedByCurrentUser);
 
                             int length = splitUsers.length;
                             if (length == 1) {
@@ -220,6 +220,7 @@ public class ViewPostFragment extends Fragment {
                                         + ", " + splitUsers[2]
                                         + " and " + (splitUsers.length - 3) + "others";
                             }
+                            Log.d(TAG, "onDataChange: likes string: " + mLikesString);
                             setupWidgets();
                         }
 
@@ -239,6 +240,28 @@ public class ViewPostFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    private void getCurrentUser(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users))
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for ( DataSnapshot singleSnapshot :  dataSnapshot.getChildren()){
+                    mCurrentUser = singleSnapshot.getValue(User.class);
+                }
+                getLikesString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: query cancelled.");
             }
         });
     }
@@ -272,7 +295,7 @@ public class ViewPostFragment extends Fragment {
                                     .child(KeyID)
                                     .removeValue();
                             myRef.child(getString(R.string.dbname_user_posts))
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(mPost.getUser_id())
                                     .child(mPost.getPost_id())
                                     .child(getString(R.string.field_likes))
                                     .child(KeyID)
@@ -327,13 +350,14 @@ public class ViewPostFragment extends Fragment {
                 .child(newLikeID)
                 .setValue(like);
         myRef.child(getString(R.string.dbname_user_posts))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(mPost.getUser_id())
                 .child(mPost.getPost_id())
                 .child(getString(R.string.field_likes))
                 .child(newLikeID)
                 .setValue(like);
         try {
             ArrayList<String> tagIDList = mPost.getTag_list();
+            //Log.d(TAG, "addNewLike: tagIDList: " + tagIDList);
             for (int i = 0; i < tagIDList.size(); i++) {
                 myRef.child(mContext.getString(R.string.dbname_tag_post))
                         .child(tagIDList.get(i))
@@ -349,7 +373,7 @@ public class ViewPostFragment extends Fragment {
         mHeart.toggleLike();
         getLikesString();
     }
-    private void getPhotoDetails(){
+    private void getPostDetails(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
                 .child(getString(R.string.dbname_users_account_settings))
