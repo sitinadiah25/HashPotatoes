@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
+import com.example.hashpotatoesv20.Utils.ProfileListAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -70,6 +72,8 @@ public class ProfileFragment extends Fragment {
     }
     onListPostSelectedListener mOnListPostSelectedListener;
 
+    ProfileListAdapter.OnAdapterItemClickListener mOnAdapterItemClickListener;
+
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -89,6 +93,9 @@ public class ProfileFragment extends Fragment {
     private UserAccountSettings mUserAccountSettings;
     private int mPostsCount = 0;
     private int mTagsCount = 0;
+
+
+
 
     @Nullable
     @Override
@@ -153,7 +160,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         try {
-            mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
+            //mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
+            mOnAdapterItemClickListener = (ProfileListAdapter.OnAdapterItemClickListener) getActivity();
         }
         catch (ClassCastException e) {
             Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
@@ -203,6 +211,7 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
 
     private void setupListView() {
         Log.d(TAG, "setupListView: Setting up list of user posts.");
@@ -301,8 +310,9 @@ public class ProfileFragment extends Fragment {
                                         getString(R.string.field_tags), getString(R.string.field_username)};
 
                                 int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
+                                //SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_edit_listview, from, to);
 
-                                SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+                                ProfileListAdapter adapter = new ProfileListAdapter(mContext,R.layout.layout_post_edit_listview,posts, mOnAdapterItemClickListener);
 
                                 listView.setAdapter(adapter);
                                 setListViewHeightBasedOnChildren(listView);
@@ -312,7 +322,10 @@ public class ProfileFragment extends Fragment {
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         int actPosition = posts.size() - position - 1;
                                         Log.d(TAG, "onItemClick: position:" + actPosition);
-                                        mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                                        //mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                                        mOnAdapterItemClickListener.onClickImage(posts.get(actPosition),ACTIVITY_NUM);
+                                        mOnAdapterItemClickListener.onViewClicked(posts.get(actPosition), ACTIVITY_NUM);
+
                                     }
                                 });
                             }

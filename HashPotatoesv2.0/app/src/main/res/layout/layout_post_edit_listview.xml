@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/post_view_background">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relLayout2"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Discussion"
+                android:textSize="15sp"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/Black"
+                android:id="@+id/edit_post_discussion"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_post_discussion"
+                android:text="#Tag"
+                android:textSize="12sp"
+                android:paddingRight="10dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/edit_post_tag"
+                android:textColor="@color/linkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="username"
+                android:layout_below="@id/edit_post_tag"
+                android:id="@+id/edit_post_username"
+                android:layout_marginLeft="5dp"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TIME"
+                android:layout_below="@id/edit_post_username"
+                android:id="@+id/edit_post_timestamp"
+                android:layout_marginLeft="5dp"
+                android:textSize="12sp"
+                android:layout_marginBottom="5dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                android:id="@+id/btn_edit"
+                android:layout_below="@id/edit_post_discussion"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:clickable="true" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_heart_white_lightblue"
+                android:id="@+id/btn_heart_white"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                android:layout_below="@id/btn_edit"
+                android:layout_marginRight="5dp"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_heart_red_lightblue"
+                android:layout_alignParentRight="true"
+                android:id="@+id/btn_heart_red"
+                android:visibility="invisible"
+                android:layout_below="@id/btn_edit"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="3"
+                android:layout_toLeftOf="@id/btn_heart_red"
+                android:layout_below="@id/edit_post_tag"
+                android:layout_marginRight="3dp"
+                android:id="@+id/tvLikes"
+                android:textSize="12sp"
+                android:visibility="gone"/>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -9,6 +9,7 @@
     <string name="view_comments_fragment">View Comments</string>
     <string name="view_profile_fragment">View Profile</string>
     <string name="view_tag_fragment">View Tag</string>
+    <string name="edit_post_fragment">Edit Post</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
