@@ -92,6 +92,10 @@ public class FeatureActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String text = mSearchParam.getText().toString();
                 searchForMatch(text);
+                if (text.isEmpty()) {
+                    mUserList.clear();
+                    mTagList.clear();
+                }
             }
         });
     }
@@ -100,6 +104,8 @@ public class FeatureActivity extends AppCompatActivity {
         Log.d(TAG, "searchForMatch: searching for a match: " + keyword);
         mUserList.clear();
         mTagList.clear();
+        updateUserList();
+        updateTagList();
         //update the users list
         if(keyword.length() == 0){
 
