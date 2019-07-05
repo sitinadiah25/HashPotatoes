@@ -106,7 +106,9 @@ public class FeatureActivity extends AppCompatActivity {
         }else{
             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
             Query query1 = reference1.child(getString(R.string.dbname_users))
-                    .orderByChild(getString(R.string.field_username)).equalTo(keyword);
+                    .orderByChild(getString(R.string.field_username))
+                    .startAt(keyword)
+                    .endAt(keyword+"\uf8ff");
             query1.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -127,7 +129,8 @@ public class FeatureActivity extends AppCompatActivity {
             DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
             Query query2 = reference2.child(getString(R.string.dbname_tags))
                     .orderByChild(getString(R.string.field_tag_name))
-                    .equalTo(keyword);
+                    .startAt(keyword)
+                    .endAt(keyword+"\uf8ff");
             query2.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -159,6 +162,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         mTAdapter = new TagListAdapter(FeatureActivity.this, R.layout.layout_tag_listitem, mTagList);
 
+        mTAdapter.notifyDataSetChanged();
         mListViewTag.setAdapter(mTAdapter);
         setListViewHeightBasedOnChildren(mListViewTag);
         mListViewTag.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -180,6 +184,7 @@ public class FeatureActivity extends AppCompatActivity {
 
         mUAdapter = new UserListAdapter(FeatureActivity.this, R.layout.layout_user_listitem, mUserList);
 
+        mUAdapter.notifyDataSetChanged();
         mListViewUser.setAdapter(mUAdapter);
         setListViewHeightBasedOnChildren(mListViewUser);
         mListViewUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
