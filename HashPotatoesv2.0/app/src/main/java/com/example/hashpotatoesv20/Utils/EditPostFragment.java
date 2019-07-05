@@ -89,16 +89,16 @@ public class EditPostFragment extends Fragment {
 
         mDiscussion.setText(mPost.getDiscussion());
         tvAnon.setText(mPost.getAnonymity());
-        if (mPost.getAnonymity()=="Anonymous"){
+        if (mPost.getAnonymity().equals( "Anonymous")){
+            Log.d(TAG, "onCreateView: test2: " + mPost.getAnonymity());
             mAnonymity.setOnCheckedChangeListener(null);
             mAnonymity.setChecked(true);
             mAnonymity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
-                        //
-                    }
 
+                    }
                 }
             });
         }

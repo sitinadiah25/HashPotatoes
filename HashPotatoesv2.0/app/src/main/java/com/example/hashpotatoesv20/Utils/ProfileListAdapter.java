@@ -52,13 +52,14 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
         mOnAdapterItemClickListener = onAdapterItemClickListener;
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         TextView Discussion, Tag, Username, timestamp;
         ImageView like, edit;
     }
 
     public interface OnAdapterItemClickListener {
         public void onClickImage(Post post, int activity_number);
+
         public void onViewClicked(Post post, int activity_number);
     }
 
@@ -68,29 +69,29 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
 
         final ViewHolder holder;
 
-        if(convertView == null){
+        if (convertView == null) {
             convertView = mInflater.inflate(layoutResource, parent, false);
             holder = new ViewHolder();
 
             holder.Discussion = (TextView) convertView.findViewById(R.id.edit_post_discussion);
-            holder.Tag = (TextView) convertView.findViewById(R.id.edit_post_tag) ;
+            holder.Tag = (TextView) convertView.findViewById(R.id.edit_post_tag);
             holder.Username = (TextView) convertView.findViewById(R.id.edit_post_username);
             holder.timestamp = (TextView) convertView.findViewById(R.id.edit_post_timestamp);
             holder.like = (ImageView) convertView.findViewById(R.id.btn_heart_white);
-            holder.edit = (ImageView) convertView.findViewById(R.id.btn_edit) ;
+            holder.edit = (ImageView) convertView.findViewById(R.id.btn_edit);
 
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         //set Discussion
         holder.Discussion.setText(getItem(position).getDiscussion());
         //set time diff
-        String timestampDifference = getTimestampDifference(getItem(position));
-        if(!timestampDifference.equals("0")){
-            holder.timestamp.setText(timestampDifference + "d");
-        }else{
+        String timestampDifference = getTimestampDifference(getItem(position).getDate_created());
+        if (!timestampDifference.equals("0")) {
+            holder.timestamp.setText(timestampDifference);
+        } else {
             holder.timestamp.setText("Today");
         }
         //set the username
@@ -104,7 +105,7 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     holder.Username.setText(
-                    singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                            singleSnapshot.getValue(UserAccountSettings.class).getUsername());
                 }
             }
 
@@ -118,7 +119,7 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick:Test");
-                mOnAdapterItemClickListener.onClickImage(getItem(position),position);
+                mOnAdapterItemClickListener.onClickImage(getItem(position), position);
             }
         });
 
@@ -135,24 +136,54 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
 
     /**
      * Returns a string representing the number of days aho the post was made
+     *
      * @return
      */
-    private String getTimestampDifference(Post post) {
+    private String getTimestampDifference(String postTimestamp) {
         Log.d(TAG, "getTimestampDifference: getting timestamp difference.");
 
         String difference = "";
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd'T'mm:ss'Z'", Locale.CANADA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CANADA);
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         Date today = c.getTime();
         sdf.format(today);
         Date timestamp;
-        final String postTimestamp = post.getDate_created();
+
         try {
             timestamp = sdf.parse(postTimestamp);
-            difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60 / 60 / 24)));
-        }
-        catch (ParseException e) {
+            difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60)));
+
+            int tsDiff = Integer.parseInt(difference);
+            String time = "";
+            if (tsDiff == 0) { //less than one minute
+                time = "A FEW SECONDS AGO";
+                return time;
+            } else if (tsDiff < 60) { //less than one hour
+                if (tsDiff == 1) {
+                    time = tsDiff + " MIN AGO";
+                } else {
+                    time = tsDiff + " MINS AGO";
+                }
+                return time;
+            } else if (tsDiff < 1440) { //less than one day
+                tsDiff = tsDiff / 60;
+                if (tsDiff == 1) {
+                    time = tsDiff + " HOUR AGO";
+                } else {
+                    time = tsDiff + " HOURS AGO";
+                }
+                return time;
+            } else {
+                tsDiff = tsDiff / 60 / 24;
+                if (tsDiff == 1) {
+                    time = tsDiff + " DAY AGO";
+                } else {
+                    time = tsDiff + " DAYS AGO";
+                }
+                return time;
+            }
+        } catch (ParseException e) {
             Log.e(TAG, "getTimestampDifference: ParseException: " + e.getMessage());
             difference = "0";
         }
