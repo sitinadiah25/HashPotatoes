@@ -104,8 +104,13 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    holder.Username.setText(
-                            singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                    if (getItem(position).getAnonymity().equals("Anonymous")) {
+                        holder.Username.setText("Anonymous");
+                    }
+                    else {
+                        holder.Username.setText(
+                                singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                    }
                 }
             }
 
@@ -114,6 +119,15 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
                 Log.d(TAG, "onCancelled: query cancelled.");
             }
         });
+        //set tag
+        String tag = getItem(position).getTags();
+        String[] tokens = tag.split(" ");
+        String newTag = "";
+        int tokenCount = tokens.length;
+        for (int j = 0; j < tokenCount; j++) {
+            newTag = newTag + "#" + tokens[j] + " ";
+        }
+        holder.Tag.setText(newTag);
 
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override

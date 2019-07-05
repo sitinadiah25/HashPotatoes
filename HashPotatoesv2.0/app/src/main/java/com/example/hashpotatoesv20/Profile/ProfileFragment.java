@@ -312,7 +312,7 @@ public class ProfileFragment extends Fragment {
                                 int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
                                 //SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_edit_listview, from, to);
 
-                                ProfileListAdapter adapter = new ProfileListAdapter(mContext,R.layout.layout_post_edit_listview,posts, mOnAdapterItemClickListener);
+                                ProfileListAdapter adapter = new ProfileListAdapter(mContext, R.layout.layout_post_edit_listview, posts, mOnAdapterItemClickListener);
 
                                 listView.setAdapter(adapter);
                                 setListViewHeightBasedOnChildren(listView);
