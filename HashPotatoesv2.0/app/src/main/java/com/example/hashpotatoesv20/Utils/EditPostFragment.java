@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,10 @@ import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
+import com.example.hashpotatoesv20.Profile.EditProfileFragment;
 import com.example.hashpotatoesv20.R;
+import com.example.hashpotatoesv20.dialogs.ConfirmDeleteDialog;
+import com.example.hashpotatoesv20.dialogs.ConfirmPasswordDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,7 +42,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class EditPostFragment extends Fragment {
+public class EditPostFragment extends Fragment implements
+        ConfirmDeleteDialog.OnConfirmDeleteListener {
+
+    @Override
+    public void onConfirmDelete() {
+        //deletePost
+        deletePost();
+        getFragmentManager().popBackStack();
+        Toast.makeText(getActivity(),"Post deleted", Toast.LENGTH_SHORT).show();
+
+    }
+
     private static final String TAG = "CreatePostActivity";
 
     //firebase
@@ -49,6 +64,7 @@ public class EditPostFragment extends Fragment {
     private FirebaseMethods mFirebaseMethods;
 
     //vars
+    private ImageView mDelete;
     private EditText mDiscussion;
     private SwitchCompat mAnonymity;
     private TextView tvAnon;
@@ -73,6 +89,7 @@ public class EditPostFragment extends Fragment {
         mDiscussion = (EditText) view.findViewById(R.id.edit_discussion);
         mAnonymity = (SwitchCompat) view.findViewById(R.id.edit_anonymity);
         tvAnon = (TextView) view.findViewById(R.id.edit_tvAnon);
+        mDelete = (ImageView) view.findViewById(R.id.btn_delete);
 
         try {
             mPost = getPostFromBundle();
@@ -130,6 +147,17 @@ public class EditPostFragment extends Fragment {
             Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage());
         }
 
+        mDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Deleting post.");
+                ConfirmDeleteDialog dialog = new ConfirmDeleteDialog();
+                dialog.show(getFragmentManager(),getString(R.string.confirm_delete_dialog));
+                dialog.setTargetFragment(EditPostFragment.this,1);
+
+            }
+        });
+
         mFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +177,25 @@ public class EditPostFragment extends Fragment {
         return view;
     }
 
+    private void deletePost(){
+        Log.d(TAG, "deletePost: deleting: " + mPost.getPost_id());
+        myRef.child(getString(R.string.dbname_posts))
+                .child(mPost.getPost_id())
+                .removeValue();
+        myRef.child(getString(R.string.dbname_user_posts))
+                .child(mPost.getUser_id())
+                .child(mPost.getPost_id())
+                .removeValue();
+        ArrayList<String> tagIDList = mPost.getTag_list();
+        Log.d(TAG, "testsize: " + tagIDList.size());
+        for (int i = 0; i < tagIDList.size(); i++) {
+            myRef.child(mContext.getString(R.string.dbname_tag_post))
+                    .child(tagIDList.get(i))
+                    .child(mPost.getPost_id())
+                    .removeValue();
+        }
+    }
+
     private void updateDiscussion(String newDiscussion){
         myRef.child(getString(R.string.dbname_posts))
                 .child(mPost.getPost_id())
@@ -159,19 +206,13 @@ public class EditPostFragment extends Fragment {
                 .child(mPost.getPost_id())
                 .child(getString(R.string.field_discussion))
                 .setValue(newDiscussion);
-        try {
-            ArrayList<String> tagIDList = mPost.getTag_list();
-            //Log.d(TAG, "addNewLike: tagIDList: " + tagIDList);
-            for (int i = 0; i < tagIDList.size(); i++) {
-                myRef.child(mContext.getString(R.string.dbname_tag_post))
-                        .child(tagIDList.get(i))
-                        .child(mPost.getPost_id())
-                        .child(mContext.getString(R.string.field_discussion))
-                        .setValue(newDiscussion);
-            }
-        }
-        catch (NullPointerException e) {
-            Log.e(TAG, "addNewLike: NullPointerException: " + e.getMessage());
+        ArrayList<String> tagIDList = mPost.getTag_list();
+        for (int i = 0; i < tagIDList.size(); i++) {
+            myRef.child(mContext.getString(R.string.dbname_tag_post))
+                    .child(tagIDList.get(i))
+                    .child(mPost.getPost_id())
+                    .child(mContext.getString(R.string.field_discussion))
+                    .setValue(newDiscussion);
         }
     }
 
@@ -393,4 +434,5 @@ public class EditPostFragment extends Fragment {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
 }

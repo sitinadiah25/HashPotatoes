@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements
                 .findFragmentByTag("android:switcher: " + R.id.container + ":" + mViewPager.getCurrentItem());
         if(fragment != null){
             Log.d(TAG, "onLoadMoreItems: fragment not empty.");
-            fragment.displayMorePhotos();
+            fragment.displayMorePosts();
         }
     }
 

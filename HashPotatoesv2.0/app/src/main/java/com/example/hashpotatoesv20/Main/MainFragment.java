@@ -200,8 +200,8 @@ public class MainFragment extends Fragment{
         }
     }
 
-    public void displayMorePhotos(){
-        Log.d(TAG, "displayMorePhotos: displaying more photos");
+    public void displayMorePosts(){
+        Log.d(TAG, "displayMorePosts: displaying more posts");
         try{
 
             if(mPosts.size() > mResults && mPosts.size() > 0){

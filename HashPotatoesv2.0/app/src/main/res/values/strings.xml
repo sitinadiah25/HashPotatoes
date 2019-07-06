@@ -13,6 +13,7 @@
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
+    <string name="confirm_delete_dialog">ConfirmDeleteDialog</string>
 
     <!-- firebase database fields -->
     <string name="dbname_users">users</string>
