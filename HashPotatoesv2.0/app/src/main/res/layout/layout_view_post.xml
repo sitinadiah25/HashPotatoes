@@ -85,14 +85,14 @@
                     android:paddingRight="10dp"
                     android:id="@+id/post_tag"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Comment"
-                    android:layout_below="@id/post_tag"
-                    android:id="@+id/btn_comment"
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_edit"
+                    android:id="@+id/btn_edit"
                     android:layout_alignParentRight="true"
-                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    android:layout_below="@id/post_discussion"
                     android:layout_marginRight="5dp"/>
 
                 <ImageView
@@ -102,8 +102,7 @@
                     android:id="@+id/btn_heart_white"
                     android:layout_alignParentRight="true"
                     android:visibility="visible"
-                    android:layout_below="@id/post_discussion"
-                    android:layout_alignRight="@id/post_tag"
+                    android:layout_below="@id/btn_edit"
                     android:layout_marginRight="5dp"/>
 
                 <ImageView
@@ -113,8 +112,7 @@
                     android:layout_alignParentRight="true"
                     android:id="@+id/btn_heart_red"
                     android:visibility="invisible"
-                    android:layout_below="@id/post_discussion"
-                    android:layout_alignRight="@id/post_tag"
+                    android:layout_below="@id/btn_edit"
                     android:layout_marginRight="5dp"/>
 
             </RelativeLayout>

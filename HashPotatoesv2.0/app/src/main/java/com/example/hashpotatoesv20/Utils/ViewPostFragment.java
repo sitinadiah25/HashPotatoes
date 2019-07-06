@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -91,8 +92,8 @@ public class ViewPostFragment extends Fragment {
 
     //widgets
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag, mComment;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark;
+    private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark, mEdit;
     private EditText mCommentText;
     private ListView mListView;
 
@@ -118,7 +119,7 @@ public class ViewPostFragment extends Fragment {
         mEllipses = (ImageView) view.findViewById(R.id.ivEllipses);
         mHeartWhite = (ImageView) view.findViewById(R.id.btn_heart_white);
         mHeartRed = (ImageView) view.findViewById(R.id.btn_heart_red);
-        mComment = (TextView) view.findViewById(R.id.btn_comment);
+        mEdit = (ImageView) view.findViewById(R.id.btn_edit);
         mProfileImage = (ImageView) view.findViewById(R.id.profilePhoto);
         mUsername = (TextView) view.findViewById(R.id.username);
         mDiscussion = (TextView) view.findViewById(R.id.post_discussion);
@@ -147,6 +148,10 @@ public class ViewPostFragment extends Fragment {
         }
         catch (NullPointerException e) {
             Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage());
+        }
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(mPost.getUser_id())){
+            mEdit.setVisibility(View.VISIBLE);
         }
         setupFirebaseAuth();
         setupBottomNavigationView();
@@ -440,14 +445,20 @@ public class ViewPostFragment extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
-        mComment.setOnClickListener(new View.OnClickListener() {
+        mEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back");
+                EditPostFragment fragment = new EditPostFragment();
+                Bundle args = new Bundle();
+                args.putParcelable(getString(R.string.post), mPost);
+                args.putInt(getString(R.string.activity_number), mActivityNumber);
+                fragment.setArguments(args);
 
-                mCommentText.requestFocus();
-
-                //mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPost);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.edit_post_fragment));
+                transaction.commit();
             }
         });
 

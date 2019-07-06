@@ -37,7 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileListAdapter extends ArrayAdapter<Post> {
 
-    private static final String TAG = "PostListAdapter";
+    private static final String TAG = "ProfileListAdapter";
 
     private LayoutInflater mInflater;
     private int layoutResource;
