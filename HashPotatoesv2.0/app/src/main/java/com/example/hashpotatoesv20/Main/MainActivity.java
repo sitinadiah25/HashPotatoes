@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void showLayout() {
-        Log.d(TAG, "hideLayout: hiding layout");
+        Log.d(TAG, "showLayout: showing layout");
         mRelativeLayout.setVisibility(View.VISIBLE);
         mFrameLayout.setVisibility(View.GONE);
     }

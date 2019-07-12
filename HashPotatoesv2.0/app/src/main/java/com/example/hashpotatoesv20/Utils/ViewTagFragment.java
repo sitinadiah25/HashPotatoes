@@ -69,10 +69,11 @@ public class ViewTagFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseMethods mFirebaseMethods;
 
+    //widgets
     private TextView mTagName, mTagDesc, mPostNum, mPost, mTagNameBar, tvLocked;
     private ProgressBar mProgressBar;
     private Toolbar toolbar;
-    private ImageView mPrivate, mPublic, profileMenu, mLocked;
+    private ImageView mPrivate, mPublic, profileMenu, mLocked, mBackArrow;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
     private Button mFollow, mUnfollow;
@@ -103,6 +104,7 @@ public class ViewTagFragment extends Fragment {
         mUnfollow = (Button) view.findViewById(R.id.btn_unfollow);
         mLocked = (ImageView) view.findViewById(R.id.locked);
         tvLocked = (TextView) view.findViewById(R.id.tvLocked);
+        mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(getActivity());
 
@@ -124,6 +126,14 @@ public class ViewTagFragment extends Fragment {
 
         isFollowing();
         getPostsCount();
+
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                getActivity().finish();
+            }
+        });
 
         mFollow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,7 +238,7 @@ public class ViewTagFragment extends Fragment {
     private void setWidgets(final Tag tag) {
         String tag_name = "#" + tag.getTag_name();
         mTagName.setText(tag_name);
-        mTagNameBar.setText(tag.getTag_name());
+        mTagNameBar.setText(tag_name);
         mTagDesc.setText(tag.getTag_description());
         String privacy = tag.getPrivacy();
         if (privacy.equals("Private")) {
@@ -458,7 +468,7 @@ public class ViewTagFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 25;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

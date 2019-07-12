@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -18,6 +20,8 @@ import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
+import com.example.hashpotatoesv20.Utils.ViewPostFragment;
+import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +46,12 @@ import javax.security.auth.login.LoginException;
 public class MainFragment extends Fragment{
     private static final String TAG = "MainFragment";
 
+    public interface onListPostSelectedListener {
+        void onPostSelected(Post post, int activity_number);
+    }
+    onListPostSelectedListener mOnListPostSelectedListener;
+
+
     //vars
     private ArrayList<Post> mPosts;
     private ArrayList<Post> mPaginatedPosts;
@@ -49,6 +59,7 @@ public class MainFragment extends Fragment{
     private ListView mListView;
     private MainfeedListAdapter mAdapter;
     private int mResults;
+    private static int ACTIVITY_NUM = 0;
 
     @Nullable
     @Override
@@ -191,6 +202,15 @@ public class MainFragment extends Fragment{
                 }
                 mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPaginatedPosts);
                 mListView.setAdapter(mAdapter);
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        int actPosition = mPaginatedPosts.size() - position - 1;
+                        Log.d(TAG, "onItemClick: position:" + actPosition);
+                        onPostSelected(mPaginatedPosts.get(actPosition), ACTIVITY_NUM);
+                        ((MainActivity)getActivity()).showLayout();
+                    }
+                });
                 setListViewHeightBasedOnChildren(mListView);
             } catch (NullPointerException e) {
                 Log.e(TAG, "displayPosts: NullPointerException: " + e.getMessage());
@@ -198,6 +218,21 @@ public class MainFragment extends Fragment{
                 Log.e(TAG, "displayPosts: IndexOutOfBoundsException: " + e.getMessage());
             }
         }
+    }
+
+    private void onPostSelected(Post post, int activity_number) {
+        Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
+
+        ViewPostFragment fragment = new ViewPostFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.post), post);
+        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_post_fragment));
+        transaction.commit();
     }
 
     public void displayMorePosts(){
@@ -243,7 +278,7 @@ public class MainFragment extends Fragment{
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 25;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
+import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
@@ -41,7 +42,9 @@ public class ProfileActivity extends AppCompatActivity implements
         ProfileFragment.onListPostSelectedListener,
         ViewPostFragment.OnCommentThreadSelectedListener,
         ViewTagFragment.onListPostSelectedListener,
-        ViewProfileFragment.onListPostSelectedListener, ProfileListAdapter.OnAdapterItemClickListener {
+        ViewProfileFragment.onListPostSelectedListener,
+        ProfileListAdapter.OnAdapterItemClickListener,
+        MainFragment.onListPostSelectedListener {
     
     private static final String TAG = "ProfileActivity";
     private static final int ACTIVITY_NUM = 3;

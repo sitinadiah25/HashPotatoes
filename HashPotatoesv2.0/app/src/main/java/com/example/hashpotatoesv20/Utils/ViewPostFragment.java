@@ -1,6 +1,7 @@
 package com.example.hashpotatoesv20.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -138,6 +139,14 @@ public class ViewPostFragment extends Fragment {
 
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
+
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                getActivity().finish();
+            }
+        });
 
         try {
             mPost = getPostFromBundle();
@@ -416,7 +425,15 @@ public class ViewPostFragment extends Fragment {
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
         //String joinedTags = String.join(" ", tags.);
-        mTag.setText(mPost.getTags());
+
+        String tag = mPost.getTags();
+        String[] tokens = tag.split(" ");
+        String newTag = "";
+        int tokenCount = tokens.length;
+        for (int i = 0; i < tokenCount; i++) {
+            newTag = newTag + "#" + tokens[i] + " ";
+        }
+        mTag.setText(newTag);
 
         //setup list for comments
         setupListView();
@@ -448,7 +465,7 @@ public class ViewPostFragment extends Fragment {
         mEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating back");
+                Log.d(TAG, "onClick: navigating to EditPostFragment");
                 EditPostFragment fragment = new EditPostFragment();
                 Bundle args = new Bundle();
                 args.putParcelable(getString(R.string.post), mPost);
@@ -458,6 +475,22 @@ public class ViewPostFragment extends Fragment {
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack(getString(R.string.edit_post_fragment));
+                transaction.commit();
+            }
+        });
+        mEllipses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to ReportPostFragment");
+                ReportPostFragment fragment = new ReportPostFragment();
+                Bundle args = new Bundle();
+                args.putParcelable("POST", mPost);
+                args.putInt(getString(R.string.activity_number), mActivityNumber);
+                fragment.setArguments(args);
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.report_post_fragment));
                 transaction.commit();
             }
         });
@@ -519,7 +552,7 @@ public class ViewPostFragment extends Fragment {
                             @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                mViewHolder.clear();
+                                //mViewHolder.clear();
                                 for (final DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                                     Comment comment = singleSnapshot.getValue(Comment.class);
                                     final Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
@@ -570,7 +603,7 @@ public class ViewPostFragment extends Fragment {
 
                                     int[] to = {R.id.post_comment, R.id.username, R.id.timestamp};
 
-                                            Log.d(TAG, "onDataChange: viewing post screen");
+                                    Log.d(TAG, "onDataChange: viewing post screen");
                                     SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_comment_listview, from, to);
                                     mListView.setAdapter(adapter);
                                     setListViewHeightBasedOnChildren(mListView);

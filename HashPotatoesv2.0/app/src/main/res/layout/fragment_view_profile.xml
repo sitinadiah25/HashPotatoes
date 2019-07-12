@@ -9,15 +9,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/relLayout1">
 
-        <include layout="@layout/snippet_top_profile_bar"/>
+        <include layout="@layout/snippet_top_viewprofile_bar"/>
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/relLayout1"
-        android:id="@+id/relLayout2">
+        android:id="@+id/relLayout2"
+        android:background="@color/lightBack">
 
         <include layout="@layout/layout_center_view_profile"/>
 

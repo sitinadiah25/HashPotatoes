@@ -48,6 +48,9 @@ dependencies {
 
     //Google Play
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
+    //JavaX Mail
+    implementation 'javax.mail:mail:1.4.7'
 }
 
 //Firebase

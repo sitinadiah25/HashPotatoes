@@ -34,58 +34,81 @@
             <!-- username section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/changeProfilePhoto"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/grey_border"
                 android:id="@+id/relLayout1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="username"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tvUsername"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/ivUsername"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"/>
 
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:src="@drawable/ic_username"
-                    android:layout_centerVertical="true"/>
+                    android:id="@+id/ivUsername"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/username"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="username"/>
+                    android:hint="username"
+                    android:layout_below="@id/tvUsername"
+                    android:paddingTop="5dp"
+                    android:layout_marginStart="5dp"/>
 
             </RelativeLayout>
 
             <!-- display name section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/relLayout1"
                 android:background="@drawable/grey_border"
                 android:id="@+id/relLayout2"
                 android:layout_marginTop="15dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@drawable/ic_displayname"
-                    android:layout_centerVertical="true"/>
+                    android:id="@+id/ivDisplayname"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Display Name"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tvDisplayname"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/ivDisplayname"
+                    android:layout_marginLeft="5dp"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/display_name"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="display name"/>
+                    android:hint="display name"
+                    android:paddingTop="5dp"
+                    android:layout_below="@id/ivDisplayname"
+                    android:layout_marginStart="5dp"/>
 
             </RelativeLayout>
 
-            <!-- website section -->
+            <!-- website section
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -112,30 +135,44 @@
 
             </RelativeLayout>
 
+            -->
+
             <!-- status section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_below="@id/relLayout3"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relLayout2"
                 android:background="@drawable/grey_border"
                 android:id="@+id/relLayout4"
                 android:layout_marginTop="15dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@drawable/ic_status"
-                    android:layout_centerVertical="true"/>
+                    android:id="@+id/ivDescription"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tvDescription"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/ivDescription"
+                    android:layout_marginLeft="5dp"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/description"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="description"/>
+                    android:hint="description"
+                    android:layout_below="@id/ivDescription"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"/>
 
             </RelativeLayout>
 
@@ -154,27 +191,39 @@
             <!-- email section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/textPrivInfo"
                 android:background="@drawable/grey_border"
                 android:id="@+id/relLayout5"
                 android:layout_marginTop="15dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@drawable/ic_email"
-                    android:layout_centerVertical="true"/>
+                    android:id="@+id/ivEmail"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tvEmail"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/ivEmail"
+                    android:layout_marginLeft="5dp"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/email"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
+                    android:layout_marginStart="5dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="email"/>
+                    android:layout_below="@id/ivEmail"
+                    android:hint="email"
+                    android:layout_marginTop="5dp"/>
 
             </RelativeLayout>
 
@@ -193,53 +242,75 @@
             <!-- Additional section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/textAdditionInfo"
                 android:background="@drawable/grey_border"
                 android:id="@+id/relLayout6"
                 android:layout_marginTop="15dp">
 
                 <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_year"
-                android:layout_centerVertical="true"/>
+                    android:layout_width="25dp"
+                    android:id="@+id/ivYear"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_year"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Year of Study"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tvYear"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/ivYear"
+                    android:layout_marginLeft="5dp"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/year"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
+                    android:layout_marginStart="5dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="Year of Study"/>
+                    android:hint="Year of Study"
+                    android:layout_below="@id/ivYear"/>
 
             </RelativeLayout>
             <!-- display name section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/relLayout6"
                 android:background="@drawable/grey_border"
                 android:id="@+id/relLayout7"
                 android:layout_marginTop="15dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@drawable/ic_major"
-                    android:layout_centerVertical="true"/>
+                    android:id="@+id/ivMajor"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Year of Study"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tvMajor"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/ivMajor"
+                    android:layout_marginLeft="5dp"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/major"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
+                    android:layout_marginStart="5dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="major"/>
+                    android:hint="major"
+                    android:layout_below="@id/ivMajor"/>
 
             </RelativeLayout>
 

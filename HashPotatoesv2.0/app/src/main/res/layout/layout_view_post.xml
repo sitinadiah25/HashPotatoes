@@ -81,13 +81,14 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/post_discussion"
                     android:text="#Tag"
+                    android:textColor="@color/linkBlue"
                     android:textSize="12sp"
                     android:paddingRight="10dp"
                     android:id="@+id/post_tag"/>
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
                     android:src="@drawable/ic_edit"
                     android:id="@+id/btn_edit"
                     android:layout_alignParentRight="true"
@@ -113,7 +114,8 @@
                     android:id="@+id/btn_heart_red"
                     android:visibility="invisible"
                     android:layout_below="@id/btn_edit"
-                    android:layout_marginRight="5dp"/>
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"/>
 
             </RelativeLayout>
 
@@ -144,7 +146,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/relLayout4"
                 android:layout_below="@id/relLayout3"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="60dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp">

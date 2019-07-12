@@ -75,7 +75,7 @@ public class ViewProfileFragment extends Fragment {
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private Toolbar toolbar;
-    private ImageView profileMenu, heartOutline;
+    private ImageView profileMenu, heartOutline, mBackArrow;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
 
@@ -102,6 +102,7 @@ public class ViewProfileFragment extends Fragment {
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mWebsite = (TextView) view.findViewById(R.id.profile_website);
         mDescription = (TextView) view.findViewById(R.id.profile_description);
+        mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mContext = getActivity();
         listView = (ListView) view.findViewById(R.id.listView);
 
@@ -117,6 +118,14 @@ public class ViewProfileFragment extends Fragment {
             Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
             getActivity().getSupportFragmentManager().popBackStack();
         }
+
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                getActivity().finish();
+            }
+        });
 
         setupBottomNavigationView();
         setupToolbar();
@@ -387,7 +396,7 @@ public class ViewProfileFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 25;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

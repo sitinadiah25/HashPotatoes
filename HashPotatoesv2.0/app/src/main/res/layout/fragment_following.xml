@@ -7,16 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".Main.MainActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/main_container">
-    </FrameLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/relLayoutParent">
+        android:layout_height="match_parent">
 
         <!-- top tool bar -->
         <RelativeLayout
@@ -26,42 +19,47 @@
 
             <include layout="@layout/layout_top_taps"/>
 
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_back"
+                android:id="@+id/backArrow"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textSize="25sp"
-                style="@style/RibeyeMarrowRegular"
-                android:text="@string/app_name"
+                android:text="Username Following"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                />
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginEnd="20dp"
-                android:layout_centerVertical="true"
-                android:id="@+id/createPost"
-                android:src="@drawable/ic_createpost"/>
+                android:id="@+id/usernameFollowing"/>
 
         </RelativeLayout>
 
         <!-- middle section -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/relLayout2"
             android:layout_below="@id/relLayout1"
+            android:background="@color/lightBack"
             android:layout_marginBottom="50dp">
 
-            <include layout="@layout/layout_centre_viewpager"/>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp"
+                android:id="@+id/listView">
+
+            </ListView>
 
         </RelativeLayout>
 
         <!-- bottom navigation -->
-        <include layout="@layout/layout_bottom_navigation_view" />
+        <include layout="@layout/layout_bottom_navigation_view"/>
 
     </RelativeLayout>
 

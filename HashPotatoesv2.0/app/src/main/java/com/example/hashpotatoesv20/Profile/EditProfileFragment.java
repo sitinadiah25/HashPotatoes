@@ -133,7 +133,7 @@ public class EditProfileFragment extends Fragment implements
         mDisplayName = (EditText) view.findViewById(R.id.display_name);
         mUsername = (EditText) view.findViewById(R.id.username);
         mDescription = (EditText) view.findViewById(R.id.description);
-        mWebsite = (EditText) view.findViewById(R.id.website);
+        //mWebsite = (EditText) view.findViewById(R.id.website);
         mEmail = (EditText) view.findViewById(R.id.email);
         changePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
         mYearOfStudy = (EditText) view.findViewById(R.id.year);
@@ -160,6 +160,9 @@ public class EditProfileFragment extends Fragment implements
             public void onClick(View v) {
                 Log.d(TAG, "onClick: attempting to save changes.");
                 saveProfileSettings();
+                //getActivity().finish();
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
@@ -184,7 +187,7 @@ public class EditProfileFragment extends Fragment implements
     private void saveProfileSettings() {
         final String displayName = mDisplayName.getText().toString();
         final String username = mUsername.getText().toString();
-        final String website = mWebsite.getText().toString();
+        //final String website = mWebsite.getText().toString();
         final String description = mDescription.getText().toString();
         final String email = mEmail.getText().toString();
         final String yearOfStudy = mYearOfStudy.getText().toString();
@@ -222,11 +225,11 @@ public class EditProfileFragment extends Fragment implements
             mFirebaseMethods.updateUserAccountSettings(null,description,null,null,null);
 
         }
-        if(!mUserSettings.getSettings().getWebsite().equals(website)){
+        //if(!mUserSettings.getSettings().getWebsite().equals(website)){
             //update
-            mFirebaseMethods.updateUserAccountSettings(null,null,website,null,null);
+            //mFirebaseMethods.updateUserAccountSettings(null,null,website,null,null);
 
-        }
+        //}
         if(!mUserSettings.getSettings().getYear().equals(yearOfStudy)){
             //update
             mFirebaseMethods.updateUserAccountSettings(null,null,null,yearOfStudy,null);
@@ -288,7 +291,7 @@ public class EditProfileFragment extends Fragment implements
         UniversalImageLoader.setImage(settings.getProfile_photo(), mProfilePhoto, null, "");
         mDisplayName.setText(settings.getDisplay_name());
         mUsername.setText(settings.getUsername());
-        mWebsite.setText(settings.getWebsite());
+        //mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
         mEmail.setText(userSettings.getUser().getEmail());
         mYearOfStudy.setText(settings.getYear());
