@@ -11,6 +11,7 @@
     <string name="view_tag_fragment">View Tag</string>
     <string name="edit_post_fragment">Edit Post</string>
     <string name="report_post_fragment">Report Post</string>
+    <string name="following_fragment">Following</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
@@ -50,8 +51,8 @@
     <string name="field_whitelist">whitelist</string>
     <string name="field_owner_id">owner_id</string>
     <string name="field_hashtags">hashtags</string>
-    <string name="field_tag_list">hashtags</string>
-    <string name="field_like_id">hashtags</string>
+    <string name="field_tag_list">tag_list</string>
+    <string name="field_like_id">like_id</string>
 
     <!-- intent extras -->
     <string name="calling_activity">calling_activity</string>

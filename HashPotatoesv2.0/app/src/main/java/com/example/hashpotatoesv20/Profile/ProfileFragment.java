@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,8 +34,10 @@ import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
+import com.example.hashpotatoesv20.Utils.FollowingFragment;
 import com.example.hashpotatoesv20.Utils.ProfileListAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
+import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -135,7 +138,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to: " + mContext.getString(R.string.edit_profile_fragment));
                 Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
-                intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
+                intent.putExtra(mContext.getString(R.string.calling_activity), mContext.getString(R.string.profile_activity));
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
@@ -149,6 +152,19 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), CreateTagActivity.class);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
+
+        mHashtags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to following fragment");
+                FollowingFragment fragment = new FollowingFragment();
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.following_fragment));
+                transaction.commit();
             }
         });
 
@@ -174,7 +190,7 @@ public class ProfileFragment extends Fragment {
         mTagsCount = 0;
 
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
-        Query query1 = reference1.child(getString(R.string.dbname_user_posts))
+        Query query1 = reference1.child(mContext.getString(R.string.dbname_user_posts))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         query1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -193,7 +209,7 @@ public class ProfileFragment extends Fragment {
         });
 
         DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
-        Query query2 = reference2.child(getString(R.string.dbname_user_following))
+        Query query2 = reference2.child(mContext.getString(R.string.dbname_user_following))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         query2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -218,7 +234,7 @@ public class ProfileFragment extends Fragment {
 //        final ArrayList<Post> posts = new ArrayList<>();
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             final Query query = reference
-                    .child(getString(R.string.dbname_user_posts))
+                    .child(mContext.getString(R.string.dbname_user_posts))
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -229,7 +245,7 @@ public class ProfileFragment extends Fragment {
                         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                             Post post = new Post();
                             Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
-                            Log.d(TAG, "onDataChange: snapshot profile: " + objectMap.get(getString(R.string.field_discussion)).toString());
+                            Log.d(TAG, "onDataChange: snapshot profile: " + objectMap.get(mContext.getString(R.string.field_discussion)).toString());
                             post.setDiscussion(objectMap.get(mContext.getString(R.string.field_discussion)).toString());
                             post.setDate_created(objectMap.get(mContext.getString(R.string.field_date_created)).toString());
                             post.setUser_id(objectMap.get(mContext.getString(R.string.field_user_id)).toString());
@@ -239,14 +255,14 @@ public class ProfileFragment extends Fragment {
 
                             ArrayList<String> tagIDList = new ArrayList<>();
                             for (DataSnapshot dataSnapshot1 : singleSnapshot
-                                    .child(getString(R.string.field_tag_list)).getChildren()) {
-                                Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue(Tag.class).getTag_id());
-                                tagIDList.add(dataSnapshot1.getValue(Tag.class).getTag_id());
+                                    .child(mContext.getString(R.string.field_tag_list)).getChildren()) {
+                                Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue());
+                                tagIDList.add(dataSnapshot1.getValue().toString());
                             }
 
                             List<Like> likesList = new ArrayList<Like>();
                             for (DataSnapshot dSnapshot : singleSnapshot
-                                    .child(getString(R.string.field_likes)).getChildren()){
+                                    .child(mContext.getString(R.string.field_likes)).getChildren()){
                                 Like like = new Like();
                                 like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                                 likesList.add(like);
@@ -254,7 +270,7 @@ public class ProfileFragment extends Fragment {
 
                             List<Comment> commentList = new ArrayList<>();
                             for (DataSnapshot dataSnapshot1 :
-                                    singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
+                                    singleSnapshot.child(mContext.getString(R.string.field_comments)).getChildren()) {
                                 Comment comment = new Comment();
                                 comment.setUser_id(dataSnapshot1.getValue(Comment.class).getUser_id());
                                 comment.setComment(dataSnapshot1.getValue(Comment.class).getComment());
@@ -278,7 +294,7 @@ public class ProfileFragment extends Fragment {
 
                         final String postTimestamp = posts.get(i).getDate_created();
                         String timestampDiff = getTimestampDifference(postTimestamp);
-                        hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
+                        hm.put(mContext.getString(R.string.field_discussion), posts.get(i).getDiscussion());
 
                         String tag = posts.get(i).getTags();
                         String[] tokens = tag.split(" ");
@@ -288,26 +304,26 @@ public class ProfileFragment extends Fragment {
                             newTag = newTag + "#" + tokens[j] + " ";
                         }
 
-                        hm.put(getString(R.string.field_date_created), timestampDiff);
-                        hm.put(getString(R.string.field_tags), newTag);
+                        hm.put(mContext.getString(R.string.field_date_created), timestampDiff);
+                        hm.put(mContext.getString(R.string.field_tags), newTag);
                         final String anon = posts.get(i).getAnonymity();
 
                         DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
                         Query query2 = reference2
-                                .child(getString(R.string.dbname_users_account_settings))
+                                .child(mContext.getString(R.string.dbname_users_account_settings))
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                         query2.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (anon.equals("Anonymous")) {
-                                    hm.put(getString(R.string.field_username), "Anonymous");
+                                    hm.put(mContext.getString(R.string.field_username), "Anonymous");
                                 }
                                 else {
-                                    hm.put(getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
+                                    hm.put(mContext.getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
                                 }
                                 aList.add(hm);
-                                String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-                                        getString(R.string.field_tags), getString(R.string.field_username)};
+                                String[] from = {mContext.getString(R.string.field_discussion), mContext.getString(R.string.field_date_created),
+                                        mContext.getString(R.string.field_tags), mContext.getString(R.string.field_username)};
 
                                 int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
                                 //SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_edit_listview, from, to);

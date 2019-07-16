@@ -87,9 +87,11 @@ public class TagListAdapter extends ArrayAdapter<Tag> {
 
                     String privacy = objectMap.get(mContext.getString(R.string.field_privacy)).toString();
                     if (privacy.equals("Private")) {
+                        holder.tag_photo_pub.setVisibility(View.INVISIBLE);
                         holder.tag_photo_priv.setVisibility(View.VISIBLE);
                     }
                     else {
+                        holder.tag_photo_priv.setVisibility(View.INVISIBLE);
                         holder.tag_photo_pub.setVisibility(View.VISIBLE);
                     }
                 }

@@ -50,11 +50,13 @@ public class EditPostFragment extends Fragment implements
         //deletePost
         deletePost();
         getFragmentManager().popBackStack();
-        Toast.makeText(getActivity(),"Post deleted", Toast.LENGTH_SHORT).show();
 
+        //need another way to bring back to prev screen, with post deleted
+        getActivity().finish();
+        Toast.makeText(getActivity(),"Post deleted", Toast.LENGTH_SHORT).show();
     }
 
-    private static final String TAG = "CreatePostActivity";
+    private static final String TAG = "EditPostActivity";
 
     //firebase
     private FirebaseAuth mAuth;
@@ -189,7 +191,8 @@ public class EditPostFragment extends Fragment implements
         ArrayList<String> tagIDList = mPost.getTag_list();
         Log.d(TAG, "testsize: " + tagIDList.size());
         for (int i = 0; i < tagIDList.size(); i++) {
-            myRef.child(mContext.getString(R.string.dbname_tag_post))
+            Log.d(TAG, "deletePost: deleting post...: " + tagIDList.get(i));
+            myRef.child(getString(R.string.dbname_tag_post))
                     .child(tagIDList.get(i))
                     .child(mPost.getPost_id())
                     .removeValue();

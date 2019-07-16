@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
     @Override
     public void onClickImage(Post post, int activity_number) {
-        Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
+        Log.d(TAG, "onPostSelected: selected a post from listview " + post.getTag_list());
 
         EditPostFragment fragment = new EditPostFragment();
         Bundle args = new Bundle();

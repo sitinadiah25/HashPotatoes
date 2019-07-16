@@ -126,8 +126,8 @@ public class MainFragment extends Fragment{
                         ArrayList<String> tagIDList = new ArrayList<>();
                         for (DataSnapshot dataSnapshot1 : singleSnapshot
                                 .child(getString(R.string.field_tag_list)).getChildren()) {
-                            Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue(Tag.class).getTag_id());
-                            tagIDList.add(dataSnapshot1.getValue(Tag.class).getTag_id());
+                            Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue());
+                            tagIDList.add(dataSnapshot1.getValue().toString());
                         }
 
                         List<Like> likesList = new ArrayList<Like>();
