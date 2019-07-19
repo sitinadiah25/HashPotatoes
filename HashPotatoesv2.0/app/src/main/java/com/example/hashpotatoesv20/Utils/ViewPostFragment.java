@@ -390,9 +390,8 @@ public class ViewPostFragment extends Fragment {
         getLikesString();
 
         //notify post owner
-        if(!mCurrentUser.equals(FirebaseAuth.getInstance().getCurrentUser().toString())){
+        if(!mCurrentUser.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())){
             mNotifString = mCurrentUser.getUsername() + " liked your post.";
-
             mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(),mNotifString,mPost.getPost_id(),"",mCurrentUser.getUser_id());
         }
     }
@@ -704,11 +703,10 @@ public class ViewPostFragment extends Fragment {
                 .setValue(comment);
 
         //notify post owner
-        //if(!mCurrentUser.toString().equals(FirebaseAuth.getInstance().getCurrentUser().toString())){
-
-        mNotifString = mCurrentUser.getUsername() + " commented on your post: " + comment.getComment();
-
-        mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(),mNotifString,mPost.getPost_id(),"",mCurrentUser.getUser_id());
+        if(!mCurrentUser.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())) {
+            mNotifString = mCurrentUser.getUsername() + " commented on your post: " + comment.getComment();
+            mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(), mNotifString, mPost.getPost_id(), "", mCurrentUser.getUser_id());
+        }
         //
     }
 
