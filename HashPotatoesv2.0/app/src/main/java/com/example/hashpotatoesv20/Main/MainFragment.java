@@ -1,5 +1,6 @@
 package com.example.hashpotatoesv20.Main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -46,11 +47,24 @@ import javax.security.auth.login.LoginException;
 
 public class MainFragment extends Fragment{
     private static final String TAG = "MainFragment";
+    private static final int ACTIVITY_NUM = 0;
+
 
     public interface onListPostSelectedListener {
         void onPostSelected(Post post, int activity_number);
     }
     onListPostSelectedListener mOnListPostSelectedListener;
+
+    @Override
+    public void onAttach(Context context) {
+        try {
+            mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
+        }
+        catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
+        }
+        super.onAttach(context);
+    }
 
 
     //widgets
@@ -63,7 +77,6 @@ public class MainFragment extends Fragment{
     private ListView mListView;
     private MainfeedListAdapter mAdapter;
     private int mResults;
-    private static int ACTIVITY_NUM = 0;
 
     @Nullable
     @Override
@@ -217,16 +230,19 @@ public class MainFragment extends Fragment{
                 }
                 mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPaginatedPosts);
                 mListView.setAdapter(mAdapter);
+                setListViewHeightBasedOnChildren(mListView);
+
                 mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         int actPosition = mPaginatedPosts.size() - position - 1;
                         Log.d(TAG, "onItemClick: position:" + actPosition);
-                        onPostSelected(mPaginatedPosts.get(actPosition), ACTIVITY_NUM);
-                        ((MainActivity)getActivity()).showLayout();
+                        //Log.d(TAG, "onItemClick: post: " + mPaginatedPosts.get(actPosition));
+                        mOnListPostSelectedListener.onPostSelected(mPaginatedPosts.get(position), ACTIVITY_NUM);
+                        //((MainActivity)getActivity()).showLayout();
                     }
                 });
-                setListViewHeightBasedOnChildren(mListView);
+
             } catch (NullPointerException e) {
                 Log.e(TAG, "displayPosts: NullPointerException: " + e.getMessage());
             } catch (IndexOutOfBoundsException e) {
@@ -235,7 +251,7 @@ public class MainFragment extends Fragment{
         }
     }
 
-    private void onPostSelected(Post post, int activity_number) {
+   /* private void onPostSelected(Post post, int activity_number) {
         Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
 
         ViewPostFragment fragment = new ViewPostFragment();
@@ -248,7 +264,7 @@ public class MainFragment extends Fragment{
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(getString(R.string.view_post_fragment));
         transaction.commit();
-    }
+    }*/
 
     public void displayMorePosts(){
         Log.d(TAG, "displayMorePosts: displaying more posts");
@@ -305,5 +321,6 @@ public class MainFragment extends Fragment{
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
+
 
 }

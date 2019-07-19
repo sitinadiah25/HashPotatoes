@@ -42,7 +42,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements
-        ViewPostFragment.OnCommentThreadSelectedListener, MainfeedListAdapter.OnLoadMoreItemsListener {
+        ViewPostFragment.OnCommentThreadSelectedListener,
+        MainfeedListAdapter.OnLoadMoreItemsListener,
+        MainFragment.onListPostSelectedListener {
 
     @Override
     public void onLoadMoreItems() {
@@ -53,6 +55,22 @@ public class MainActivity extends AppCompatActivity implements
             Log.d(TAG, "onLoadMoreItems: fragment not empty.");
             fragment.displayMorePosts();
         }
+    }
+
+    @Override
+    public void onPostSelected(Post post, int activity_number) {
+        Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
+
+        ViewPostFragment fragment = new ViewPostFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.post), post);
+        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.relLayoutParent, fragment);
+        transaction.addToBackStack(getString(R.string.view_post_fragment));
+        transaction.commit();
     }
 
     private static final String TAG = "MainActivity";
@@ -225,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
 
 
 }

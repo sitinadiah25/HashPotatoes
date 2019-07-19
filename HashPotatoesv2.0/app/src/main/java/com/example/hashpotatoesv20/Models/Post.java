@@ -147,6 +147,21 @@ public class Post implements Parcelable {
     public static Creator<Post> getCREATOR() {
         return CREATOR;
     }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "discussion='" + discussion + '\'' +
+                ", date_created='" + date_created + '\'' +
+                ", user_id='" + user_id + '\'' +
+                ", post_id='" + post_id + '\'' +
+                ", tags='" + tags + '\'' +
+                ", anonymity='" + anonymity + '\'' +
+                ", likes=" + likes +
+                ", comments=" + comments +
+                ", tag_list=" + tag_list +
+                '}';
+    }
 }
 
 

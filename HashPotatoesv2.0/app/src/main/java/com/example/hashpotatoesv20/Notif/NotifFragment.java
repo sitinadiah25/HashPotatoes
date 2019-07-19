@@ -41,7 +41,17 @@ public class NotifFragment extends Fragment{
 
     onListNotifSelectedListener mOnListNotifSelectedListener;
 
-
+    @Override
+    public void onAttach(Context context) {
+        try {
+            //mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
+            mOnListNotifSelectedListener = (onListNotifSelectedListener) getActivity();
+        }
+        catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
+        }
+        super.onAttach(context);
+    }
 
     //vars
     private ArrayList<Notification> mNotification;
@@ -167,15 +177,4 @@ public class NotifFragment extends Fragment{
         listView.requestLayout();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        try {
-            //mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
-            mOnListNotifSelectedListener = (onListNotifSelectedListener) getActivity();
-        }
-        catch (ClassCastException e) {
-            Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
-        }
-        super.onAttach(context);
-    }
 }
