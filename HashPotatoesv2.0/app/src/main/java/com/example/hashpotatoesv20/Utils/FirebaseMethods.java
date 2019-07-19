@@ -308,6 +308,7 @@ public class FirebaseMethods {
         final ArrayList<String> tagList = new ArrayList<>();
         Log.d(TAG, "addPostToDatabase: tokens: " + st.countTokens());
         if (st.countTokens() == 1) {
+            tags = tags.substring(0, tags.length() - 1);
             tagList.add(tags);
         }
         else {
@@ -335,7 +336,7 @@ public class FirebaseMethods {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Log.d(TAG, "onDataChange: child value n: " + ds.getValue(Tag.class).getTag_name() + " " + currTag);
+                        Log.d(TAG, "onDataChange: child value n: " + currTag + " " + ds.getValue(Tag.class).getTag_name());
                         if (currTag.equals(ds.getValue(Tag.class).getTag_name())) {
                             Log.d(TAG, "onDataChange: success get tag");
                             tagIDList.add(ds.getValue(Tag.class).getTag_id());

@@ -96,18 +96,20 @@ public class ReportPostFragment extends Fragment {
             public void onClick(View v) {
                 if (chosenOption.isEmpty()) {
                     Log.d(TAG, "onClick: no option chosen");
-                    Toast.makeText(mContext, "Please select a reason for reporting this post.", Toast.LENGTH_SHORT);
+                    Toast.makeText(mContext, "Please select a reason for reporting this post.", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.d(TAG, "onClick: sending report to gmail");
                     String fromEmail = "hashpotatoes98@gmail.com";
                     String fromPassword = "jannad1998";
                     String toEmail = "hashpotatoes98@gmail.com";
-                    String emailSubject = "Report Post";
-                    String emailBody = "From UserID: " + FirebaseAuth.getInstance().getCurrentUser().getUid()
-                            + "\nReason: " + chosenOption + "\nPostID" + mPost.getPost_id();
+                    String emailSubject = "Report Post: " + mPost.getPost_id();
+                    String emailBody = "Reported by UserID: " + FirebaseAuth.getInstance().getCurrentUser().getUid()
+                            + "\nReason: " + chosenOption + "\nPostID: " + mPost.getPost_id() + " " + mPost.getDiscussion();
                     new SendMailTask(getActivity()).execute(fromEmail, fromPassword, toEmail
                             ,emailSubject, emailBody);
+                    Toast.makeText(mContext, "Report sent. Please wait while we review the report.", Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
                 }
             }
         });

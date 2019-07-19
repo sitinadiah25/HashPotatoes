@@ -1,5 +1,6 @@
 package com.example.hashpotatoesv20.Profile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +10,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Main.CreatePostActivity;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
@@ -119,6 +124,7 @@ public class EditProfileFragment extends Fragment implements
     private EditText mDisplayName, mUsername, mDescription, mWebsite, mEmail, mYearOfStudy, mMajor;
     private TextView changePhoto;
     private CircleImageView mProfilePhoto;
+    private RelativeLayout mParent;
 
     //variables
     private UserSettings mUserSettings;
@@ -137,6 +143,7 @@ public class EditProfileFragment extends Fragment implements
         mEmail = (EditText) view.findViewById(R.id.email);
         changePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
         mYearOfStudy = (EditText) view.findViewById(R.id.year);
+        mParent = (RelativeLayout) view.findViewById(R.id.parent_container);
         mMajor = (EditText) view.findViewById(R.id.major);
         mFirebaseMethods = new FirebaseMethods(getActivity());
         mContext = getActivity();

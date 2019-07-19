@@ -1,5 +1,6 @@
 package com.example.hashpotatoesv20.Profile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +11,13 @@ import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +52,7 @@ public class CreateTagActivity extends AppCompatActivity {
     private EditText mTagName, mTagDescription;
     private SwitchCompat mPrivacy;
     private TextView tvPrivacy;
-    private UserSettings userSettings;
+    private RelativeLayout mParent;
 
     private Context mContext = CreateTagActivity.this;
 
@@ -69,9 +73,11 @@ public class CreateTagActivity extends AppCompatActivity {
         mTagDescription = (EditText) findViewById(R.id.tagDescription);
         tvPrivacy = (TextView) findViewById(R.id.tvPrivacy);
         mPrivacy = (SwitchCompat) findViewById(R.id.privacy);
+        mParent = (RelativeLayout) findViewById(R.id.parent_container);
         mFirebaseMethods = new FirebaseMethods(CreateTagActivity.this);
 
         setupFirebaseAuth();
+        setupUI(mParent);
 
         mPrivacy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +151,37 @@ public class CreateTagActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    //hide keyboard if user touches view
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(CreateTagActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+
+    //hide keyboard
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     /*

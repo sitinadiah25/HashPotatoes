@@ -1,5 +1,6 @@
 package com.example.hashpotatoesv20.Main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,15 +11,27 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
@@ -31,8 +44,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class CreatePostActivity extends AppCompatActivity {
@@ -48,8 +66,14 @@ public class CreatePostActivity extends AppCompatActivity {
     //widgets
     private EditText mDiscussion, mTag;
     private SwitchCompat mAnonymity;
-    private TextView tvAnon;
-    private UserSettings userSettings;
+    private TextView tvAnon, chosenTag;
+    private ListView listView;
+    private RelativeLayout mParent;
+
+    //vars
+    private List<String> mTagList;
+    private String taglist;
+    private String tags;
 
     //constants
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
@@ -75,6 +99,12 @@ public class CreatePostActivity extends AppCompatActivity {
         mAnonymity = (SwitchCompat) findViewById(R.id.anonymity);
         mTag = (EditText) findViewById(R.id.searchTag);
         tvAnon = (TextView) findViewById(R.id.tvAnon);
+        listView = (ListView) findViewById(R.id.listView);
+        chosenTag = (TextView) findViewById(R.id.chosenTag);
+        mParent = (RelativeLayout) findViewById(R.id.parent_container);
+        chosenTag.setText("");
+        taglist = "";
+        tags = "";
         tvAnon.setText("Public");
         mFirebaseMethods = new FirebaseMethods(CreatePostActivity.this);
 
@@ -115,29 +145,18 @@ public class CreatePostActivity extends AppCompatActivity {
                 //upload post to firebase
                 Toast.makeText(CreatePostActivity.this, "Attempting to upload post", Toast.LENGTH_SHORT).show();
 
-                //tokenizing tag string to get the different tags
-                String fullTag = mTag.getText().toString();
-                String delim = " ";
-                StringTokenizer st = new StringTokenizer(fullTag, delim);
-                String tag = "";
-                if (st.countTokens() == 1) {
-                    tag = tag + st.nextElement();
-                }
-                else {
-                    while (st.hasMoreElements()) {
-                        tag = tag + st.nextElement() + " ";
-                    }
-                }
-
                 String discussion = mDiscussion.getText().toString();
                 String sAnonymity = tvAnon.getText().toString();
 
-                mFirebaseMethods.uploadPost(discussion, tag, sAnonymity);
+                mFirebaseMethods.uploadPost(discussion, tags, sAnonymity);
 
                 Intent intent = new Intent(mContext, MainActivity.class);
                 mContext.startActivity(intent);
             }
         });
+
+        setupUI(mParent);
+        tagListener();
 
         /*
         if (checkPermissionsArray(Permissions.PERMISSIONS)) {
@@ -148,10 +167,155 @@ public class CreatePostActivity extends AppCompatActivity {
         }*/
     }
 
+    private void tagListener() {
+        mTagList = new ArrayList<>();
+        mTag.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = mTag.getText().toString();
+                searchForMatch(text);
+            }
+        });
+    }
+
+    private void searchForMatch(String keyword) {
+        Log.d(TAG, "searchForMatch: searching for: " + keyword);
+        mTagList.clear();
+        updateTagList();
+
+        if (keyword.isEmpty()) {
+
+        }
+        else {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            Query query = reference.child(getString(R.string.dbname_tags))
+                    .orderByChild(getString(R.string.field_tag_name))
+                    .startAt(keyword)
+                    .endAt(keyword+"\uf8ff");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                        Log.d(TAG, "onDataChange: ds value: " + singleSnapshot.getValue());
+                        Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                        Log.d(TAG, "onDataChange: tag name: " + objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        mTagList.add(objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        //update the tags list view
+                        updateTagList();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    private void updateTagList() {
+        Log.d(TAG, "updateTagList: updating listview");
+        listView.setVisibility(View.VISIBLE);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, mTagList);
+        listView.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemClick: user clicked on tag: " + mTagList.get(position));
+                String text = "#" + mTagList.get(position) + " ";
+                tags = tags + mTagList.get(position) + " ";
+                taglist = taglist + text;
+                Log.d(TAG, "onItemClick: text: " + taglist);
+                mTag.setText("");
+                chosenTag.setText(taglist);
+                chosenTag.setVisibility(View.VISIBLE);
+                mTagList.clear();
+                clearTagList();
+            }
+        });
+    }
+
+    private void clearTagList() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, mTagList);
+        listView.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(listView);
+    }
+
+    private static void setListViewHeightBasedOnChildren (ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) return;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0) view.setLayoutParams(new
+                    ViewGroup.LayoutParams(desiredWidth,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+
+        int width = listAdapter.getCount() - 1;
+
+        params.height = totalHeight + (listView.getDividerHeight() * (width));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
     private void setupPost(UserSettings userSettings) {
         UserAccountSettings settings = userSettings.getSettings();
 
         String username = settings.getUsername();
+    }
+
+    //hide keyboard if user touches view
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(CreatePostActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+
+    //hide keyboard
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     private String getUsername(UserSettings userSettings) {

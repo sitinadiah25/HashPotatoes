@@ -3,21 +3,22 @@ package com.example.hashpotatoesv20.Utils;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+
 public class Gmail {
 
     final String emailPort = "587";// gmail's smtp port
-    final String smtpAuth = "true";
+    final String smtpAuth = "false";
     final String starttls = "true";
     final String emailHost = "smtp.gmail.com";
 
@@ -53,8 +54,15 @@ public class Gmail {
     public MimeMessage createEmailMessage() throws AddressException,
             MessagingException, UnsupportedEncodingException {
 
-        mailSession = Session.getDefaultInstance(emailProperties, null);
+        //mailSession = Session.getDefaultInstance(emailProperties, null);
+        mailSession = Session.getInstance(emailProperties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, fromPassword);
+            }
+        });
         emailMessage = new MimeMessage(mailSession);
+
+        Log.d("Gmail", "createEmailMessage: from email to email: " + fromEmail + " " + toEmail);
 
         emailMessage.setFrom(new InternetAddress(fromEmail, fromEmail));
         emailMessage.setRecipient(Message.RecipientType.TO,
@@ -68,10 +76,9 @@ public class Gmail {
     }
 
     public void sendEmail() throws AddressException, MessagingException {
-
-        Transport transport = mailSession.getTransport("smtp");
+        Transport transport = mailSession.getTransport("smtps");
         transport.connect(emailHost, fromEmail, fromPassword);
-        Log.i("GMail","allrecipients: "+emailMessage.getAllRecipients());
+        Log.i("GMail","allrecipients: "+ emailMessage.getAllRecipients());
         transport.sendMessage(emailMessage, emailMessage.getAllRecipients());
         transport.close();
         Log.i("GMail", "Email sent successfully.");

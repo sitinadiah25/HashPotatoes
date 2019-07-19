@@ -5,163 +5,199 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/lightBack">
 
-    <!-- top tool bar -->
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@id/relLayout1">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/layout_top_taps"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="25sp"
-            style="@style/RibeyeMarrowRegular"
-            android:text="@string/app_name"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:id="@+id/top_Potatoes"
-            />
-
-    </RelativeLayout>
-
-    <!-- middle section -->
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/relLayout2"
-        android:layout_below="@id/relLayout1">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="New Post"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:textColor="@color/Black"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:id="@+id/tvNewPost"/>
-
-    </RelativeLayout>
-
-    <!-- post discussion section
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/relLayout2"
-        android:id="@+id/relLayout3"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp">
-
-        <EditText
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="top|left"
-            android:hint="What do you want to discuss?"
-            android:textSize="15sp"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:background="@color/lightBlue"
-            android:inputType="textCapSentences|textImeMultiLine"
-            android:id="@+id/discussion"
-            android:scrollHorizontally="false"/>
+            android:id="@+id/parent_container">
 
-    </RelativeLayout> -->
+            <!-- top tool bar -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@id/relLayout1">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/relLayout2"
-        android:id="@+id/relLayout3"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp"
-        android:orientation="vertical">
+                <include layout="@layout/layout_top_taps"/>
 
-        <EditText
-            android:layout_width ="match_parent"
-            android:layout_height ="wrap_content"
-            android:layout_weight ="1"
-            android:gravity="top|left"
-            android:hint="What do you want to discuss?"
-            android:textSize="15sp"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:background="@color/lightBlue"
-            android:inputType="textCapSentences|textMultiLine"
-            android:id="@+id/discussion"
-            android:scrollHorizontally="false"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="25sp"
+                    style="@style/RibeyeMarrowRegular"
+                    android:text="@string/app_name"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:id="@+id/top_Potatoes"
+                    />
 
-    </LinearLayout>
+            </RelativeLayout>
 
-    <!-- search tag section -->
+            <!-- middle section -->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/relLayout3"
-        android:id="@+id/relLayout4"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/relLayout2"
+                android:layout_below="@id/relLayout1">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|left"
-            android:paddingLeft="10dp"
-            android:hint="Search Tag"
-            android:textSize="15sp"
-            android:background="@color/lightBlue"
-            android:inputType="textCapSentences|textMultiLine"
-            android:id="@+id/searchTag"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="New Post"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:textColor="@color/Black"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:id="@+id/tvNewPost"/>
 
-    </RelativeLayout>
+            </RelativeLayout>
 
-    <!-- anonymity section -->
+            <!-- post discussion section
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/relLayout4"
-        android:id="@+id/relLayout5"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/relLayout2"
+                android:id="@+id/relLayout3"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|left"
-            android:paddingLeft="10dp"
-            android:textStyle="normal"
-            android:textColor="@color/Black"
-            android:textSize="15sp"
-            android:background="@color/lightBlue"
-            android:inputType="text"
-            android:id="@+id/tvAnon"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="top|left"
+                    android:hint="What do you want to discuss?"
+                    android:textSize="15sp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:background="@color/lightBlue"
+                    android:inputType="textCapSentences|textImeMultiLine"
+                    android:id="@+id/discussion"
+                    android:scrollHorizontally="false"/>
 
-        <android.support.v7.widget.SwitchCompat
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/anonymity"/>
+            </RelativeLayout> -->
 
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/relLayout2"
+                android:id="@+id/relLayout3"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp"
+                android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/relLayout5">
+                <EditText
+                    android:layout_width ="match_parent"
+                    android:layout_height ="wrap_content"
+                    android:layout_weight ="1"
+                    android:gravity="top|left"
+                    android:hint="What do you want to discuss?"
+                    android:textSize="15sp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:background="@color/lightBlue"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:id="@+id/discussion"
+                    android:scrollHorizontally="false"/>
 
-        <include layout="@layout/layout_bottom_share_bar"/>
+            </LinearLayout>
 
-    </RelativeLayout>
+            <!-- search tag section -->
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relLayout3"
+                android:id="@+id/relLayout4"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:hint="Search Tag"
+                    android:textSize="15sp"
+                    android:background="@color/lightBlue"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:id="@+id/searchTag"/>
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/searchTag"
+                    android:id="@+id/listView"
+                    android:visibility="gone">
+
+                </ListView>
+
+            </RelativeLayout>
+
+            <!-- anonymity section -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relLayout4"
+                android:id="@+id/relLayout5"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="normal"
+                    android:textColor="@color/Black"
+                    android:textSize="15sp"
+                    android:background="@color/lightBlue"
+                    android:inputType="text"
+                    android:id="@+id/tvAnon"/>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/anonymity"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvAnon"
+                    android:text="#chosen_tag"
+                    android:textColor="@color/linkBlue"
+                    android:layout_marginTop="5dp"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:id="@+id/chosenTag"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/relLayout5">
+
+                <include layout="@layout/layout_bottom_share_bar" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
