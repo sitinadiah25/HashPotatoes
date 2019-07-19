@@ -56,6 +56,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -327,6 +329,13 @@ public class ProfileFragment extends Fragment {
 
                                 int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
                                 //SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_edit_listview, from, to);
+
+                                Collections.sort(posts, new Comparator<Post>() {
+                                    @Override
+                                    public int compare(Post o1, Post o2) {
+                                        return o2.getDate_created().compareTo(o1.getDate_created());
+                                    }
+                                });
 
                                 ProfileListAdapter adapter = new ProfileListAdapter(mContext, R.layout.layout_post_edit_listview, posts, mOnAdapterItemClickListener);
 

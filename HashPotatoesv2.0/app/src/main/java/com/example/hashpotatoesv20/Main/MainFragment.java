@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,9 @@ public class MainFragment extends Fragment{
     onListPostSelectedListener mOnListPostSelectedListener;
 
 
+    //widgets
+    private SwipeRefreshLayout pullToRefresh;
+
     //vars
     private ArrayList<Post> mPosts;
     private ArrayList<Post> mPaginatedPosts;
@@ -66,10 +70,21 @@ public class MainFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container,false);
         mListView = (ListView) view.findViewById(R.id.listView);
+        pullToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.pullToRefresh);
         mFollowing = new ArrayList<>();
         mPosts = new ArrayList<>();
 
+        pullToRefresh.setDistanceToTriggerSync(20);
+
         getFollowing();
+
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getPosts();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         return view;
     }
