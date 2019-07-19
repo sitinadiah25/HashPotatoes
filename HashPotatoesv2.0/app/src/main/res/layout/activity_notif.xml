@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main.MainActivity">
+    android:id="@+id/container">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,12 +34,14 @@
 
         <!-- middle section -->
         <RelativeLayout
+            android:id="@+id/container2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relLayout2"
-            android:layout_below="@id/relLayout1">
+            android:layout_height="match_parent"
+            android:background="@color/lightBack"
+            android:layout_below="@id/relLayout1"
+            android:layout_marginBottom="50dp">
 
-            <include layout="@layout/layout_centre_viewpager"/>
+            <include layout="@layout/fragment_notif"/>
 
         </RelativeLayout>
 

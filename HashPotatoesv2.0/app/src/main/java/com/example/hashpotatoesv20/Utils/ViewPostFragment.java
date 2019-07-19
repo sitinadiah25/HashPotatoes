@@ -112,6 +112,8 @@ public class ViewPostFragment extends Fragment {
     private ArrayList<Comment> mComments;
     private Context mContext;
     private User mCurrentUser;
+    private String mNotifString="";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -386,6 +388,13 @@ public class ViewPostFragment extends Fragment {
         }
         mHeart.toggleLike();
         getLikesString();
+
+        //notify post owner
+        if(!mCurrentUser.equals(FirebaseAuth.getInstance().getCurrentUser().toString())){
+            mNotifString = mCurrentUser.getUsername() + " liked your post.";
+
+            mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(),mNotifString,mPost.getPost_id(),"",mCurrentUser.getUser_id());
+        }
     }
     private void getPostDetails(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -693,6 +702,14 @@ public class ViewPostFragment extends Fragment {
                 .child(getString(R.string.field_comments))
                 .child(commentID)
                 .setValue(comment);
+
+        //notify post owner
+        //if(!mCurrentUser.toString().equals(FirebaseAuth.getInstance().getCurrentUser().toString())){
+
+        mNotifString = mCurrentUser.getUsername() + " commented on your post: " + comment.getComment();
+
+        mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(),mNotifString,mPost.getPost_id(),"",mCurrentUser.getUser_id());
+        //
     }
 
     private String getCommmentUserDetails(final String uID){

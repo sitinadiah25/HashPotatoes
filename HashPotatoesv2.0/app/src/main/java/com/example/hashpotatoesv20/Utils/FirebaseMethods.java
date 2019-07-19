@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.Notification;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
@@ -559,5 +560,36 @@ public class FirebaseMethods {
         }
         return new UserSettings(user, settings);
     }
+
+    /**
+     *
+     * Add new notif to database
+     *
+     * @param uid
+     * @param notifstring
+     * @param postid
+     * @param tag
+     * @param user_id
+     */
+    public void addNotificationToDatabase(String uid,String notifstring, String postid, String tag, String user_id){
+        Log.d(TAG, "addNotificationtoDatabase: adding notification to database");
+
+        final String newnotifkey = myRef.child(mContext.getString(R.string.dbname_user_notif)).push().getKey();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        final Notification notification = new Notification();
+
+        notification.setMessage(notifstring);
+        notification.setPost_id(postid);
+        notification.setTag(tag);
+        notification.setViewer_uid(user_id);
+        notification.setDate_created(getTimestamp());
+
+        myRef.child(mContext.getString(R.string.dbname_user_notif))
+                .child(uid)
+                .child(newnotifkey)
+                .setValue(notification);
+    }
+
 
 }

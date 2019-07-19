@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
-import com.example.hashpotatoesv20.Alert.AlertActivity;
 import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Main.MainActivity;
+import com.example.hashpotatoesv20.Notif.NotifActivity;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.example.hashpotatoesv20.R;
@@ -44,7 +44,7 @@ public class BottomNavigationViewHelper {
                         break;
 
                     case R.id.ic_alert:
-                        Intent intent3 = new Intent(context, AlertActivity.class);
+                        Intent intent3 = new Intent(context, NotifActivity.class);
                         context.startActivity(intent3);
                         callingActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         break;
