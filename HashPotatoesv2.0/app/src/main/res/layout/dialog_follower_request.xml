@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@color/lightBack">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do you want to allow this user to follow your tag?"
+        android:textAlignment="center"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        android:textColor="@color/Black"
+        android:id="@+id/dialogTitle"
+        android:layout_gravity="center"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/Black"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="5dp"
+            android:text="Allow"
+            android:id="@+id/dialogAllow"
+            android:background="@color/midBlue"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/Black"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            android:text="Ignore"
+            android:id="@+id/dialogIgnore"
+            android:background="@color/midBlue"/>
+
+
+    </RelativeLayout>
+
+</LinearLayout>

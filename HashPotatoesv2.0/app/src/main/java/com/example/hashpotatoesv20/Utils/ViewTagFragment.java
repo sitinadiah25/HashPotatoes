@@ -82,7 +82,8 @@ public class ViewTagFragment extends Fragment {
     private Tag mTag;
     private Context mContext;
     private int mPostsCount = 0;
-    private User user;
+    private User mCurrentUser;
+    private String mNotifString;
 
     @Nullable
     @Override
@@ -126,6 +127,7 @@ public class ViewTagFragment extends Fragment {
 
         isFollowing();
         getPostsCount();
+        getCurrentUser();
 
         mBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,44 +140,54 @@ public class ViewTagFragment extends Fragment {
         mFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: now following: " + mTag.getTag_name());
+                if (mTag.getPrivacy().equals("Private")) {
+                    //Send notification to tag owner
+                    mNotifString = mCurrentUser.getUsername() + "has requested to follow your tag: " + mTag.getTag_name();
+                    mFirebaseMethods.addNotificationToDatabase(mTag.getOwner_id(), mNotifString, "", mTag.getTag_id(), mCurrentUser.getUser_id());
+                    //Inform user that a request has been sent
+                    Toast.makeText(mContext,"Your request to follow this tag has been sent to the owner.", Toast.LENGTH_SHORT).show();
 
-                FirebaseDatabase.getInstance().getReference()
-                        .child(mContext.getString(R.string.dbname_tag_followers))
-                        .child(mTag.getTag_id())
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .setValue(FirebaseAuth.getInstance().getCurrentUser());
+                } else {
+                    //if public
+                    Log.d(TAG, "onClick: now following: " + mTag.getTag_name());
 
-                FirebaseDatabase.getInstance().getReference()
-                        .child(mContext.getString(R.string.dbname_user_following))
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(mTag.getTag_id())
-                        .setValue(mTag);
-                setFollowing();
+                    FirebaseDatabase.getInstance().getReference()
+                            .child(mContext.getString(R.string.dbname_tag_followers))
+                            .child(mTag.getTag_id())
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .setValue(FirebaseAuth.getInstance().getCurrentUser());
 
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                Query query = reference.child(mContext.getString(R.string.dbname_tags))
-                        .child(mTag.getTag_id());
-                Log.d(TAG, "setWidgets: checking privacy");
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.getValue().equals("Private")) {
-                                //send notification to owner
+                    FirebaseDatabase.getInstance().getReference()
+                            .child(mContext.getString(R.string.dbname_user_following))
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(mTag.getTag_id())
+                            .setValue(mTag);
+                    setFollowing();
 
-                                mLocked.setVisibility(View.GONE);
-                                tvLocked.setVisibility(View.GONE);
-                                listView.setVisibility(View.VISIBLE);
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                    Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                            .child(mTag.getTag_id());
+                    Log.d(TAG, "setWidgets: checking privacy");
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                if (ds.getValue().equals("Private")) {
+                                    //send notification to owner
+
+                                    mLocked.setVisibility(View.GONE);
+                                    tvLocked.setVisibility(View.GONE);
+                                    listView.setVisibility(View.VISIBLE);
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
         });
 
@@ -233,6 +245,27 @@ public class ViewTagFragment extends Fragment {
             Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
         }
         super.onAttach(context);
+    }
+
+    private void getCurrentUser(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users))
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for ( DataSnapshot singleSnapshot :  dataSnapshot.getChildren()){
+                    mCurrentUser = singleSnapshot.getValue(User.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: query cancelled.");
+            }
+        });
     }
 
     private void setWidgets(final Tag tag) {

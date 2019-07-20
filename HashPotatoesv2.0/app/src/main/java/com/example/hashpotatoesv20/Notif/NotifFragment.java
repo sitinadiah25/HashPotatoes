@@ -44,7 +44,6 @@ public class NotifFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         try {
-            //mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
             mOnListNotifSelectedListener = (onListNotifSelectedListener) getActivity();
         }
         catch (ClassCastException e) {
