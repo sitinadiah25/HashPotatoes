@@ -94,7 +94,7 @@ public class MainFragment extends Fragment{
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getPosts();
+                getFollowing();
                 pullToRefresh.setRefreshing(false);
             }
         });

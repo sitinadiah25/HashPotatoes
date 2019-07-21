@@ -66,7 +66,6 @@ public class NotifFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notif, container, false);
         mListView = (ListView) view.findViewById(R.id.listView);
-        mListView = (ListView) view.findViewById(R.id.listView);
         mNotification = new ArrayList<>();
         mContext = getActivity();
 
@@ -163,7 +162,7 @@ public class NotifFragment extends Fragment{
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 25;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

@@ -571,7 +571,7 @@ public class FirebaseMethods {
      * @param tag
      * @param user_id
      */
-    public void addNotificationToDatabase(String uid,String notifstring, String postid, String tag, String user_id){
+    public void addNotificationToDatabase(String uid, String notifstring, String postid, String tag, String user_id){
         Log.d(TAG, "addNotificationtoDatabase: adding notification to database");
 
         final String newnotifkey = myRef.child(mContext.getString(R.string.dbname_user_notif)).push().getKey();

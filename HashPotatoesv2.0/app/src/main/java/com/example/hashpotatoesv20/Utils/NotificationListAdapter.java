@@ -3,6 +3,9 @@ package com.example.hashpotatoesv20.Utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 public class NotificationListAdapter extends ArrayAdapter<Notification> {
@@ -27,6 +31,7 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
 
     private LayoutInflater mInflater;
     private int layoutResource;
+    private int usernameLen;
     private Context mContext;
 
     public NotificationListAdapter(@NonNull Context context, int resource, @NonNull List<Notification> objects) {
@@ -37,7 +42,7 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
     }
 
     private static class ViewHolder {
-        TextView Message, Timestamp,Accept,Decline;
+        TextView Message, Timestamp, Accept, Decline;
     }
 
     @NonNull
@@ -60,13 +65,19 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
             holder = (NotificationListAdapter.ViewHolder) convertView.getTag();
         }
 
-        holder.Message.setText(getItem(position).getMessage());
+        final SpannableStringBuilder sb = new SpannableStringBuilder(getItem(position).getMessage());
+        final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+        StringTokenizer str = new StringTokenizer (getItem(position).getMessage());
+        usernameLen = str.nextToken().length();
+        sb.setSpan(bss, 0, usernameLen, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+        holder.Message.setText(sb);
         String timestampDifference = getTimestampDifference(getItem(position).getDate_created());
-        if (!timestampDifference.equals("0")) {
+//        if (!timestampDifference.equals("0")) {
             holder.Timestamp.setText(timestampDifference);
-        } else {
-            holder.Timestamp.setText("Today");
-        }
+//        } else {
+//            holder.Timestamp.setText("Today");
+//        }
         
         return convertView;
     }

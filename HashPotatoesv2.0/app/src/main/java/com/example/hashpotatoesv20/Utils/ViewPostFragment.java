@@ -132,6 +132,7 @@ public class ViewPostFragment extends Fragment {
         mCommentText = (EditText) view.findViewById(R.id.add_comment);
         mCheckmark = (ImageView) view.findViewById(R.id.checkmark);
         mListView = (ListView) view.findViewById(R.id.comment_list);
+        mFirebaseMethods = new FirebaseMethods(getActivity());
         mContext = getActivity();
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
@@ -390,9 +391,9 @@ public class ViewPostFragment extends Fragment {
         getLikesString();
 
         //notify post owner
-        if(!mCurrentUser.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())){
+        if(!mPost.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
             mNotifString = mCurrentUser.getUsername() + " liked your post.";
-            mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(),mNotifString,mPost.getPost_id(),"",mCurrentUser.getUser_id());
+            mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(), mNotifString, mPost.getPost_id()," ", mCurrentUser.getUser_id());
         }
     }
     private void getPostDetails(){
@@ -703,9 +704,9 @@ public class ViewPostFragment extends Fragment {
                 .setValue(comment);
 
         //notify post owner
-        if(!mCurrentUser.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())) {
-            mNotifString = mCurrentUser.getUsername() + " commented on your post: " + comment.getComment();
-            mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(), mNotifString, mPost.getPost_id(), "", mCurrentUser.getUser_id());
+        if(!mPost.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())) {
+            mNotifString = mCurrentUser.getUsername() + " commented on your post: " + comment.getComment() + " ";
+            mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(), mNotifString, mPost.getPost_id(), "", mPost.getUser_id());
         }
         //
     }

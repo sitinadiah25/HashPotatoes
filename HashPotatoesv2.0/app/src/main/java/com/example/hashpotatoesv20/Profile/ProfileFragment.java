@@ -384,7 +384,7 @@ public class ProfileFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 25;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
