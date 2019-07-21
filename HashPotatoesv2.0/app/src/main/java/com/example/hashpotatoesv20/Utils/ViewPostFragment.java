@@ -705,7 +705,7 @@ public class ViewPostFragment extends Fragment {
 
         //notify post owner
         if(!mPost.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())) {
-            mNotifString = mCurrentUser.getUsername() + " commented on your post: " + comment.getComment() + " ";
+            mNotifString = mCurrentUser.getUsername() + " commented on your post: \"" + comment.getComment() + "\"";
             mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(), mNotifString, mPost.getPost_id(), "", mPost.getUser_id());
         }
         //
