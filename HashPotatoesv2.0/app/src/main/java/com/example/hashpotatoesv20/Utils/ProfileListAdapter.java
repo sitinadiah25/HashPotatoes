@@ -73,10 +73,10 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
             convertView = mInflater.inflate(layoutResource, parent, false);
             holder = new ViewHolder();
 
-            holder.Discussion = (TextView) convertView.findViewById(R.id.edit_post_discussion);
-            holder.Tag = (TextView) convertView.findViewById(R.id.edit_post_tag);
-            holder.Username = (TextView) convertView.findViewById(R.id.edit_post_username);
-            holder.timestamp = (TextView) convertView.findViewById(R.id.edit_post_timestamp);
+            holder.Discussion = (TextView) convertView.findViewById(R.id.post_discussion);
+            holder.Tag = (TextView) convertView.findViewById(R.id.post_tag);
+            holder.Username = (TextView) convertView.findViewById(R.id.username);
+            holder.timestamp = (TextView) convertView.findViewById(R.id.timestamp);
             holder.like = (ImageView) convertView.findViewById(R.id.btn_heart_white);
             holder.edit = (ImageView) convertView.findViewById(R.id.btn_edit);
 
@@ -129,13 +129,13 @@ public class ProfileListAdapter extends ArrayAdapter<Post> {
         }
         holder.Tag.setText(newTag);
 
-        holder.edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick:Test");
-                mOnAdapterItemClickListener.onClickImage(getItem(position), position);
-            }
-        });
+//        holder.edit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onClick:Test");
+//                mOnAdapterItemClickListener.onClickImage(getItem(position), position);
+//            }
+//        });
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,14 +16,49 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-                <ListView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/listView"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
-                </ListView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/welcomeText"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Welcome to HashPotatoes"
+                android:textAlignment="center"
+                android:textColor="@color/Black"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/next1"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:text="When you follow tags, you'll see the discussions under them."
+                android:layout_below="@id/welcomeText"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/next1"
+                android:id="@+id/listPopular"
+                android:paddingTop="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+            </ListView>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:id="@+id/listView"
+                android:paddingTop="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+            </ListView>
 
         </RelativeLayout>
 

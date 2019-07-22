@@ -1,6 +1,7 @@
 package com.example.hashpotatoesv20.Main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,14 +15,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
+import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
+import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +36,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,23 +76,32 @@ public class MainFragment extends Fragment{
 
     //widgets
     private SwipeRefreshLayout pullToRefresh;
+    private ListView mListView, popListView;
+    private TextView welcome1, welcome2;
 
     //vars
     private ArrayList<Post> mPosts;
     private ArrayList<Post> mPaginatedPosts;
+    private ArrayList<Tag> mTags;
     private ArrayList<String> mFollowing;
-    private ListView mListView;
     private MainfeedListAdapter mAdapter;
+    private TagListAdapter tagListAdapter;
     private int mResults;
+    private Context mContext;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container,false);
         mListView = (ListView) view.findViewById(R.id.listView);
+        popListView = (ListView) view.findViewById(R.id.listPopular);
+        welcome1 = (TextView) view.findViewById(R.id.welcomeText);
+        welcome2 = (TextView) view.findViewById(R.id.next1);
         pullToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.pullToRefresh);
+        mTags = new ArrayList<>();
         mFollowing = new ArrayList<>();
         mPosts = new ArrayList<>();
+        mContext = getActivity();
 
         pullToRefresh.setDistanceToTriggerSync(20);
 
@@ -112,13 +128,25 @@ public class MainFragment extends Fragment{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Log.d(TAG, "onDataChange: found tag: " +
-                            ds.child(getString(R.string.field_tag_id)).getValue());
+                            ds.child(mContext.getString(R.string.field_tag_id)).getValue());
 
                     mFollowing.add(ds.child(getString(R.string.field_tag_id)).getValue().toString());
                 }
                 mFollowing.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                //get posts
-                getPosts();
+                if (mFollowing.isEmpty()) {
+                    welcome1.setVisibility(View.VISIBLE);
+                    welcome2.setVisibility(View.VISIBLE);
+                    popListView.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                    getPopularTags();
+                }
+                else {
+                    welcome1.setVisibility(View.GONE);
+                    welcome2.setVisibility(View.GONE);
+                    popListView.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                    getPosts();
+                }
             }
 
             @Override
@@ -126,6 +154,52 @@ public class MainFragment extends Fragment{
 
             }
         });
+    }
+
+    private void getPopularTags() {
+        Log.d(TAG, "getPopularTags: getting top 5 popular tags");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        final ArrayList<String> tagids = new ArrayList<>();
+        tagids.add("-LkNiOJLJ2YB2cfn_d9L");
+        tagids.add("-LkNid9KskYhsKtlJGct");
+        tagids.add("-LkNiqbrIwZqdDZSeL3i");
+        tagids.add("-LkNj6lnFSS-M6VtsQ9R");
+        tagids.add("-LihuHiPfZedJNWctCSM");
+        for (int i = 0; i < tagids.size(); i++) {
+            final String currID = tagids.get(i);
+            Query query = reference.child(mContext.getString(R.string.dbname_tags))
+                    .orderByChild(mContext.getString(R.string.field_tag_id))
+                    .equalTo(currID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: key: " + ds.getKey() + " curr: " + currID);
+                        mTags.add(ds.getValue(Tag.class));
+                    }
+                    tagListAdapter = new TagListAdapter(mContext, R.layout.layout_tag_listitem, mTags);
+                    popListView.setAdapter(tagListAdapter);
+                    setListViewHeightBasedOnChildren(popListView);
+                    popListView.setOnItemClickListener((new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Log.d(TAG, "onItemClick: selected tag: " +  mTags.get(position).toString());
+
+                            //navigate to tag profile activity
+                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                            intent.putExtra(getString(R.string.calling_activity),getString(R.string.main_activity));
+                            intent.putExtra(getString(R.string.intent_tag), mTags.get(position));
+                            startActivity(intent);
+                        }
+                    }));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     private void getPosts() {

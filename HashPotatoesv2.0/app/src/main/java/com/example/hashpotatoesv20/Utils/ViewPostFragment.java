@@ -30,6 +30,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
@@ -94,7 +95,7 @@ public class ViewPostFragment extends Fragment {
     //widgets
     private BottomNavigationViewEx bottomNavigationView;
     private TextView mUsername, mDiscussion, mTimestamp, mLikedBy, mTag;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark, mEdit;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark, mEdit, mReport;
     private EditText mCommentText;
     private ListView mListView;
 
@@ -119,10 +120,9 @@ public class ViewPostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_post, container, false);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
-        mEllipses = (ImageView) view.findViewById(R.id.ivEllipses);
+        //mEllipses = (ImageView) view.findViewById(R.id.ivEllipses);
         mHeartWhite = (ImageView) view.findViewById(R.id.btn_heart_white);
         mHeartRed = (ImageView) view.findViewById(R.id.btn_heart_red);
-        mEdit = (ImageView) view.findViewById(R.id.btn_edit);
         mProfileImage = (ImageView) view.findViewById(R.id.profilePhoto);
         mUsername = (TextView) view.findViewById(R.id.username);
         mDiscussion = (TextView) view.findViewById(R.id.post_discussion);
@@ -133,6 +133,8 @@ public class ViewPostFragment extends Fragment {
         mCheckmark = (ImageView) view.findViewById(R.id.checkmark);
         mListView = (ListView) view.findViewById(R.id.comment_list);
         mFirebaseMethods = new FirebaseMethods(getActivity());
+        mEdit = (ImageView) view.findViewById(R.id.btn_edit);
+        mReport = (ImageView) view.findViewById(R.id.btn_report);
         mContext = getActivity();
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
@@ -164,6 +166,11 @@ public class ViewPostFragment extends Fragment {
 
         if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(mPost.getUser_id())){
             mEdit.setVisibility(View.VISIBLE);
+            mReport.setVisibility(View.GONE);
+        }
+        else {
+            mEdit.setVisibility(View.GONE);
+            mReport.setVisibility(View.VISIBLE);
         }
         setupFirebaseAuth();
         setupBottomNavigationView();
@@ -487,7 +494,7 @@ public class ViewPostFragment extends Fragment {
                 transaction.commit();
             }
         });
-        mEllipses.setOnClickListener(new View.OnClickListener() {
+        mReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to ReportPostFragment");
@@ -501,6 +508,7 @@ public class ViewPostFragment extends Fragment {
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack(getString(R.string.report_post_fragment));
                 transaction.commit();
+                ((MainActivity)mContext).showLayout();
             }
         });
 
@@ -704,7 +712,7 @@ public class ViewPostFragment extends Fragment {
                 .setValue(comment);
 
         //notify post owner
-        if(!mPost.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())) {
+        if(!mPost.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             mNotifString = mCurrentUser.getUsername() + " commented on your post: \"" + comment.getComment() + "\"";
             mFirebaseMethods.addNotificationToDatabase(mPost.getUser_id(), mNotifString, mPost.getPost_id(), "", mPost.getUser_id());
         }

@@ -35,6 +35,7 @@ import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.FollowingFragment;
+import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.ProfileListAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
@@ -178,8 +179,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         try {
-            //mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
-            mOnAdapterItemClickListener = (ProfileListAdapter.OnAdapterItemClickListener) getActivity();
+            mOnListPostSelectedListener = (onListPostSelectedListener) getActivity();
+            //mOnAdapterItemClickListener = (ProfileListAdapter.OnAdapterItemClickListener) getActivity();
         }
         catch (ClassCastException e) {
             Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
@@ -288,79 +289,23 @@ public class ProfileFragment extends Fragment {
                     catch (NullPointerException e) {
                         Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage() );
                     }
-                    //setup list view (change to custom adapter when made)
-                    //mPosts.setText(Integer.toString(posts.size()));
-                    final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                    for (int i = posts.size()-1; i >= 0; i--) {
-                        final HashMap<String, String> hm = new HashMap<String, String>();
 
-                        final String postTimestamp = posts.get(i).getDate_created();
-                        String timestampDiff = getTimestampDifference(postTimestamp);
-                        hm.put(mContext.getString(R.string.field_discussion), posts.get(i).getDiscussion());
+                    MainfeedListAdapter adapter = new MainfeedListAdapter(mContext, R.layout.layout_mainfeed_listitem, posts);
 
-                        String tag = posts.get(i).getTags();
-                        String[] tokens = tag.split(" ");
-                        String newTag = "";
-                        int tokenCount = tokens.length;
-                        for (int j = 0; j < tokenCount; j++) {
-                            newTag = newTag + "#" + tokens[j] + " ";
+                    listView.setAdapter(adapter);
+                    setListViewHeightBasedOnChildren(listView);
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            int actPosition = posts.size() - position - 1;
+                            Log.d(TAG, "onItemClick: position:" + actPosition);
+                            //Log.d(TAG, "onItemClick: post: " + mPaginatedPosts.get(actPosition));
+                            mOnListPostSelectedListener.onPostSelected(posts.get(position), ACTIVITY_NUM);
+                            //((MainActivity)getActivity()).showLayout();
                         }
+                    });
 
-                        hm.put(mContext.getString(R.string.field_date_created), timestampDiff);
-                        hm.put(mContext.getString(R.string.field_tags), newTag);
-                        final String anon = posts.get(i).getAnonymity();
-
-                        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
-                        Query query2 = reference2
-                                .child(mContext.getString(R.string.dbname_users_account_settings))
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        query2.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (anon.equals("Anonymous")) {
-                                    hm.put(mContext.getString(R.string.field_username), "Anonymous");
-                                }
-                                else {
-                                    hm.put(mContext.getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
-                                }
-                                aList.add(hm);
-                                String[] from = {mContext.getString(R.string.field_discussion), mContext.getString(R.string.field_date_created),
-                                        mContext.getString(R.string.field_tags), mContext.getString(R.string.field_username)};
-
-                                int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
-                                //SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_edit_listview, from, to);
-
-                                Collections.sort(posts, new Comparator<Post>() {
-                                    @Override
-                                    public int compare(Post o1, Post o2) {
-                                        return o2.getDate_created().compareTo(o1.getDate_created());
-                                    }
-                                });
-
-                                ProfileListAdapter adapter = new ProfileListAdapter(mContext, R.layout.layout_post_edit_listview, posts, mOnAdapterItemClickListener);
-
-                                listView.setAdapter(adapter);
-                                setListViewHeightBasedOnChildren(listView);
-
-                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        int actPosition = posts.size() - position - 1;
-                                        Log.d(TAG, "onItemClick: position:" + actPosition);
-                                        //mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
-                                        mOnAdapterItemClickListener.onClickImage(posts.get(actPosition),ACTIVITY_NUM);
-                                        mOnAdapterItemClickListener.onViewClicked(posts.get(actPosition), ACTIVITY_NUM);
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
                 }
 
                 @Override
