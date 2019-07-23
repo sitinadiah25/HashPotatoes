@@ -30,9 +30,9 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
 
     private Context mContext;
-    private String email, username, password;
-    private EditText mEmail, mPassword, mUsername;
-    private TextView loadingPleaseWait;
+    private String email, username, password, confPassword;
+    private EditText mEmail, mPassword, mUsername, mConfirmPassword;
+    private TextView loadingPleaseWait, mError;
     private Button btnRegister;
     private ProgressBar mProgressBar;
 
@@ -65,12 +65,20 @@ public class RegisterActivity extends AppCompatActivity {
                 email = mEmail.getText().toString();
                 password = mPassword.getText().toString();
                 username = mUsername.getText().toString();
+                confPassword = mConfirmPassword.getText().toString();
 
-                if(checkInputs(email,password,username)){
-                    mProgressBar.setVisibility((View.VISIBLE));
-                    loadingPleaseWait.setVisibility(View.VISIBLE);
+                if (password.equals(confPassword)) {
+                    if(checkInputs(email,password,username)){
+                        mProgressBar.setVisibility((View.VISIBLE));
+                        loadingPleaseWait.setVisibility(View.VISIBLE);
 
-                    firebaseMethods.registerNewEmail(email, password, username);
+                        firebaseMethods.registerNewEmail(email, password, username);
+                    }
+                }
+                else {
+                    mError.setText("Passwords are not the same.");
+                    mError.setVisibility(View.VISIBLE);
+                    //Toast.makeText(mContext, "Passwords are not the same.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -79,7 +87,9 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean checkInputs(String email, String password, String username){
         Log.d(TAG,"checkInputsL checking inputs for null values");
         if(email.equals("") || username.equals("") || password.equals("")) {
-            Toast.makeText(mContext, "All fields must be filled out", Toast.LENGTH_SHORT).show();
+            mError.setText("All fields must be filled out");
+            mError.setVisibility(View.VISIBLE);
+            //Toast.makeText(mContext, "All fields must be filled out", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -91,10 +101,12 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d(TAG, "initWidgets: Initializing widgets");
         mEmail = (EditText) findViewById(R.id.inputEmail);
         mPassword = (EditText) findViewById(R.id.inputPassword);
+        mConfirmPassword = (EditText) findViewById(R.id.inputConfirmPassword);
         mUsername = (EditText) findViewById(R.id.inputName);
         btnRegister = (Button) findViewById(R.id.btn_register);
         mProgressBar = (ProgressBar) findViewById(R.id.ProgressBar);
         loadingPleaseWait = (TextView) findViewById(R.id.loadingPleaseWait);
+        mError = (TextView) findViewById(R.id.error_msg);
         mContext = RegisterActivity.this;
         mProgressBar.setVisibility(View.GONE);
         loadingPleaseWait.setVisibility(View.GONE);

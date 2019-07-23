@@ -252,6 +252,7 @@ public class FirebaseMethods {
                             Log.d(TAG, "createUserWithEmail:success");
                             userID = mAuth.getCurrentUser().getUid();
                             Log.d(TAG,"onComplete: Authstate changed" + userID);
+                            Toast.makeText(mContext, "Please verify your email.", Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());

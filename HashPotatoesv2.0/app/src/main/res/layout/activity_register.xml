@@ -20,7 +20,17 @@
             android:textSize="20sp"
             android:textColor="@color/Black"
             android:gravity="center"
-            android:layout_marginBottom="35dp"/>
+            android:layout_marginBottom="25dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Error message"
+            android:textSize="16sp"
+            android:textColor="@color/red"
+            android:gravity="center"
+            android:id="@+id/error_msg"
+            android:visibility="gone"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -47,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:hint="Full Name"
+                android:hint="Username"
                 android:id="@+id/inputName"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -64,6 +74,21 @@
                 android:inputType="textPassword"
                 android:hint="Password"
                 android:id="@+id/inputPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="15dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Confirm Password"
+                android:id="@+id/inputConfirmPassword" />
 
         </android.support.design.widget.TextInputLayout>
 
