@@ -28,15 +28,15 @@ public class SendMailTask extends AsyncTask {
     protected Object doInBackground(Object... args) {
         try {
             Log.i("SendMailTask", "About to instantiate Gmail...");
-            publishProgress("Processing input....");
+            //publishProgress("Processing input....");
             Gmail androidEmail = new Gmail(args[0].toString(),
                     args[1].toString(), args[2].toString(), args[3].toString(),
                     args[4].toString());
-            publishProgress("Preparing Report....");
+            //publishProgress("Preparing Report....");
             androidEmail.createEmailMessage();
-            publishProgress("Sending Report....");
+            //publishProgress("Sending Report....");
             androidEmail.sendEmail();
-            publishProgress("Report Sent.");
+            //publishProgress("Report Sent.");
             Log.i("SendMailTask", "Report Sent.");
         } catch (Exception e) {
             publishProgress(e.getMessage());

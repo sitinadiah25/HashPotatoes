@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/parent_container"
     android:background="@color/lightBack">
 
     <LinearLayout
@@ -23,27 +24,34 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register a New Account"
-            android:textSize="20sp"
-            android:textColor="@color/Black"
+            android:text="Forgot your password?"
             android:gravity="center"
-            android:layout_marginBottom="25dp"/>
+            android:textColor="@color/Black"
+            android:textSize="23sp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Error message"
-            android:textSize="16sp"
-            android:textColor="@color/red"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="To reset your password,"
             android:gravity="center"
-            android:id="@+id/error_msg"
-            android:visibility="gone"/>
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="please enter your email."
+            android:gravity="center"
+            android:textSize="18sp"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="25dp">
 
             <EditText
                 android:layout_width="match_parent"
@@ -54,60 +62,15 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Username"
-                android:id="@+id/inputName"/>
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="15dp">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="Password"
-                android:id="@+id/inputPassword" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="15dp">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="Confirm Password"
-                android:id="@+id/inputConfirmPassword" />
-
-        </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:text="Register"
-            android:id="@+id/btn_register"
+            android:layout_marginBottom="20dp"
+            android:text="Reset Password"
+            android:id="@+id/btn_reset"
             android:padding="12dp"
-            android:background="@drawable/blue_rounded_button"
-            android:layout_marginTop="15dp"/>
+            android:background="@drawable/blue_rounded_button"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -134,7 +97,7 @@
         android:layout_alignBottom="@id/ProgressBar"
         android:layout_alignRight="@id/ProgressBar"
         android:layout_alignLeft="@id/ProgressBar"
-        android:gravity="center"
-        android:id="@+id/loadingPleaseWait"/>
+        android:id="@+id/pleaseWait"
+        android:gravity="center"/>
 
 </RelativeLayout>

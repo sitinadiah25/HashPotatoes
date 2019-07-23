@@ -30,6 +30,7 @@
         <activity android:name=".Profile.AccountSettingsActivity"></activity>
         <activity android:name=".Login.RegisterActivity"></activity>
         <activity android:name=".Login.LoginActivity"></activity>
+        <activity android:name=".Login.ForgotPasswordActivity"></activity>
         <activity android:name=".Main.CreatePostActivity"></activity>
         <activity android:name=".Profile.ChangeProfilePhotoActivity"/>
         <activity android:name=".Profile.CreateTagActivity"></activity>

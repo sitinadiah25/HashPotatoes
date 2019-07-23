@@ -101,15 +101,15 @@ public class ReportPostFragment extends Fragment {
                 else {
                     Log.d(TAG, "onClick: sending report to gmail");
                     String fromEmail = "hashpotatoes98@gmail.com";
-                    String fromPassword = "jannad1998";
+                    String fromPassword = "98jannad98";
                     String toEmail = "hashpotatoes98@gmail.com";
                     String emailSubject = "Report Post: " + mPost.getPost_id();
                     String emailBody = "Reported by UserID: " + FirebaseAuth.getInstance().getCurrentUser().getUid()
-                            + "\nReason: " + chosenOption + "\nPostID: " + mPost.getPost_id() + " " + mPost.getDiscussion();
+                            + "\nReason: " + chosenOption + "\nPostID: " + mPost.getPost_id() + " \nPost Content: " + mPost.getDiscussion();
                     new SendMailTask(getActivity()).execute(fromEmail, fromPassword, toEmail
                             ,emailSubject, emailBody);
-                    Toast.makeText(mContext, "Report sent. Please wait while we review the report.", Toast.LENGTH_SHORT).show();
                     getActivity().onBackPressed();
+                    Toast.makeText(mContext, "Report sent. Please wait while we review the report.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

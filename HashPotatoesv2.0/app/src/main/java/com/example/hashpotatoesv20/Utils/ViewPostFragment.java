@@ -508,7 +508,6 @@ public class ViewPostFragment extends Fragment {
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack(getString(R.string.report_post_fragment));
                 transaction.commit();
-                ((MainActivity)mContext).showLayout();
             }
         });
 

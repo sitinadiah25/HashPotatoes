@@ -285,6 +285,12 @@ public class ProfileFragment extends Fragment {
                             post.setLikes(likesList);
                             posts.add(post);
                         }
+                        Collections.sort(posts, new Comparator<Post>() {
+                            @Override
+                            public int compare(Post o1, Post o2) {
+                                return o2.getDate_created().compareTo(o1.getDate_created());
+                            }
+                        });
                     }
                     catch (NullPointerException e) {
                         Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage() );
@@ -301,7 +307,7 @@ public class ProfileFragment extends Fragment {
                             int actPosition = posts.size() - position - 1;
                             Log.d(TAG, "onItemClick: position:" + actPosition);
                             //Log.d(TAG, "onItemClick: post: " + mPaginatedPosts.get(actPosition));
-                            mOnListPostSelectedListener.onPostSelected(posts.get(position), ACTIVITY_NUM);
+                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
                             //((MainActivity)getActivity()).showLayout();
                         }
                     });

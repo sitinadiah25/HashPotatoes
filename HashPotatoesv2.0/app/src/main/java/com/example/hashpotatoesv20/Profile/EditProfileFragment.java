@@ -156,7 +156,7 @@ public class EditProfileFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to ProfileActivity");
-                getActivity().finish();
+                getActivity().onBackPressed();
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });

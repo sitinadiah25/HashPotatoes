@@ -32,7 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Context mContext;
     private String email, username, password, confPassword;
     private EditText mEmail, mPassword, mUsername, mConfirmPassword;
-    private TextView loadingPleaseWait, mError;
+    private TextView loadingPleaseWait, mError, mBack;
     private Button btnRegister;
     private ProgressBar mProgressBar;
 
@@ -73,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
                         loadingPleaseWait.setVisibility(View.VISIBLE);
 
                         firebaseMethods.registerNewEmail(email, password, username);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     }
                 }
                 else {
@@ -80,6 +81,14 @@ public class RegisterActivity extends AppCompatActivity {
                     mError.setVisibility(View.VISIBLE);
                     //Toast.makeText(mContext, "Passwords are not the same.", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back to login screen");
+                finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }
@@ -107,6 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.ProgressBar);
         loadingPleaseWait = (TextView) findViewById(R.id.loadingPleaseWait);
         mError = (TextView) findViewById(R.id.error_msg);
+        mBack = (TextView) findViewById(R.id.back_btn);
         mContext = RegisterActivity.this;
         mProgressBar.setVisibility(View.GONE);
         loadingPleaseWait.setVisibility(View.GONE);
