@@ -81,6 +81,8 @@ public class ViewProfileFragment extends Fragment {
 
     //vars
     private User mUser;
+    private int mPostsCount = 0;
+    private int mTagsCount = 0;
 
     private Context mContext;
 
@@ -218,6 +220,49 @@ public class ViewProfileFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d(TAG, "onCancelled: query cancelled.");
+            }
+        });
+    }
+
+    private void getCounts() {
+        mPostsCount = 0;
+        mTagsCount = 0;
+
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+        Query query1 = reference1.child(mContext.getString(R.string.dbname_user_posts))
+                .child(mUser.getUser_id());
+        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found post: " + ds.getValue());
+                    mPostsCount++;
+                }
+                mPosts.setText(String.valueOf(mPostsCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+        Query query2 = reference2.child(mContext.getString(R.string.dbname_user_following))
+                .child(mUser.getUser_id());
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found post: " + ds.getValue());
+                    mTagsCount++;
+                }
+                mHashtags.setText(String.valueOf(mTagsCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
@@ -380,6 +425,7 @@ public class ViewProfileFragment extends Fragment {
         }
 
         mProgressBar.setVisibility(View.GONE);
+        getCounts();
     }
 
     private static void setListViewHeightBasedOnChildren (ListView listView) {
