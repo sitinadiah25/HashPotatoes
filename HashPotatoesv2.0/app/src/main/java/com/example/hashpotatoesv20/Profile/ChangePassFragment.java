@@ -97,9 +97,6 @@ public class ChangePassFragment extends Fragment {
                 Log.d(TAG, "onClick: attempting to change password.");
                 changePassword();
                 //getActivity().finish();
-                Intent intent = new Intent(mContext, ProfileActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
 
@@ -144,6 +141,9 @@ public class ChangePassFragment extends Fragment {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
                                             Toast.makeText(getActivity(), "Password is updated.", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                                            startActivity(intent);
+                                            getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                                         }
                                     }
                                 });
