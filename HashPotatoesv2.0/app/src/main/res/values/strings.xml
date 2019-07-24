@@ -13,6 +13,7 @@
     <string name="report_post_fragment">Report Post</string>
     <string name="following_fragment">Following</string>
     <string name="notification_fragment">Notification</string>
+    <string name="changepass_fragment">Change Password</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>

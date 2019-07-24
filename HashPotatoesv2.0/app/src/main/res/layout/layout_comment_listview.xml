@@ -53,7 +53,7 @@
                 android:src="@drawable/ic_heart_white_lightblue"
                 android:id="@+id/btn_heart_white"
                 android:layout_alignParentRight="true"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_below="@id/post_comment"
                 android:layout_alignRight="@id/username"
                 android:layout_marginRight="5dp"/>
@@ -64,10 +64,10 @@
                 android:src="@drawable/ic_heart_red_lightblue"
                 android:layout_alignParentRight="true"
                 android:id="@+id/btn_heart_red"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:layout_below="@id/post_comment"
                 android:layout_alignRight="@id/username"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginRight="5dp" />
 
 
         </RelativeLayout>

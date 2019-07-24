@@ -244,7 +244,7 @@ public class ViewProfileFragment extends Fragment {
 
         int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
 
-        SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+        MainfeedListAdapter adapter = new MainfeedListAdapter(mContext, R.layout.layout_post_listview, posts);
         listView.setAdapter(adapter);
         setListViewHeightBasedOnChildren(listView);
 
