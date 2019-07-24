@@ -80,7 +80,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/username"
+            android:id="@+id/currentpass"
             android:background="@color/lightBlue"
             android:inputType="textPassword"
             android:hint="Current Password"

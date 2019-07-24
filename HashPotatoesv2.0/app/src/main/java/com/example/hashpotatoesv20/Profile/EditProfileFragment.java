@@ -168,9 +168,9 @@ public class EditProfileFragment extends Fragment implements
                 Log.d(TAG, "onClick: attempting to save changes.");
                 saveProfileSettings();
                 //getActivity().finish();
-                Intent intent = new Intent(mContext, ProfileActivity.class);
+                /*Intent intent = new Intent(mContext, ProfileActivity.class);
                 startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);*/
             }
         });
 
