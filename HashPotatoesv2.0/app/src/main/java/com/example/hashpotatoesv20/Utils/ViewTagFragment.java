@@ -24,6 +24,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
@@ -413,6 +414,16 @@ public class ViewTagFragment extends Fragment {
                     post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
                     post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
 
+                    ArrayList<Comment> comments = new ArrayList<Comment>();
+                    for (DataSnapshot dSnapshot : singleSnapshot
+                            .child(getString(R.string.field_comments)).getChildren()){
+                        Comment comment = new Comment();
+                        comment.setUser_id(dSnapshot.getValue(Comment.class).getUser_id());
+                        comment.setComment(dSnapshot.getValue(Comment.class).getComment());
+                        comment.setDate_created(dSnapshot.getValue(Comment.class).getDate_created());
+                        comments.add(comment);
+                    }
+
                     List<Like> likesList = new ArrayList<Like>();
                     for (DataSnapshot dSnapshot : singleSnapshot
                             .child(getString(R.string.field_likes)).getChildren()){
@@ -420,6 +431,7 @@ public class ViewTagFragment extends Fragment {
                         like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                         likesList.add(like);
                     }
+                    post.setComments(comments);
                     post.setLikes(likesList);
                     posts.add(post);
                 }
@@ -457,7 +469,7 @@ public class ViewTagFragment extends Fragment {
 
                             int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
 
-                            SimpleAdapter adapter = new SimpleAdapter(mContext, aList, R.layout.layout_post_listview, from, to);
+                            MainfeedListAdapter adapter = new MainfeedListAdapter(mContext, R.layout.layout_post_listview, posts);
 
                             listView.setAdapter(adapter);
                             setListViewHeightBasedOnChildren(listView);
