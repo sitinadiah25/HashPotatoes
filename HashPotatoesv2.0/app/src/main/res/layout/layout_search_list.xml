@@ -19,4 +19,12 @@
 
     </ListView>
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_listview_new"
+        android:layout_below="@id/search_listview_tag">
+
+    </ListView>
+
 </RelativeLayout>

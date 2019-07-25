@@ -19,13 +19,18 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.example.hashpotatoesv20.Models.Comment;
+import com.example.hashpotatoesv20.Models.Like;
+import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
+import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.UserListAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +40,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -50,12 +57,17 @@ public class FeatureActivity extends AppCompatActivity {
     private EditText mSearchParam;
     private ListView mListViewUser;
     private ListView mListViewTag;
+    private ListView mListViewNew;
 
     //Vars
     private List<User> mUserList;
     private List<Tag> mTagList;
+    private List<Post> mPosts;
+    private ArrayList<Post> mPaginatedPosts;
+    private MainfeedListAdapter mAdapter;
     private UserListAdapter mUAdapter;
     private TagListAdapter mTAdapter;
+    private int mResults;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,11 +76,142 @@ public class FeatureActivity extends AppCompatActivity {
         mSearchParam = (EditText) findViewById(R.id.search);
         mListViewUser = (ListView) findViewById(R.id.search_listview);
         mListViewTag = (ListView) findViewById(R.id.search_listview_tag);
+        mListViewNew = (ListView) findViewById(R.id.search_listview_new);
+        mPosts = new ArrayList<>();
         Log.d(TAG, "onCreate: started.");
 
         hideSoftKeyboard();
         setupBottomNavigationView();
+        getPost();
         initTextListener();
+    }
+
+    private void getPost() {
+        Log.d(TAG, "getPosts: getting posts");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_posts));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    final Post post = new Post();
+                    Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                    post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
+                    post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
+                    post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
+                    post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
+                    post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
+                    post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
+
+                    if (post.getAnonymity().equals("Public")) {
+                        ArrayList<String> tagIDList = new ArrayList<>();
+                        for (DataSnapshot dataSnapshot1 : singleSnapshot
+                                .child(getString(R.string.field_tag_list)).getChildren()) {
+                            tagIDList.add(dataSnapshot1.getValue().toString());
+                        }
+
+                        List<Like> likesList = new ArrayList<Like>();
+                        for (DataSnapshot dSnapshot : singleSnapshot
+                                .child(getString(R.string.field_likes)).getChildren()) {
+                            Like like = new Like();
+                            like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
+                            likesList.add(like);
+                        }
+
+                        //find the one with comments pls lol
+                        List<Comment> commentList = new ArrayList<>();
+                        for (DataSnapshot dataSnapshot1 :
+                                singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
+                            Comment comment = new Comment();
+                            comment.setUser_id(dataSnapshot1.getValue(Comment.class).getUser_id());
+                            comment.setComment(dataSnapshot1.getValue(Comment.class).getComment());
+                            comment.setDate_created(dataSnapshot1.getValue(Comment.class).getDate_created());
+                        }
+
+                        post.setTag_list(tagIDList);
+                        post.setComments(commentList);
+                        post.setLikes(likesList);
+                        //Log.d(TAG, "onDataChange: post: " + post.toString());
+
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+                        Query query1 = reference1.child(getString(R.string.dbname_user_following))
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                boolean is_following = false;
+                                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                                    for (int i = 0; i < post.getTag_list().size(); i++) {
+                                        if (singleSnapshot.child(mContext.getString(R.string.field_tag_id)).getValue().toString().equals(post.getTag_list().get(i))) {
+                                            is_following = true;
+                                        }
+                                    }
+                                }
+
+                                if (!is_following) {
+                                    mPosts.add(post);
+                                }
+                                displayPosts();
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void displayPosts(){
+        Log.d(TAG, "displayPosts: displaying posts.");
+        mPaginatedPosts = new ArrayList<>();
+        if (mPosts != null) {
+            try {
+                Collections.sort(mPosts, new Comparator<Post>() {
+                    @Override
+                    public int compare(Post o1, Post o2) {
+                        return o2.getDate_created().compareTo(o1.getDate_created());
+                    }
+                });
+
+                int iteration = mPosts.size();
+                Log.d(TAG, "displayPosts: Checking post size: " + mPosts.size());
+
+                if (iteration > 10){
+                    iteration = 10;
+                }
+                mResults = 10;
+                for (int i = 0; i < iteration; i ++){
+                    mPaginatedPosts.add(mPosts.get(i));
+                }
+                mAdapter = new MainfeedListAdapter(mContext, R.layout.layout_mainfeed_listitem, mPaginatedPosts);
+                mListViewNew.setAdapter(mAdapter);
+                setListViewHeightBasedOnChildren(mListViewNew);
+
+                mListViewNew.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        int actPosition = mPaginatedPosts.size() - position - 1;
+                        Log.d(TAG, "onItemClick: position:" + actPosition);
+                        //mOnListPostSelectedListener.onPostSelected(mPaginatedPosts.get(position), ACTIVITY_NUM);
+                    }
+                });
+
+            } catch (NullPointerException e) {
+                Log.e(TAG, "displayPosts: NullPointerException: " + e.getMessage());
+            } catch (IndexOutOfBoundsException e) {
+                Log.e(TAG, "displayPosts: IndexOutOfBoundsException: " + e.getMessage());
+            }
+        }
     }
 
     private void initTextListener(){
@@ -92,9 +235,11 @@ public class FeatureActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String text = mSearchParam.getText().toString();
                 searchForMatch(text);
+                mListViewNew.setVisibility(View.GONE);
                 if (text.isEmpty()) {
                     mUserList.clear();
                     mTagList.clear();
+                    mListViewNew.setVisibility(View.VISIBLE);
                 }
             }
         });
