@@ -31,7 +31,6 @@ import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.UserListAdapter;
-import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +46,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class FeatureActivity extends AppCompatActivity implements MainfeedListAdapter.OnTagSelectedListener{
@@ -90,7 +88,6 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
 
             }
         });
-
     }
 
     private static final String TAG = "FeatureActivity";
@@ -296,10 +293,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
         mTagList.clear();
         updateUserList();
         updateTagList();
-        //update the users list
-        if(keyword.length() == 0){
-
-        }else{
+        if(keyword.length() != 0){
             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
             Query query1 = reference1.child(getString(R.string.dbname_users))
                     .orderByChild(getString(R.string.field_username))
@@ -312,7 +306,6 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
                         Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue(User.class).toString());
 
                         mUserList.add(singleSnapshot.getValue(User.class));
-                        //update the users list view
                         updateUserList();
                     }
                 }
@@ -365,7 +358,6 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: selected user: " +  mTagList.get(position).toString());
-
                 //navigate to profile activity
                 Intent intent = new Intent(FeatureActivity.this, ProfileActivity.class);
                 intent.putExtra(getString(R.string.calling_activity),getString(R.string.feature_activity));
@@ -387,7 +379,6 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: selected user: " +  mUserList.get(position).toString());
-
                 //navigate to profile activity
                 Intent intent = new Intent(FeatureActivity.this, ProfileActivity.class);
                 intent.putExtra(getString(R.string.calling_activity),getString(R.string.feature_activity));

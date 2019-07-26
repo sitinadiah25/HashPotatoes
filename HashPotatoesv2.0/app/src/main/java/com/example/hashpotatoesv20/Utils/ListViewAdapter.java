@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 public class ListViewAdapter extends ArrayAdapter<String> {
 
+    //should we delete this?
     private Context mContext;
     private LayoutInflater mInflater;
     private int layoutResource;

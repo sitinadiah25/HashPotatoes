@@ -38,7 +38,6 @@ public class ChangeProfilePhotoActivity extends AppCompatActivity {
         else {
             verifyPermissions(Permissions.PERMISSIONS);
         }
-
     }
 
     private void setupViewPager(){
@@ -106,7 +105,6 @@ public class ChangeProfilePhotoActivity extends AppCompatActivity {
         Log.d(TAG, "checkPermissions: checking permission: " + permission);
 
         int permissionRequest = ActivityCompat.checkSelfPermission(ChangeProfilePhotoActivity.this, permission);
-
         if(permissionRequest != PackageManager.PERMISSION_GRANTED){
             Log.d(TAG, "checkPermissions: \n Permission was not granted for: " + permission);
             return false;
@@ -116,6 +114,5 @@ public class ChangeProfilePhotoActivity extends AppCompatActivity {
             return true;
         }
     }
-
 }
 

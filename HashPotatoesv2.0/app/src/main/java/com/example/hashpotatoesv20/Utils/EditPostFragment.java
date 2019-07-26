@@ -1,15 +1,12 @@
 package com.example.hashpotatoesv20.Utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,15 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
-import com.example.hashpotatoesv20.Models.UserSettings;
-import com.example.hashpotatoesv20.Profile.EditProfileFragment;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.dialogs.ConfirmDeleteDialog;
-import com.example.hashpotatoesv20.dialogs.ConfirmPasswordDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -47,11 +40,9 @@ public class EditPostFragment extends Fragment implements
 
     @Override
     public void onConfirmDelete() {
-        //deletePost
         deletePost();
         getFragmentManager().popBackStack();
 
-        //need another way to bring back to prev screen, with post deleted
         getActivity().finish();
         Toast.makeText(getActivity(),"Post deleted", Toast.LENGTH_SHORT).show();
     }
@@ -63,18 +54,14 @@ public class EditPostFragment extends Fragment implements
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
-    private FirebaseMethods mFirebaseMethods;
 
     //vars
     private ImageView mDelete;
     private EditText mDiscussion;
     private SwitchCompat mAnonymity;
     private TextView tvAnon;
-    private UserAccountSettings mUserAccountSettings;
     private Button mCancel, mFinish;
     private Post mPost;
-    private int mActivityNumber = 0;
-    private User mCurrentUser;
 
     //constants
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
@@ -93,23 +80,11 @@ public class EditPostFragment extends Fragment implements
         tvAnon = (TextView) view.findViewById(R.id.edit_tvAnon);
         mDelete = (ImageView) view.findViewById(R.id.btn_delete);
 
-        try {
-            mPost = getPostFromBundle();
-            mActivityNumber = getActivityNumFromBundle();
-            Log.d(TAG, "onCreateView: Viewing post id: " + mPost.getPost_id());
-            getPostDetails();
-            getCurrentUser();
-        }
-        catch (NullPointerException e) {
-            Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage());
-        }
-
-       setupFirebaseAuth();
+        mPost = getPostFromBundle();
 
         mDiscussion.setText(mPost.getDiscussion());
         tvAnon.setText(mPost.getAnonymity());
         if (mPost.getAnonymity().equals( "Anonymous")){
-            Log.d(TAG, "onCreateView: test2: " + mPost.getAnonymity());
             mAnonymity.setOnCheckedChangeListener(null);
             mAnonymity.setChecked(true);
             mAnonymity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -164,11 +139,8 @@ public class EditPostFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: editing post.");
-
-                //upload post to firebase
                 Toast.makeText(getActivity(),"Attempting to edit post", Toast.LENGTH_SHORT).show();
 
-                //Update new content
                 updateDiscussion(mDiscussion.getText().toString());
                 updateAnonymity(tvAnon.getText().toString());
                 getFragmentManager().popBackStack();
@@ -189,9 +161,7 @@ public class EditPostFragment extends Fragment implements
                 .child(mPost.getPost_id())
                 .removeValue();
         ArrayList<String> tagIDList = mPost.getTag_list();
-        Log.d(TAG, "testsize: " + tagIDList.size());
         for (int i = 0; i < tagIDList.size(); i++) {
-            Log.d(TAG, "deletePost: deleting post...: " + tagIDList.get(i));
             myRef.child(getString(R.string.dbname_tag_post))
                     .child(tagIDList.get(i))
                     .child(mPost.getPost_id())
@@ -231,7 +201,6 @@ public class EditPostFragment extends Fragment implements
                 .setValue(newAnonymity);
         try {
             ArrayList<String> tagIDList = mPost.getTag_list();
-            //Log.d(TAG, "addNewLike: tagIDList: " + tagIDList);
             for (int i = 0; i < tagIDList.size(); i++) {
                 myRef.child(mContext.getString(R.string.dbname_tag_post))
                         .child(tagIDList.get(i))
@@ -245,51 +214,8 @@ public class EditPostFragment extends Fragment implements
         }
     }
 
-    private void getCurrentUser(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference
-                .child(getString(R.string.dbname_users))
-                .orderByChild(getString(R.string.field_user_id))
-                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for ( DataSnapshot singleSnapshot :  dataSnapshot.getChildren()){
-                    mCurrentUser = singleSnapshot.getValue(User.class);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: query cancelled.");
-            }
-        });
-    }
-
-    private void getPostDetails(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference
-                .child(getString(R.string.dbname_users_account_settings))
-                .orderByChild(getString(R.string.field_user_id))
-                .equalTo(mPost.getUser_id());
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: query cancelled.");
-            }
-        });
-    }
-
     /**
-     * retrieve the post from the incoming bundle from profileactivity interface
+     * retrieve the post from the incoming bundle from ProfileActivity interface
      * @return
      */
     private Post getPostFromBundle() {
@@ -319,17 +245,6 @@ public class EditPostFragment extends Fragment implements
             return 0;
         }
     }
-
-   /* private void setupPost(UserSettings userSettings) {
-        UserAccountSettings settings = userSettings.getSettings();
-
-        String username = settings.getUsername();
-    }
-
-    private String getUsername(UserSettings userSettings) {
-        UserAccountSettings settings = userSettings.getSettings();
-        return settings.getUsername();
-    }*/
 
     /**
      * Verify all the permissions passed to the array
@@ -407,26 +322,11 @@ public class EditPostFragment extends Fragment implements
                 }
             }
         };
-
-        /*myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                setupPost(mFirebaseMethods.getUserSettings(dataSnapshot));
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         mAuth.addAuthStateListener(mAuthListener);
     }
 

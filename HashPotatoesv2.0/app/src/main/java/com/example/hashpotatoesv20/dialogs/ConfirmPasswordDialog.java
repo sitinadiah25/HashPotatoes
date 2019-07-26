@@ -22,7 +22,6 @@ public class ConfirmPasswordDialog extends DialogFragment {
     }
     OnConfirmPasswordListener mOnConfirmPasswordListener;
 
-
     //vars
     TextView mPassword;
 

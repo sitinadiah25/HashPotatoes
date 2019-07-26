@@ -3,7 +3,6 @@ package com.example.hashpotatoesv20.Profile;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,9 +25,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.util.ArrayList;
 
 public class GalleryFragment extends Fragment{
@@ -85,7 +81,6 @@ public class GalleryFragment extends Fragment{
                 getActivity().finish();
             }
         });
-
         init();
 
         return view;

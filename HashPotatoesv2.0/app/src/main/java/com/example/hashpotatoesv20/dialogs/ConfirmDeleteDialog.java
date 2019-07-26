@@ -9,9 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.R;
 
 public class ConfirmDeleteDialog extends DialogFragment {
@@ -51,7 +49,6 @@ public class ConfirmDeleteDialog extends DialogFragment {
                 getDialog().dismiss();
             }
         });
-
 
         return view;
     }

@@ -93,7 +93,6 @@ public class NotifFragment extends Fragment{
                     notification.setTag(objectMap.get(getString(R.string.field_tag)).toString());
 
                     mNotification.add(notification);
-                    Log.d(TAG, "onDataChange: testnotif: size: " + mNotification.size());
                 }
                 displayNotifications();
             }
@@ -103,10 +102,10 @@ public class NotifFragment extends Fragment{
 
             }
         });
-
     }
 
     private void displayNotifications(){
+        Log.d(TAG, "displayNotifications: displaying notification.");
         mPaginatedNotification = new ArrayList<>();
         if (mNotification != null) {
             try {
@@ -118,7 +117,6 @@ public class NotifFragment extends Fragment{
                 });
 
                 int iteration = mNotification.size();
-                Log.d(TAG, "displayPosts: Checking post size: " + mNotification.size());
 
                 if (iteration > 10){
                     iteration = 10;
@@ -164,15 +162,10 @@ public class NotifFragment extends Fragment{
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
             totalHeight += view.getMeasuredHeight() + 25;
         }
-
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-
         int width = listAdapter.getCount() - 1;
-
         params.height = totalHeight + (listView.getDividerHeight() * (width));
-
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
-
 }

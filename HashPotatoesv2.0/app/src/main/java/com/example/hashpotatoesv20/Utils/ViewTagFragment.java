@@ -3,7 +3,6 @@ package com.example.hashpotatoesv20.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.service.autofill.Dataset;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,7 +65,6 @@ public class ViewTagFragment extends Fragment {
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseMethods mFirebaseMethods;
 
     //widgets
@@ -118,7 +115,6 @@ public class ViewTagFragment extends Fragment {
         catch (NullPointerException e){
             Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage());
             Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
-            //getActivity().getSupportFragmentManager().popBackStack();
         }
 
         setupListView();
@@ -143,7 +139,7 @@ public class ViewTagFragment extends Fragment {
             public void onClick(View v) {
                 if (mTag.getPrivacy().equals("Private")) {
                     //Send notification to tag owner
-                    mNotifString = mCurrentUser.getUsername() + "has requested to follow your tag: " + mTag.getTag_name();
+                    mNotifString = mCurrentUser.getUsername() + " has requested to follow your tag: " + mTag.getTag_name();
                     mFirebaseMethods.addNotificationToDatabase(mTag.getOwner_id(), mNotifString, "", mTag.getTag_id(), mCurrentUser.getUser_id());
                     //Inform user that a request has been sent
                     Toast.makeText(mContext,"Your request to follow this tag has been sent to the owner.", Toast.LENGTH_SHORT).show();
@@ -652,7 +648,6 @@ public class ViewTagFragment extends Fragment {
     private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
         mAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -669,13 +664,11 @@ public class ViewTagFragment extends Fragment {
                 }
             }
         };
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         mAuth.addAuthStateListener(mAuthListener);
     }
 

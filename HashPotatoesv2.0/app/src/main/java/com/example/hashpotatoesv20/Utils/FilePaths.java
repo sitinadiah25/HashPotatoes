@@ -1,6 +1,5 @@
 package com.example.hashpotatoesv20.Utils;
 
-import android.content.Context;
 import android.os.Environment;
 
 public class FilePaths {

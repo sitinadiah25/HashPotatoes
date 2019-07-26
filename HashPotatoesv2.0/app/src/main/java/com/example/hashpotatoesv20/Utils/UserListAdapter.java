@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,8 +75,6 @@ public class UserListAdapter extends ArrayAdapter<User> {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-//                    Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue(UserAccountSettings.class));
-
                     UserAccountSettings cUser = singleSnapshot.getValue(UserAccountSettings.class);
                     UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
                     ImageLoader.getInstance().init(universalImageLoader.getConfig());

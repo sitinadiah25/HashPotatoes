@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,9 +18,7 @@ import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.R;
-import com.example.hashpotatoesv20.Utils.EditPostFragment;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
-import com.example.hashpotatoesv20.Utils.ProfileListAdapter;
 import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.example.hashpotatoesv20.Utils.ViewProfileFragment;
 import com.example.hashpotatoesv20.Utils.ViewTagFragment;
@@ -40,44 +37,11 @@ public class ProfileActivity extends AppCompatActivity implements
         ProfileFragment.onListPostSelectedListener,
         ViewTagFragment.onListPostSelectedListener,
         ViewProfileFragment.onListPostSelectedListener,
-        ProfileListAdapter.OnAdapterItemClickListener,
         MainFragment.onListPostSelectedListener,
         MainfeedListAdapter.OnTagSelectedListener{
     
     private static final String TAG = "ProfileActivity";
     private static final int ACTIVITY_NUM = 3;
-
-    @Override
-    public void onClickImage(Post post, int activity_number) {
-        Log.d(TAG, "onPostSelected: selected a post from listview " + post.getTag_list());
-
-        EditPostFragment fragment = new EditPostFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.post), post);
-        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
-        fragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(getString(R.string.edit_post_fragment));
-        transaction.commit();
-    }
-
-    @Override
-    public void onViewClicked(Post post, int activity_number) {
-        Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
-
-        ViewPostFragment fragment = new ViewPostFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.post), post);
-        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
-        fragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(getString(R.string.view_post_fragment));
-        transaction.commit();
-    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -210,5 +174,4 @@ public class ProfileActivity extends AppCompatActivity implements
             transaction.commit();
         }
     }
-
 }

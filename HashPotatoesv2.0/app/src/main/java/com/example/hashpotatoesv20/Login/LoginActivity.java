@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,8 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -61,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isStringNull(String string) {
-        Log.d(TAG, "isStringNull: checking if string is null");
         if (string.equals("")) {
             return true;
         }
@@ -123,8 +118,6 @@ public class LoginActivity extends AppCompatActivity {
                                         mProgressBar.setVisibility(View.GONE);
                                         mPleaseWait.setVisibility(View.GONE);
                                     }
-
-                                    // ...
                                 }
                             });
                 }
