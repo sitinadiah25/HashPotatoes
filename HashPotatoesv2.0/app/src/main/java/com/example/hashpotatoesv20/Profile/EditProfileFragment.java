@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,6 +109,7 @@ public class EditProfileFragment extends Fragment implements
     private EditText mDisplayName, mUsername, mDescription, mWebsite, mEmail, mYearOfStudy, mMajor;
     private TextView changePhoto;
     private CircleImageView mProfilePhoto;
+    private Spinner mSpinner;
     private RelativeLayout mParent;
 
     //variables
@@ -128,6 +131,7 @@ public class EditProfileFragment extends Fragment implements
         mYearOfStudy = (EditText) view.findViewById(R.id.year);
         mParent = (RelativeLayout) view.findViewById(R.id.parent_container);
         mMajor = (EditText) view.findViewById(R.id.major);
+        mSpinner = (Spinner) view.findViewById(R.id.spinnerYear);
         mFirebaseMethods = new FirebaseMethods(getActivity());
         mContext = getActivity();
 
@@ -176,7 +180,8 @@ public class EditProfileFragment extends Fragment implements
         //final String website = mWebsite.getText().toString();
         final String description = mDescription.getText().toString();
         final String email = mEmail.getText().toString();
-        final String yearOfStudy = mYearOfStudy.getText().toString();
+        String yearOfStudy = String.valueOf(mSpinner.getSelectedItem());
+        yearOfStudy = yearOfStudy.substring(yearOfStudy.length() - 1);
         final String major = mMajor.getText().toString();
 
         if (!mUserSettings.getUser().getUsername().equals(username)) {
@@ -208,6 +213,8 @@ public class EditProfileFragment extends Fragment implements
             mFirebaseMethods.updateUserAccountSettings(null,null,null,null,major);
 
         }
+
+        Toast.makeText(mContext, "Changes have been saved.", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -260,6 +267,11 @@ public class EditProfileFragment extends Fragment implements
         mEmail.setText(userSettings.getUser().getEmail());
         mYearOfStudy.setText(settings.getYear());
         mMajor.setText((settings.getMajor()));
+
+        int year = Integer.parseInt(settings.getYear());
+        ArrayAdapter myAdap = (ArrayAdapter) mSpinner.getAdapter();
+        int spinnerPosition = myAdap.getPosition("Year " + year);
+        mSpinner.setSelection(spinnerPosition);
     }
 
     /*

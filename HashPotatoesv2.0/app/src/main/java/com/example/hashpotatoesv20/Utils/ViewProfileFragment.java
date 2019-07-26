@@ -56,7 +56,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewProfileFragment extends Fragment {
 
-    private static final String TAG = "ProfileFragment";
+    private static final String TAG = "ViewProfileFragment";
     private static final int ACTIVITY_NUM = 1;
 
     public interface onListPostSelectedListener {
@@ -206,7 +206,9 @@ public class ViewProfileFragment extends Fragment {
                         }
                         Log.d(TAG, "onDataChange: comments: " + comments.size());
                         post.setLikes(likesList);
-                        posts.add(post);
+                        if (!post.getAnonymity().equals("Anonymous")) {
+                            posts.add(post);
+                        }
                     }
                     catch (NullPointerException e) {
                         Log.e(TAG, "onDataChange: Null Pointer Exception: " + e.getMessage() );
@@ -233,8 +235,11 @@ public class ViewProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d(TAG, "onDataChange: found post: " + ds.getValue());
-                    mPostsCount++;
+                    //Log.d(TAG, "onDataChange: found post anon: " + ds.getValue(Post.class).getAnonymity());
+                    Map<String,Object> objectMap = (HashMap<String, Object>) ds.getValue();
+                    if (!objectMap.get(getString(R.string.field_anonymity)).toString().equals("Anonymous")) {
+                        mPostsCount++;
+                    }
                 }
                 mPosts.setText(String.valueOf(mPostsCount));
             }

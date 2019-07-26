@@ -281,6 +281,9 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
                 if (text.isEmpty()) {
                     mUserList.clear();
                     mTagList.clear();
+                    updateUserList();
+                    updateTagList();
+                    hideSoftKeyboard();
                     mListViewNew.setVisibility(View.VISIBLE);
                 }
             }
@@ -293,7 +296,38 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
         mTagList.clear();
         updateUserList();
         updateTagList();
-        if(keyword.length() != 0){
+        if (keyword.length() != 0 && keyword.charAt(0) == '#') {
+            keyword = keyword.substring(1);
+            DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+            Query query2 = reference2.child(getString(R.string.dbname_tags))
+                    .orderByChild(getString(R.string.field_tag_name))
+                    .startAt(keyword)
+                    .endAt(keyword+"\uf8ff");
+            query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                        Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                        Tag tag = new Tag();
+                        tag.setPrivacy(objectMap.get(mContext.getString(R.string.field_privacy)).toString());
+                        tag.setTag_name(objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        tag.setTag_id(objectMap.get(mContext.getString(R.string.field_tag_id)).toString());
+                        tag.setTag_description(objectMap.get(mContext.getString(R.string.field_tag_description)).toString());
+                        tag.setOwner_id(objectMap.get(mContext.getString(R.string.field_owner_id)).toString());
+
+                        mTagList.add(tag);
+                        //update the tags list view
+                        updateTagList();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else if (keyword.length() != 0) {
             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
             Query query1 = reference1.child(getString(R.string.dbname_users))
                     .orderByChild(getString(R.string.field_username))

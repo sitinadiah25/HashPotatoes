@@ -92,4 +92,14 @@
     <!-- photo types -->
     <string name="profile_photo">profile_photo</string>
 
+    <!-- year spinner -->
+    <string name="year_prompt">Select Year</string>
+    <string-array name="year_array">
+        <item>Year 1</item>
+        <item>Year 2</item>
+        <item>Year 3</item>
+        <item>Year 4</item>
+        <item>Year 5</item>
+    </string-array>
+
 </resources>

@@ -90,6 +90,10 @@ public class MainFragment extends Fragment{
         mPosts = new ArrayList<>();
         mContext = getActivity();
 
+        welcome1.setVisibility(View.GONE);
+        welcome2.setVisibility(View.GONE);
+        popListView.setVisibility(View.GONE);
+
         pullToRefresh.setDistanceToTriggerSync(20);
 
         getFollowing();
@@ -119,7 +123,7 @@ public class MainFragment extends Fragment{
 
                     mFollowing.add(ds.child(getString(R.string.field_tag_id)).getValue().toString());
                 }
-                mFollowing.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                //mFollowing.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 if (mFollowing.isEmpty()) {
                     welcome1.setVisibility(View.VISIBLE);
                     welcome2.setVisibility(View.VISIBLE);
@@ -298,7 +302,7 @@ public class MainFragment extends Fragment{
                         Log.d(TAG, "onItemClick: position:" + actPosition);
                         //Log.d(TAG, "onItemClick: post: " + mPaginatedPosts.get(actPosition));
                         mOnListPostSelectedListener.onPostSelected(mPaginatedPosts.get(position), ACTIVITY_NUM);
-                        //((MainActivity)getActivity()).showLayout();
+                        ((MainActivity)getActivity()).showLayout();
                     }
                 });
 

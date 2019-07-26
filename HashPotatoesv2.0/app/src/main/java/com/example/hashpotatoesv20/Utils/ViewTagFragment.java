@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,6 +76,7 @@ public class ViewTagFragment extends Fragment {
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
     private Button mFollow, mUnfollow;
+    private SwipeRefreshLayout pullToRefresh;
 
     //vars
     private Tag mTag;
@@ -104,8 +106,11 @@ public class ViewTagFragment extends Fragment {
         mLocked = (ImageView) view.findViewById(R.id.locked);
         tvLocked = (TextView) view.findViewById(R.id.tvLocked);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
+        pullToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.pullToRefresh);
+
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(getActivity());
+        pullToRefresh.setDistanceToTriggerSync(20);
 
         try{
             mTag = getTagFromBundle();
@@ -125,6 +130,17 @@ public class ViewTagFragment extends Fragment {
         isFollowing();
         getPostsCount();
         getCurrentUser();
+
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setupListView();
+                isFollowing();
+                getPostsCount();
+                getCurrentUser();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         mBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override

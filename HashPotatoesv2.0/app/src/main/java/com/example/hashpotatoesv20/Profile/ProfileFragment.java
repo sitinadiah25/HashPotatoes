@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,13 +78,14 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
 
-    private TextView mPosts, mHashtags, mDisplayName, mYear, mMajor, mUsername, mWebsite, mDescription, tvYear;
+    private TextView mPosts, mHashtags, mDisplayName, mYear, mMajor, mUsername, mWebsite, mDescription, tvYear, tvHash;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private Toolbar toolbar;
     private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
+    private SwipeRefreshLayout pullToRefresh;
 
     private Context mContext;
     private UserAccountSettings mUserAccountSettings;
@@ -101,6 +103,7 @@ public class ProfileFragment extends Fragment {
         mProfilePhoto = (CircleImageView) view.findViewById(R.id.profilePhoto);
         mPosts = (TextView) view.findViewById(R.id.tvPost);
         mHashtags = (TextView) view.findViewById(R.id.tvHash);
+        tvHash = (TextView) view.findViewById(R.id.textHash);
         mProgressBar = (ProgressBar) view.findViewById(R.id.profileProgressBar);
         toolbar = (Toolbar) view.findViewById(R.id.profileToolBar);
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
@@ -108,9 +111,12 @@ public class ProfileFragment extends Fragment {
         mWebsite = (TextView) view.findViewById(R.id.profile_website);
         mDescription = (TextView) view.findViewById(R.id.profile_description);
         tvYear = (TextView) view.findViewById(R.id.tv_year);
+        pullToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.pullToRefresh);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(getActivity());
         listView = (ListView) view.findViewById(R.id.listView);
+
+        pullToRefresh.setDistanceToTriggerSync(20);
 
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
@@ -120,6 +126,14 @@ public class ProfileFragment extends Fragment {
 
         setupFirebaseAuth();
         setupListView();
+
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setupListView();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         TextView editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         editProfile.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +159,19 @@ public class ProfileFragment extends Fragment {
         });
 
         mHashtags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to following fragment");
+                FollowingFragment fragment = new FollowingFragment();
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.following_fragment));
+                transaction.commit();
+            }
+        });
+
+        tvHash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to following fragment");
@@ -404,7 +431,7 @@ public class ProfileFragment extends Fragment {
         mUsername.setText(settings.getUsername());
         mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
-        mYear.setText(settings.getYear());
+        mYear.setText("Year " + settings.getYear());
         mMajor.setText(String.valueOf(settings.getMajor()));
 
         if (settings.getWebsite().isEmpty()) {

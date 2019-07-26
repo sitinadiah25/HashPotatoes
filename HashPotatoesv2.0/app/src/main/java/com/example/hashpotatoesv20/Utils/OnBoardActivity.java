@@ -30,13 +30,15 @@ public class OnBoardActivity extends TutorialActivity {
                 .setSummary("")
                 .build());
 
-        addFragment(new Step.Builder().setTitle("Tag")
-                .setContent("Create custom tags for posts. \nTags act like groups - private tags and its posts are only visible to its followers while public tags are visible to all. \nAll posts should be tagged so that other users are able to view them.")
+        addFragment(new Step.Builder().setTitle("Tagging")
+                .setContent("Create custom tags for posts. \nTags act like groups - \nprivate tags and its posts are only visible to its followers \nwhile public tags are visible to all. \nAll posts should be tagged so that other users are able to view them.")
                 .setBackgroundColor(Color.parseColor("#ABD1ED")) // int background color
                 .setDrawable(R.drawable.welcome3) // int top drawable
                 .setSummary("")
                 .build());
 
+        setFinishText("START");
+        setCancelText("");
     }
 
     @Override

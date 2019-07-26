@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
+import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.OnBoardActivity;
+import com.example.hashpotatoesv20.Utils.TutorialActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.storage.internal.Util;
 
 public class MainEmptyActivity extends AppCompatActivity {
@@ -38,12 +41,19 @@ public class MainEmptyActivity extends AppCompatActivity {
         else {
             // go straight to main if a token is stored
             if (user != null) {
-                activityIntent = new Intent(this, MainActivity.class);
+                FirebaseUserMetadata metadata = FirebaseAuth.getInstance().getCurrentUser().getMetadata();
+                if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp()) {
+                    activityIntent = new Intent(this, TutorialActivity.class);
+                }
+                else {
+                    activityIntent = new Intent(this, MainActivity.class);
+                }
             } else {
                 activityIntent = new Intent(this, LoginActivity.class);
             }
         }
         startActivity(activityIntent);
         finish();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

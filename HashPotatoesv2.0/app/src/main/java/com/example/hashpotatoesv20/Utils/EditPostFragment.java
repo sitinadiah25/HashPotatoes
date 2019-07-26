@@ -81,6 +81,7 @@ public class EditPostFragment extends Fragment implements
         mDelete = (ImageView) view.findViewById(R.id.btn_delete);
 
         mPost = getPostFromBundle();
+        setupFirebaseAuth();
 
         mDiscussion.setText(mPost.getDiscussion());
         tvAnon.setText(mPost.getAnonymity());

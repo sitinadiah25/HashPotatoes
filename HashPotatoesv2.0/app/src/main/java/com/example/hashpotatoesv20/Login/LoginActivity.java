@@ -1,5 +1,6 @@
 package com.example.hashpotatoesv20.Login;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hashpotatoesv20.Main.MainActivity;
+import com.example.hashpotatoesv20.Main.MainEmptyActivity;
 import com.example.hashpotatoesv20.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -63,6 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
+    private void hideSoftKeyboard(){
+        if(getCurrentFocus() != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
+    }
+
     /*
     ---------------------------------------firebase------------------------------------------------
      */
@@ -74,6 +84,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: attempting to log in");
+
+                hideSoftKeyboard();
 
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
@@ -96,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                                         try {
                                             if (user.isEmailVerified()) {
                                                 Log.d(TAG, "onComplete: success. email is verified");
-                                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                Intent intent = new Intent(LoginActivity.this, MainEmptyActivity.class);
                                                 startActivity(intent);
                                                 Log.d(TAG, "onComplete: sendhelp");
                                             }

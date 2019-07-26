@@ -164,6 +164,9 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String text = mTag.getText().toString();
+                if (text.length() > 1 && text.charAt(0) == '#') {
+                    text = text.substring(1);
+                }
                 searchForMatch(text);
             }
         });
@@ -175,7 +178,7 @@ public class CreatePostActivity extends AppCompatActivity {
         updateTagList();
 
         if (!keyword.isEmpty()) {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference.child(getString(R.string.dbname_tags))
                     .orderByChild(getString(R.string.field_tag_name))
                     .startAt(keyword)
@@ -187,7 +190,27 @@ public class CreatePostActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: ds value: " + singleSnapshot.getValue());
                         Map<String,Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
                         Log.d(TAG, "onDataChange: tag name: " + objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
-                        mTagList.add(objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        if (objectMap.get(mContext.getString(R.string.field_privacy)).toString().equals("Private")) {
+                            final String tagname = objectMap.get(mContext.getString(R.string.field_tag_name)).toString();
+                            String tagid = objectMap.get(mContext.getString(R.string.field_tag_id)).toString();
+                            Query query1 = reference.child(getString(R.string.dbname_tag_followers))
+                                    .child(tagid)
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    mTagList.add("#" + tagname);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                        else {
+                            mTagList.add("#" + objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        }
                         //update the tags list view
                         updateTagList();
                     }
@@ -212,8 +235,8 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: user clicked on tag: " + mTagList.get(position));
-                String text = "#" + mTagList.get(position) + " ";
-                tags = tags + mTagList.get(position) + " ";
+                String text = mTagList.get(position) + " ";
+                tags = tags + mTagList.get(position).substring(1) + " ";
                 taglist = taglist + text;
                 Log.d(TAG, "onItemClick: text: " + taglist);
                 mTag.setText("");
@@ -267,7 +290,7 @@ public class CreatePostActivity extends AppCompatActivity {
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(CreatePostActivity.this);
+                    hideSoftKeyboard();
                     return false;
                 }
             });
@@ -282,13 +305,11 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
-    //hide keyboard
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
+    private void hideSoftKeyboard(){
+        if(getCurrentFocus() != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
     }
 
     private String getUsername(UserSettings userSettings) {

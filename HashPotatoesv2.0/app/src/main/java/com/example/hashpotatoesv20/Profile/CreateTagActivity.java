@@ -44,7 +44,7 @@ public class CreateTagActivity extends AppCompatActivity {
     //widgets
     private EditText mTagName, mTagDescription;
     private SwitchCompat mPrivacy;
-    private TextView tvPrivacy;
+    private TextView tvPrivacy, tvError;
     private RelativeLayout mParent;
 
     private Context mContext = CreateTagActivity.this;
@@ -65,6 +65,7 @@ public class CreateTagActivity extends AppCompatActivity {
         mTagName = (EditText) findViewById(R.id.tag_name);
         mTagDescription = (EditText) findViewById(R.id.tagDescription);
         tvPrivacy = (TextView) findViewById(R.id.tvPrivacy);
+        tvError = (TextView) findViewById(R.id.error_msg);
         mPrivacy = (SwitchCompat) findViewById(R.id.privacy);
         mParent = (RelativeLayout) findViewById(R.id.parent_container);
         mFirebaseMethods = new FirebaseMethods(CreateTagActivity.this);
@@ -105,6 +106,9 @@ public class CreateTagActivity extends AppCompatActivity {
 
                 //check if tag name already exists
                 String tag_name = mTagName.getText().toString();
+                if (tag_name.charAt(0) == '#') {
+                    tag_name = tag_name.substring(1);
+                }
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                 Query query = reference.child(getString(R.string.dbname_tags))
                         .orderByChild(getString(R.string.field_tag_name))
@@ -117,7 +121,8 @@ public class CreateTagActivity extends AppCompatActivity {
 
                         if (dataSnapshot.exists()) {
                             Log.d(TAG, "onDataChange: Tag name exists.");
-                            Toast.makeText(mContext, "Tag name exists. Please try again.", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(mContext, "Tag name exists. Please try again.", Toast.LENGTH_SHORT).show();
+                            tvError.setVisibility(View.VISIBLE);
                         }
                         else {
                             String tag_desc = mTagDescription.getText().toString();
@@ -152,7 +157,7 @@ public class CreateTagActivity extends AppCompatActivity {
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(CreateTagActivity.this);
+                    hideSoftKeyboard();
                     return false;
                 }
             });
@@ -167,13 +172,11 @@ public class CreateTagActivity extends AppCompatActivity {
         }
     }
 
-    //hide keyboard
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
+    private void hideSoftKeyboard(){
+        if(getCurrentFocus() != null){
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
     }
 
     /*
