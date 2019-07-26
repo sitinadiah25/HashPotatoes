@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,10 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Main.CreatePostActivity;
-import com.example.hashpotatoesv20.Main.MainActivity;
-import com.example.hashpotatoesv20.Models.Tag;
-import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,8 +30,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.StringTokenizer;
 
 public class CreateTagActivity extends AppCompatActivity {
     private static final String TAG = "CreateTagActivity";
@@ -82,13 +75,12 @@ public class CreateTagActivity extends AppCompatActivity {
         mPrivacy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: Privacy switch checked");
                 if (mPrivacy.isChecked()) {
-                    Log.d(TAG, "onClick: Private Tag.");
+                    Log.d(TAG, "onClick: Privacy switch checked: Private");
                     tvPrivacy.setText("Private");
                 }
                 else {
-                    Log.d(TAG, "onClick: Public Tag.");
+                    Log.d(TAG, "onClick: Privacy switch checked: Public");
                     tvPrivacy.setText("Public");
                 }
             }
@@ -98,7 +90,7 @@ public class CreateTagActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: closing activity, to back to previous screen");
+                Log.d(TAG, "onClick: closing activity, go back to previous screen");
                 finish();
             }
         });
@@ -212,29 +204,11 @@ public class CreateTagActivity extends AppCompatActivity {
                 }
             }
         };
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                //retrieve user information from the database
-
-                //retrieve posts for the user in question
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        //mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override

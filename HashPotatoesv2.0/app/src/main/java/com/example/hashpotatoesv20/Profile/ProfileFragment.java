@@ -14,14 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ActionMenuView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.hashpotatoesv20.Models.Comment;
@@ -36,9 +33,7 @@ import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.FollowingFragment;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
-import com.example.hashpotatoesv20.Utils.ProfileListAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
-import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,9 +44,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,8 +70,6 @@ public class ProfileFragment extends Fragment {
     }
     onListPostSelectedListener mOnListPostSelectedListener;
 
-    ProfileListAdapter.OnAdapterItemClickListener mOnAdapterItemClickListener;
-
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -91,7 +81,7 @@ public class ProfileFragment extends Fragment {
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private Toolbar toolbar;
-    private ImageView profileMenu, heartOutline;
+    private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
 
@@ -100,14 +90,10 @@ public class ProfileFragment extends Fragment {
     private int mPostsCount = 0;
     private int mTagsCount = 0;
 
-
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_profile, container,false);
-        View viewList = inflater.inflate(R.layout.layout_post_listview, container, false);
         mDisplayName = (TextView) view.findViewById(R.id.display_name);
         mUsername = (TextView) view.findViewById(R.id.username);
         mYear = (TextView) view.findViewById(R.id.profile_year);
@@ -411,9 +397,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setProfileWidgets(UserSettings userSettings) {
-        //Log.d(TAG, "setProfileWidgets: settings widgets with data retireved from firebase database");
-
-        //User user = userSettings.getUser();
         UserAccountSettings settings = userSettings.getSettings();
 
         UniversalImageLoader.setImage(settings.getProfile_photo(), mProfilePhoto, null, "");
@@ -471,12 +454,9 @@ public class ProfileFragment extends Fragment {
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
-
-
     /*
     ---------------------------------------firebase------------------------------------------------
      */
-
     /**
      * Setup the firebase auth object
      */
@@ -505,12 +485,7 @@ public class ProfileFragment extends Fragment {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                //retrieve user information from the database
                 setProfileWidgets(mFirebaseMethods.getUserSettings(dataSnapshot));
-
-                //retrieve posts for the user in question
-
             }
 
             @Override
@@ -523,7 +498,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         mAuth.addAuthStateListener(mAuthListener);
     }
 

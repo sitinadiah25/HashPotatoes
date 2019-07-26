@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.hashpotatoesv20.Login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.internal.Util;
 
 public class MainEmptyActivity extends AppCompatActivity {
     @Override

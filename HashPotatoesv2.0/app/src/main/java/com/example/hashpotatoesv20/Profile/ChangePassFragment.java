@@ -13,32 +13,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Models.User;
-import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
-import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
-import com.example.hashpotatoesv20.dialogs.ConfirmPasswordDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChangePassFragment extends Fragment {
 
@@ -47,14 +35,10 @@ public class ChangePassFragment extends Fragment {
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference myRef;
-    private FirebaseMethods mFirebaseMethods;
-    private String userID;
 
     //EditProfile fragment widgets
     private EditText mConfirmNewPass, mNewPass, mCurrentPass;
-    private TextView mtvPassword,mtvNewPass, mtvNewCPass;
+
     private Button mConfirm, mCancel;
 
     //variables
@@ -69,13 +53,9 @@ public class ChangePassFragment extends Fragment {
         mConfirmNewPass = (EditText) view.findViewById(R.id.confPass);
         mNewPass = (EditText) view.findViewById(R.id.newPass);
         mCurrentPass = (EditText) view.findViewById(R.id.currentpass);
-        mtvPassword = (TextView) view.findViewById(R.id.tvPassword);
-        mtvNewPass = (TextView) view.findViewById(R.id.tvNewPass);
-        mtvNewCPass = (TextView) view.findViewById(R.id.tvNewCPass);
         mCancel = (Button) view.findViewById(R.id.btn_cancel);
         mConfirm = (Button) view.findViewById(R.id.btn_confirm);
 
-        mFirebaseMethods = new FirebaseMethods(getActivity());
         mContext = getActivity();
 
         setupFirebaseAuth();
@@ -172,9 +152,6 @@ public class ChangePassFragment extends Fragment {
     private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
         mAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference();
-        userID = mAuth.getCurrentUser().getUid();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override

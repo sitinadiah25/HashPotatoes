@@ -19,7 +19,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,17 +26,13 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Models.UserSettings;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
-import com.example.hashpotatoesv20.Utils.Permissions;
-import com.example.hashpotatoesv20.Utils.SectionsStatePagerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -51,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 public class CreatePostActivity extends AppCompatActivity {
     private static final String TAG = "CreatePostActivity";
@@ -77,8 +71,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
     //constants
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
-
-    private ViewPager mViewPager;
 
     private Context mContext = CreatePostActivity.this;
 
@@ -113,13 +105,12 @@ public class CreatePostActivity extends AppCompatActivity {
         mAnonymity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: Anonymity switch checked");
                 if (mAnonymity.isChecked()) {
-                    Log.d(TAG, "onClick: Anonymous Post.");
+                    Log.d(TAG, "onClick: Anonymity switch checked: Anonymous");
                     tvAnon.setText("Anonymous");
                 }
                 else {
-                    Log.d(TAG, "onClick: Public Post.");
+                    Log.d(TAG, "onClick: Anonymity switch checked: Public");
                     tvAnon.setText("Public");
                 }
             }
@@ -140,9 +131,6 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: sharing post.");
 
-                //check if tags exists
-
-                //upload post to firebase
                 Toast.makeText(CreatePostActivity.this, "Attempting to upload post", Toast.LENGTH_SHORT).show();
 
                 String discussion = mDiscussion.getText().toString();
@@ -158,13 +146,6 @@ public class CreatePostActivity extends AppCompatActivity {
         setupUI(mParent);
         tagListener();
 
-        /*
-        if (checkPermissionsArray(Permissions.PERMISSIONS)) {
-
-        }
-        else {
-            verifyPermissions(Permissions.PERMISSIONS);
-        }*/
     }
 
     private void tagListener() {
@@ -193,10 +174,7 @@ public class CreatePostActivity extends AppCompatActivity {
         mTagList.clear();
         updateTagList();
 
-        if (keyword.isEmpty()) {
-
-        }
-        else {
+        if (!keyword.isEmpty()) {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference.child(getString(R.string.dbname_tags))
                     .orderByChild(getString(R.string.field_tag_name))
@@ -270,13 +248,9 @@ public class CreatePostActivity extends AppCompatActivity {
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
             totalHeight += view.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-
         int width = listAdapter.getCount() - 1;
-
         params.height = totalHeight + (listView.getDividerHeight() * (width));
-
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
@@ -289,7 +263,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
     //hide keyboard if user touches view
     public void setupUI(View view) {
-
         // Set up touch listener for non-text box views to hide keyboard.
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
@@ -379,7 +352,6 @@ public class CreatePostActivity extends AppCompatActivity {
     /*
     ---------------------------------------firebase------------------------------------------------
     */
-
     /**
      * Setup the firebase auth object
      **/

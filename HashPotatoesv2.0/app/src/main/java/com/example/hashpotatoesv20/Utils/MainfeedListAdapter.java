@@ -1,19 +1,13 @@
 package com.example.hashpotatoesv20.Utils;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -24,10 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.hashpotatoesv20.Feature.FeatureActivity;
-import com.example.hashpotatoesv20.Main.MainActivity;
-import com.example.hashpotatoesv20.Main.MainFragment;
-import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
@@ -42,8 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +39,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -188,9 +175,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
         holder.tags.setText(ss);
         holder.tags.setMovementMethod(LinkMovementMethod.getInstance());
 
-
-
-
         //set time it was posted
         String timestampDiff = getTimestampDifference(getItem(position).getDate_created());
         holder.timeDetails.setText(timestampDiff);
@@ -256,14 +240,12 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             loadMoreData();
         }
 
-        //set tagidlist
         tagIDList = getItem(position).getTag_list();
 
         likedByUser(holder);
 
         numLikes = holder.post.getLikes().size();
         numComment = holder.post.getComments().size();
-
         if (numLikes == 0) {
             holder.likesNum.setVisibility(View.GONE);
         }

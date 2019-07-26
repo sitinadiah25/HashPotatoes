@@ -1,14 +1,11 @@
 package com.example.hashpotatoesv20.Utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -19,26 +16,20 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
-import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.R;
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -58,15 +49,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewPostFragment extends Fragment {
 
@@ -423,7 +409,6 @@ public class ViewPostFragment extends Fragment {
             mUsername.setText(mUserAccountSettings.getUsername());
             UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(), mProfileImage,null,"");
         }
-        //Log.d(TAG, "getDiscussion: check discussion: " + mPost.getDiscussion());
         mDiscussion.setText(mPost.getDiscussion());
         mLikedBy.setText(mLikesString);
         //String joinedTags = String.join(" ", tags.);
@@ -437,10 +422,8 @@ public class ViewPostFragment extends Fragment {
         }
         mTag.setText(newTag);
 
-        //setup list for comments
         setupListView();
 
-        //checkmark for comment
         mCheckmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -520,7 +503,6 @@ public class ViewPostFragment extends Fragment {
                 }
             });
         }
-
     }
 
     private void closeKeyboard(){
@@ -579,7 +561,6 @@ public class ViewPostFragment extends Fragment {
                                             }
                                             mViewHolder.add(viewHolder);
                                     //setup list view
-                                    Log.d(TAG, "onDataChange: mviewholder.size(): " + mViewHolder.size());
                                     double num = Math.sqrt(mViewHolder.size());
                                     List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                                     try {
@@ -662,13 +643,9 @@ public class ViewPostFragment extends Fragment {
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
             totalHeight += view.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-
         int width = listAdapter.getCount() - 1;
-
         params.height = totalHeight + (listView.getDividerHeight() * (width));
-
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
@@ -874,5 +851,4 @@ public class ViewPostFragment extends Fragment {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
 }

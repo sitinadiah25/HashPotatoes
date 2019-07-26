@@ -1,6 +1,5 @@
 package com.example.hashpotatoesv20.Utils;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +17,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
@@ -32,7 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,10 +65,6 @@ public class FollowingFragment extends Fragment {
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mTagList = new ArrayList<>();
 
-        //get following of the username from user_following
-        //setup listview, clicking will send to ViewTagFragment
-
-        //get username
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference.child(getString(R.string.dbname_users_account_settings))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -138,7 +131,6 @@ public class FollowingFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: selected tag: " +  mTagList.get(position).toString());
 
-                //navigate to tag profile activity
                 Intent intent = new Intent(getActivity(), ProfileActivity.class);
                 intent.putExtra(getString(R.string.calling_activity),getString(R.string.feature_activity));
                 intent.putExtra(getString(R.string.intent_tag), mTagList.get(position));
@@ -165,11 +157,8 @@ public class FollowingFragment extends Fragment {
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-
         int width = listAdapter.getCount() - 1;
-
         params.height = totalHeight + (listView.getDividerHeight() * (width));
-
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
@@ -190,7 +179,6 @@ public class FollowingFragment extends Fragment {
     /*
     ---------------------------------------firebase------------------------------------------------
      */
-
     /**
      * Setup the firebase auth object
      */
@@ -220,7 +208,6 @@ public class FollowingFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         mAuth.addAuthStateListener(mAuthListener);
     }
 

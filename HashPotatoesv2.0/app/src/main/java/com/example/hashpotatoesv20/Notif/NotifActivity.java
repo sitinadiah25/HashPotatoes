@@ -5,13 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.hashpotatoesv20.Models.Comment;
@@ -50,12 +47,8 @@ public class NotifActivity extends AppCompatActivity implements
 
     @Override
     public void onNotifSelected(Notification notification, int activity_num) {
-        Log.d(TAG, "onNotifSelected: selected a notification from listview " + notification.toString());
-
-        //if there is a post id, then it is a comment or like notification
-        //get post and view post
         if(!notification.getPost_id().equals("")) {
-            Log.d(TAG, "onNotifSelected: this is a post");
+            Log.d(TAG, "onNotifSelected: going to view post fragment.");
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference.child(getString(R.string.dbname_user_posts))
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -96,7 +89,6 @@ public class NotifActivity extends AppCompatActivity implements
                                 like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                                 likesList.add(like);
                             }
-                            Log.d(TAG, "onDataChange: comments: " + comments.size());
                             post.setLikes(likesList);
                         } catch (NullPointerException e) {
                             Log.e(TAG, "onDataChange: Null Pointer Exception: " + e.getMessage());
@@ -121,7 +113,7 @@ public class NotifActivity extends AppCompatActivity implements
                 }
             });
         }else{
-            //this is a tag follow request
+            Log.d(TAG, "onNotifSelected: starting follower request dialog.");
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference.child(getString(R.string.dbname_tags))
                     .orderByChild(getString(R.string.field_tag_id))
@@ -230,9 +222,6 @@ public class NotifActivity extends AppCompatActivity implements
 
     }
 
-
-
-
     /**
      * BottomNavigationView setup
      */
@@ -246,7 +235,7 @@ public class NotifActivity extends AppCompatActivity implements
         menuItem.setChecked(true);
     }
 
-/*
+    /*
     ---------------------------------------firebase------------------------------------------------
      */
 
@@ -290,8 +279,4 @@ public class NotifActivity extends AppCompatActivity implements
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
-
-
-
 }

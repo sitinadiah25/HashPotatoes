@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +16,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
-import com.example.hashpotatoesv20.Models.UserAccountSettings;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.TagListAdapter;
-import com.example.hashpotatoesv20.Utils.ViewPostFragment;
-import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,20 +32,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.security.auth.login.LoginException;
 
 public class MainFragment extends Fragment{
     private static final String TAG = "MainFragment";
@@ -241,7 +227,6 @@ public class MainFragment extends Fragment{
                             likesList.add(like);
                         }
 
-                        //find the one with comments pls lol
                         List<Comment> commentList = new ArrayList<>();
                         for (DataSnapshot dataSnapshot1 :
                                 singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
@@ -257,7 +242,6 @@ public class MainFragment extends Fragment{
 
                         boolean duplicate = false;
 
-                        //check for duplicates (not efficient, need a more efficient way)
                         for (int j = 0; j < mPosts.size(); j++) {
                             if (mPosts.get(j).getPost_id().equals(post.getPost_id())) {
                                 duplicate = true;
@@ -326,21 +310,6 @@ public class MainFragment extends Fragment{
         }
     }
 
-   /* private void onPostSelected(Post post, int activity_number) {
-        Log.d(TAG, "onPostSelected: selected a post from listview " + post.toString());
-
-        ViewPostFragment fragment = new ViewPostFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.post), post);
-        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
-        fragment.setArguments(args);
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(getString(R.string.view_post_fragment));
-        transaction.commit();
-    }*/
-
     public void displayMorePosts(){
         Log.d(TAG, "displayMorePosts: displaying more posts");
         try{
@@ -396,6 +365,4 @@ public class MainFragment extends Fragment{
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
-
-
 }

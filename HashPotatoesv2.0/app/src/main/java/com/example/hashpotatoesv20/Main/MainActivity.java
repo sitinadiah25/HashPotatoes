@@ -3,34 +3,24 @@ package com.example.hashpotatoesv20.Main;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.example.hashpotatoesv20.Login.LoginActivity;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
-import com.example.hashpotatoesv20.Models.UserAccountSettings;
-import com.example.hashpotatoesv20.Profile.AccountSettingsActivity;
-import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
-import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.SectionsPagerAdapter;
 import com.example.hashpotatoesv20.Utils.UniversalImageLoader;
@@ -49,8 +39,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements
         MainfeedListAdapter.OnLoadMoreItemsListener,
@@ -131,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private Context mContext = MainActivity.this;
 
-    private ImageView createPost;
-
     //widgets
     private ViewPager mViewPager;
     private FrameLayout mFrameLayout;
@@ -171,20 +157,6 @@ public class MainActivity extends AppCompatActivity implements
         setupViewPager();
     }
 
-    public void onCommentThreadSelectedListener(Post post) {
-        Log.d(TAG, "OnCommentThreadSelectedListener: selected a post thread");
-
-        ViewPostFragment fragment = new ViewPostFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.post), post);
-        fragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(getString(R.string.view_post_fragment));
-        transaction.commit();
-    }
-
     private void initImageLoader(){
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
@@ -216,14 +188,21 @@ public class MainActivity extends AppCompatActivity implements
     private void setupViewPager() {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MainFragment());
-        //adapter.addFragment(new CreatePostFragment());
 
         mViewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+    }
 
-        //tabLayout.getTabAt(1).setIcon(R.drawable.ic_createpost);
+    private void checkCurrentUser(FirebaseUser user) {
+        Log.d(TAG, "checkCurrentUser: checking if user is logged in.");
+
+        Log.d(TAG, "checkCurrentUser: user: " + user);
+        if (user == null) {
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            startActivity(intent);
+        }
     }
 
     /**
@@ -242,16 +221,6 @@ public class MainActivity extends AppCompatActivity implements
     /*
     ---------------------------------------firebase------------------------------------------------
      */
-
-    private void checkCurrentUser(FirebaseUser user) {
-        Log.d(TAG, "checkCurrentUser: checking if user is logged in.");
-
-        Log.d(TAG, "checkCurrentUser: user: " + user);
-        if (user == null) {
-            Intent intent = new Intent(mContext, LoginActivity.class);
-            startActivity(intent);
-        }
-    }
 
     /**
      * Setup the firebase auth object
@@ -295,7 +264,4 @@ public class MainActivity extends AppCompatActivity implements
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
-
-
 }

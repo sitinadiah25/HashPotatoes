@@ -20,23 +20,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hashpotatoesv20.Profile.CreateTagActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
     private static final String TAG = "ForgotPasswordActivity";
-
 
     //firebase
     private FirebaseAuth mAuth;
@@ -72,7 +67,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         mReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String email = mEmail.getText().toString().trim();
                 hideSoftKeyboard(ForgotPasswordActivity.this);
 
@@ -95,7 +89,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                                 }
                             }
                         });
-            }
+                }
         });
 
         mBack.setOnClickListener(new View.OnClickListener() {

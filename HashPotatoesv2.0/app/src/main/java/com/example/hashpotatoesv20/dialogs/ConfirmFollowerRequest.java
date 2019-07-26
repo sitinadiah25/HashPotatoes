@@ -51,7 +51,6 @@ public class ConfirmFollowerRequest extends DialogFragment {
             }
         });
 
-
         return view;
     }
 

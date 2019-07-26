@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,13 +23,6 @@ import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.FirebaseMethods;
 import com.example.hashpotatoesv20.Utils.SectionsStatePagerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
@@ -59,7 +51,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         setupFragments();
         getIncomingIntent();
 
-        //setup the back arrow for navigating back to profile activity
         ImageView backArrow = (ImageView) findViewById(R.id.backArrow);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,9 +83,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
                     firebaseMethods.uploadProfilePhoto(getString(R.string.profile_photo),
                             null,(Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap)));
                 }
-
             }
-
         }
 
         if (intent.hasExtra(getString(R.string.calling_activity))) {
@@ -159,5 +148,4 @@ public class AccountSettingsActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
-
 }

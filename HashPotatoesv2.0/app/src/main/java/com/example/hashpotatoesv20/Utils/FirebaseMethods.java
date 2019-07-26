@@ -51,17 +51,14 @@ public class FirebaseMethods {
 
     //firebase
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private StorageReference mStorageReference;
     private String userID;
-    private String username;
 
     private Context mContext;
     private double mPhotoUploadProgress = 0;
 
-    private UserSettings user;
     private User cUser;
 
     public FirebaseMethods(Context context){
@@ -216,6 +213,7 @@ public class FirebaseMethods {
                 .setValue(email);
     }
 
+    //Check if in use
     public void createTag(final String tagName, final String tagDescription, final String privacy) {
         //check if tag name exists
         Log.d(TAG, "createTag: checking if tag name already exists.");
@@ -259,8 +257,6 @@ public class FirebaseMethods {
                             Toast.makeText(mContext, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
     }
@@ -461,7 +457,6 @@ public class FirebaseMethods {
 
             }
         });
-
         return cUser;
     }
 
@@ -478,7 +473,6 @@ public class FirebaseMethods {
         User user = new User();
 
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-
             //user_account_settings node
             if (ds.getKey().equals(mContext.getString(R.string.dbname_users_account_settings))) {
                 Log.d(TAG, "getUserAccountSettings: datasnapshot: " + ds);
@@ -534,8 +528,6 @@ public class FirebaseMethods {
                 catch (NullPointerException e) {
                     Log.e(TAG, "getUserAccountSettings: NullPointerException: " + e.getMessage());
                 }
-
-
             }
 
             if (ds.getKey().equals(mContext.getString(R.string.dbname_users))) {
@@ -591,6 +583,4 @@ public class FirebaseMethods {
                 .child(newnotifkey)
                 .setValue(notification);
     }
-
-
 }
