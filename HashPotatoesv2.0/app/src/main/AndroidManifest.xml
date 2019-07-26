@@ -34,6 +34,7 @@
         <activity android:name=".Main.CreatePostActivity"></activity>
         <activity android:name=".Profile.ChangeProfilePhotoActivity"/>
         <activity android:name=".Profile.CreateTagActivity"></activity>
+        <activity android:name=".Utils.OnBoardActivity"></activity>
     </application>
 
 </manifest>
