@@ -28,15 +28,6 @@
                 android:paddingBottom="4dp"
                 />
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginEnd="20dp"
-                android:layout_centerVertical="true"
-                android:id="@+id/createPost"
-                android:src="@drawable/ic_createpost"/>
-
         </RelativeLayout>
 
         <RelativeLayout

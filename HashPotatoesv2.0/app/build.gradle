@@ -51,6 +51,9 @@ dependencies {
 
     //JavaX Mail
     //implementation 'javax.mail:mail:1.4.7'
+
+    //introductory tutorial slider
+    implementation 'com.github.msayan:tutorial-view:v1.0.10'
 }
 
 //Firebase
