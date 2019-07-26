@@ -1,9 +1,19 @@
 package com.example.hashpotatoesv20.Utils;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -15,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hashpotatoesv20.Main.MainActivity;
+import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
@@ -41,6 +52,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainfeedListAdapter extends ArrayAdapter<Post> {
 
@@ -48,6 +61,12 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
         void onLoadMoreItems();
     }
     OnLoadMoreItemsListener mOnLoadMoreItemsListener;
+
+    public interface OnTagSelectedListener{
+        void OnTagSelected(String Tag);
+    }
+    OnTagSelectedListener mOnTagSelectedListener;
+
     private static final String TAG = "MainfeedListAdapter";
 
     private LayoutInflater mInflater;
@@ -133,6 +152,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
         });
 
         holder.discussion.setText(getItem(position).getDiscussion());
+
+
         String tag = getItem(position).getTags();
         String[] tokens = tag.split(" ");
         String newTag = "";
@@ -141,7 +162,45 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             newTag = newTag + "#" + tokens[i] + " ";
         }
 
-        holder.tags.setText(newTag);
+        //try clickablespan here
+        //holder.tags.setText(newTag);
+        newTag += " ";
+        List<Integer> start = new ArrayList<>();
+        int index = newTag.indexOf("#");
+        while (index >= 0) {
+            start.add(index);
+            index = newTag.indexOf("#", index + 1);
+        }
+
+        SpannableString ss = new SpannableString(newTag);
+        Matcher matcher = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(ss);
+
+        while (matcher.find())
+        {
+            //ss.setSpan(new ForegroundColorSpan(Color.parseColor("#0000FF")), matcher.start(), matcher.end(), 0); //to highlight word havgin '@'
+            final String tag1 = matcher.group(0);
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    TextView tv = (TextView) widget;
+                    Spanned s = (Spanned) tv.getText();
+                    int start = s.getSpanStart(this);
+                    int end = s.getSpanEnd(this);
+                    Log.d(TAG, "onClick: pressed tag: " + s.subSequence(start, end));
+
+                    mOnTagSelectedListener = (OnTagSelectedListener) getContext();
+                    mOnTagSelectedListener.OnTagSelected(s.subSequence(start, end) + "");
+
+                }
+            };
+            ss.setSpan(clickableSpan, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        holder.tags.setText(ss);
+        holder.tags.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+
 
         //set time it was posted
         String timestampDiff = getTimestampDifference(getItem(position).getDate_created());

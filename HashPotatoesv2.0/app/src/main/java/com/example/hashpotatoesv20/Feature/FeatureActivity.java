@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +31,7 @@ import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.UserListAdapter;
+import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +49,49 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class FeatureActivity extends AppCompatActivity {
+public class FeatureActivity extends AppCompatActivity implements MainfeedListAdapter.OnTagSelectedListener{
+
+    @Override
+    public void OnTagSelected(final String Tag) {
+        Log.d(TAG, "OnTagSelected: setting up view tag fragment.");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_tags));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    if(singleSnapshot.child(mContext.getString(R.string.field_tag_name)).getValue().toString().equals(Tag.substring(1))) {
+                        Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                        com.example.hashpotatoesv20.Models.Tag tag = new Tag();
+                        tag.setPrivacy(objectMap.get(mContext.getString(R.string.field_privacy)).toString());
+                        tag.setTag_name(objectMap.get(mContext.getString(R.string.field_tag_name)).toString());
+                        tag.setTag_id(objectMap.get(mContext.getString(R.string.field_tag_id)).toString());
+                        tag.setTag_description(objectMap.get(mContext.getString(R.string.field_tag_description)).toString());
+                        tag.setOwner_id(objectMap.get(mContext.getString(R.string.field_owner_id)).toString());
+
+                        Log.d(TAG, "onDataChange: get tag: " + tag.toString());
+                        ViewTagFragment fragment = new ViewTagFragment();
+                        Bundle args = new Bundle();
+                        args.putParcelable(getString(R.string.field_tag), tag);
+                        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
+                        fragment.setArguments(args);
+
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.relLayout1, fragment);
+                        transaction.addToBackStack(getString(R.string.view_post_fragment));
+                        transaction.commit();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     private static final String TAG = "FeatureActivity";
     private static final int ACTIVITY_NUM = 1;
 

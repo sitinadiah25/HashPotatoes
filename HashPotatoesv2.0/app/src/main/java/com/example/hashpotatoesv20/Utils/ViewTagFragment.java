@@ -592,17 +592,19 @@ public class ViewTagFragment extends Fragment {
      * Responsible for setting up the profile Toolbar
      */
     private void setupToolbar() {
-        ((ProfileActivity) getActivity()).setSupportActionBar(toolbar);
+        if(this.getClass().getSimpleName().equals("ProfileActivity")) {
+            ((ProfileActivity) getActivity()).setSupportActionBar(toolbar);
 
-        profileMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating to account settings.");
-                Intent intent = new Intent(mContext, AccountSettingsActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }
-        });
+            profileMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick: navigating to account settings.");
+                    Intent intent = new Intent(mContext, AccountSettingsActivity.class);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                }
+            });
+        }
     }
 
     /**
