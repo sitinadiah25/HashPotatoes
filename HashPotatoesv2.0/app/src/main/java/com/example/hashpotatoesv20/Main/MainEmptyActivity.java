@@ -11,6 +11,7 @@ import com.example.hashpotatoesv20.Login.LoginActivity;
 import com.example.hashpotatoesv20.Utils.OnBoardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.internal.Util;
 
 public class MainEmptyActivity extends AppCompatActivity {
     @Override
@@ -22,15 +23,19 @@ public class MainEmptyActivity extends AppCompatActivity {
         Intent activityIntent;
 
         final String PREFS_NAME = "MyPrefsFile";
+
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
         if (settings.getBoolean("my_first_time", true)) {
             //the app is being launched for first time, do something
             Log.d("Comments", "First time");
             // first time task (open onboardactivity)
-            activityIntent = new Intent(this, OnBoardActivity.class);// record the fact that the app has been started at least once
+            activityIntent = new Intent(this, OnBoardActivity.class);
+
+            // record the fact that the app has been started at least once
             settings.edit().putBoolean("my_first_time", false).commit();
-        }        else {
+        }
+        else {
             // go straight to main if a token is stored
             if (user != null) {
                 activityIntent = new Intent(this, MainActivity.class);
@@ -38,7 +43,6 @@ public class MainEmptyActivity extends AppCompatActivity {
                 activityIntent = new Intent(this, LoginActivity.class);
             }
         }
-
         startActivity(activityIntent);
         finish();
     }
