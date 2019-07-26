@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Comment;
@@ -89,14 +90,12 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
     }
 
     static class ViewHolder{
-        String likesString;
         TextView username, timeDetails, discussion, tags, likesNum, comment, commentNum;
         ImageView heartRed, heartWhite;
 
         UserAccountSettings settings = new UserAccountSettings();
         User user = new User();
         StringBuilder users;
-        String mLikesString;
         boolean likeByCurrentUser;
         Heart heart;
         GestureDetector detector;
@@ -120,7 +119,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             holder.timeDetails = (TextView) convertView.findViewById(R.id.timestamp);
             holder.discussion = (TextView) convertView.findViewById(R.id.post_discussion);
             holder.tags = (TextView) convertView.findViewById(R.id.post_tag);
-            holder.comment = (TextView) convertView.findViewById(R.id.btn_comment);
+            //holder.comment = (TextView) convertView.findViewById(R.id.btn_comment);
             holder.likesNum = (TextView) convertView.findViewById(R.id.tvLikes);
             holder.commentNum = (TextView) convertView.findViewById(R.id.tvComments);
             holder.heart = new Heart(holder.heartWhite, holder.heartRed);
@@ -140,16 +139,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             holder.likesNum.setVisibility(View.GONE);
         }
 
-        holder.comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: loading post thread for " + getItem(position).getPost_id());
-                ((MainActivity)mContext).onCommentThreadSelectedListener(getItem(position));
-
-                //going to need to do something else?
-                ((MainActivity)mContext).showLayout();
-            }
-        });
 
         holder.discussion.setText(getItem(position).getDiscussion());
 
@@ -233,14 +222,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
                             }
                         });
                         holder.settings = ds.getValue(UserAccountSettings.class);
-                        holder.comment.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((MainActivity)mContext).onCommentThreadSelectedListener(getItem(position));
-
-                                ((MainActivity)mContext).hideLayout();
-                            }
-                        });
                     }
                 }
 

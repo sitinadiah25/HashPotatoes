@@ -53,7 +53,6 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements
-        ViewPostFragment.OnCommentThreadSelectedListener,
         MainfeedListAdapter.OnLoadMoreItemsListener,
         MainFragment.onListPostSelectedListener,
         MainfeedListAdapter.OnTagSelectedListener {

@@ -31,6 +31,7 @@ import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.UserListAdapter;
+import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
