@@ -9,55 +9,77 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- top tool bar -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/relLayout1">
-
-            <include layout="@layout/layout_top_taps"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="25sp"
-                style="@style/RibeyeMarrowRegular"
-                android:text="@string/app_name"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relLayout2"
-            android:layout_below="@id/relLayout1"
-            android:layout_marginTop="5dp">
-
-            <include layout="@layout/snippet_searchbar"/>
-
-        </RelativeLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/relLayout2">
-
+            <!-- top tool bar -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/relLayout2">
 
-                <include layout="@layout/layout_search_list"/>
+                <include layout="@layout/layout_top_taps"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="25sp"
+                    style="@style/RibeyeMarrowRegular"
+                    android:text="@string/app_name"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="20dp"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/createPost"
+                    android:src="@drawable/ic_createpost"/>
 
             </RelativeLayout>
 
-        </ScrollView>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relLayout2">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/search_layout">
+
+                    <include layout="@layout/snippet_searchbar"/>
+
+                </RelativeLayout>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/search_layout">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <include layout="@layout/layout_search_list"/>
+
+                    </RelativeLayout>
+
+                </ScrollView>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <include layout="@layout/layout_bottom_navigation_view"/>
 
     </RelativeLayout>
-
-    <include layout="@layout/layout_bottom_navigation_view"/>
 
 </RelativeLayout>

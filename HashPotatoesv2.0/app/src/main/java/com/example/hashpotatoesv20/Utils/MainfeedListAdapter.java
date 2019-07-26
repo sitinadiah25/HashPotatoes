@@ -1,9 +1,19 @@
 package com.example.hashpotatoesv20.Utils;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -14,7 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Main.MainActivity;
+import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
@@ -41,6 +53,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainfeedListAdapter extends ArrayAdapter<Post> {
 
@@ -48,6 +62,12 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
         void onLoadMoreItems();
     }
     OnLoadMoreItemsListener mOnLoadMoreItemsListener;
+
+    public interface OnTagSelectedListener{
+        void OnTagSelected(String Tag);
+    }
+    OnTagSelectedListener mOnTagSelectedListener;
+
     private static final String TAG = "MainfeedListAdapter";
 
     private LayoutInflater mInflater;
@@ -70,14 +90,12 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
     }
 
     static class ViewHolder{
-        String likesString;
         TextView username, timeDetails, discussion, tags, likesNum, comment, commentNum;
         ImageView heartRed, heartWhite;
 
         UserAccountSettings settings = new UserAccountSettings();
         User user = new User();
         StringBuilder users;
-        String mLikesString;
         boolean likeByCurrentUser;
         Heart heart;
         GestureDetector detector;
@@ -101,7 +119,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             holder.timeDetails = (TextView) convertView.findViewById(R.id.timestamp);
             holder.discussion = (TextView) convertView.findViewById(R.id.post_discussion);
             holder.tags = (TextView) convertView.findViewById(R.id.post_tag);
-            holder.comment = (TextView) convertView.findViewById(R.id.btn_comment);
+            //holder.comment = (TextView) convertView.findViewById(R.id.btn_comment);
             holder.likesNum = (TextView) convertView.findViewById(R.id.tvLikes);
             holder.commentNum = (TextView) convertView.findViewById(R.id.tvComments);
             holder.heart = new Heart(holder.heartWhite, holder.heartRed);
@@ -121,18 +139,10 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             holder.likesNum.setVisibility(View.GONE);
         }
 
-        holder.comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: loading post thread for " + getItem(position).getPost_id());
-                ((MainActivity)mContext).onCommentThreadSelectedListener(getItem(position));
-
-                //going to need to do something else?
-                ((MainActivity)mContext).showLayout();
-            }
-        });
 
         holder.discussion.setText(getItem(position).getDiscussion());
+
+
         String tag = getItem(position).getTags();
         String[] tokens = tag.split(" ");
         String newTag = "";
@@ -141,7 +151,45 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
             newTag = newTag + "#" + tokens[i] + " ";
         }
 
-        holder.tags.setText(newTag);
+        //try clickablespan here
+        //holder.tags.setText(newTag);
+        newTag += " ";
+        List<Integer> start = new ArrayList<>();
+        int index = newTag.indexOf("#");
+        while (index >= 0) {
+            start.add(index);
+            index = newTag.indexOf("#", index + 1);
+        }
+
+        SpannableString ss = new SpannableString(newTag);
+        Matcher matcher = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(ss);
+
+        while (matcher.find())
+        {
+            //ss.setSpan(new ForegroundColorSpan(Color.parseColor("#0000FF")), matcher.start(), matcher.end(), 0); //to highlight word havgin '@'
+            final String tag1 = matcher.group(0);
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    TextView tv = (TextView) widget;
+                    Spanned s = (Spanned) tv.getText();
+                    int start = s.getSpanStart(this);
+                    int end = s.getSpanEnd(this);
+                    Log.d(TAG, "onClick: pressed tag: " + s.subSequence(start, end));
+
+                    mOnTagSelectedListener = (OnTagSelectedListener) getContext();
+                    mOnTagSelectedListener.OnTagSelected(s.subSequence(start, end) + "");
+
+                }
+            };
+            ss.setSpan(clickableSpan, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        holder.tags.setText(ss);
+        holder.tags.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+
 
         //set time it was posted
         String timestampDiff = getTimestampDifference(getItem(position).getDate_created());
@@ -174,14 +222,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Post> {
                             }
                         });
                         holder.settings = ds.getValue(UserAccountSettings.class);
-                        holder.comment.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((MainActivity)mContext).onCommentThreadSelectedListener(getItem(position));
-
-                                ((MainActivity)mContext).hideLayout();
-                            }
-                        });
                     }
                 }
 

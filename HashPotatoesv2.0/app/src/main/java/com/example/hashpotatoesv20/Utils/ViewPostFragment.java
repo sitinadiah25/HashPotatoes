@@ -72,10 +72,6 @@ public class ViewPostFragment extends Fragment {
 
     private static final String TAG = "ViewPostFragment";
 
-    public interface OnCommentThreadSelectedListener{
-        void onCommentThreadSelectedListener(Post post);
-    }
-    OnCommentThreadSelectedListener mOnCommentThreadSelectedListener;
     public ViewPostFragment() {
         super();
         setArguments(new Bundle());
@@ -176,16 +172,6 @@ public class ViewPostFragment extends Fragment {
         setupBottomNavigationView();
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            mOnCommentThreadSelectedListener = (OnCommentThreadSelectedListener) getActivity();
-        }catch (ClassCastException e){
-            Log.e(TAG,"onAttach: ClassCastException: " + e.getMessage());
-        }
     }
 
     private void getLikesString(){
