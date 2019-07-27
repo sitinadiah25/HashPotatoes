@@ -7,7 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -24,6 +30,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Comment;
 import com.example.hashpotatoesv20.Models.Like;
 import com.example.hashpotatoesv20.Models.Post;
@@ -53,6 +60,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ViewPostFragment extends Fragment {
 
@@ -67,6 +76,11 @@ public class ViewPostFragment extends Fragment {
         String comment, username, timestamp;
     }
 
+    public interface OnTagSelectedListener{
+        void OnTagSelected(String Tag);
+    }
+    OnTagSelectedListener mOnTagSelectedListener;
+
     //Firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -80,6 +94,7 @@ public class ViewPostFragment extends Fragment {
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mCheckmark, mEdit, mReport;
     private EditText mCommentText;
     private ListView mListView;
+    private SwipeRefreshLayout pullToRefresh;
 
     //variables
     private Post mPost;
@@ -116,8 +131,19 @@ public class ViewPostFragment extends Fragment {
         mListView = (ListView) view.findViewById(R.id.comment_list);
         mFirebaseMethods = new FirebaseMethods(getActivity());
         mEdit = (ImageView) view.findViewById(R.id.btn_edit);
+        pullToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.pullToRefresh);
         mReport = (ImageView) view.findViewById(R.id.btn_report);
         mContext = getActivity();
+
+        pullToRefresh.setDistanceToTriggerSync(20);
+
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLikesString();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(),new GestureListener());
@@ -131,7 +157,7 @@ public class ViewPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back");
-                getActivity().finish();
+                getFragmentManager().popBackStack();
             }
         });
 
@@ -420,7 +446,44 @@ public class ViewPostFragment extends Fragment {
         for (int i = 0; i < tokenCount; i++) {
             newTag = newTag + "#" + tokens[i] + " ";
         }
-        mTag.setText(newTag);
+
+        //try clickablespan here
+        //holder.tags.setText(newTag);
+        newTag += " ";
+        List<Integer> start = new ArrayList<>();
+        int index = newTag.indexOf("#");
+        while (index >= 0) {
+            start.add(index);
+            index = newTag.indexOf("#", index + 1);
+        }
+
+        SpannableString ss = new SpannableString(newTag);
+        Matcher matcher = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(ss);
+
+        while (matcher.find())
+        {
+            //ss.setSpan(new ForegroundColorSpan(Color.parseColor("#0000FF")), matcher.start(), matcher.end(), 0); //to highlight word havgin '@'
+            final String tag1 = matcher.group(0);
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    TextView tv = (TextView) widget;
+                    Spanned s = (Spanned) tv.getText();
+                    int start = s.getSpanStart(this);
+                    int end = s.getSpanEnd(this);
+                    Log.d(TAG, "onClick: pressed tag: " + s.subSequence(start, end));
+
+                    mOnTagSelectedListener = (OnTagSelectedListener) mContext;
+                    mOnTagSelectedListener.OnTagSelected(s.subSequence(start, end) + "");
+
+                }
+            };
+            ss.setSpan(clickableSpan, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        mTag.setText(ss);
+        mTag.setMovementMethod(LinkMovementMethod.getInstance());
+        //mTag.setText(newTag);
 
         setupListView();
 
@@ -451,6 +514,14 @@ public class ViewPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to EditPostFragment");
+                String activityName = getActivity().getClass().getSimpleName();
+                int Id;
+                if (activityName.equals("MainActivity")) {
+                    Id = R.id.relLayoutParent;
+                }
+                else {
+                    Id = R.id.container;
+                }
                 EditPostFragment fragment = new EditPostFragment();
                 Bundle args = new Bundle();
                 args.putParcelable(getString(R.string.post), mPost);
@@ -458,7 +529,7 @@ public class ViewPostFragment extends Fragment {
                 fragment.setArguments(args);
 
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, fragment);
+                transaction.replace(Id, fragment);
                 transaction.addToBackStack(getString(R.string.edit_post_fragment));
                 transaction.commit();
             }
@@ -466,6 +537,15 @@ public class ViewPostFragment extends Fragment {
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //check for activity
+                String activityName = getActivity().getClass().getSimpleName();
+                int Id;
+                if (activityName.equals("MainActivity")) {
+                    Id = R.id.relLayoutParent;
+                }
+                else {
+                    Id = R.id.container;
+                }
                 Log.d(TAG, "onClick: navigating to ReportPostFragment");
                 ReportPostFragment fragment = new ReportPostFragment();
                 Bundle args = new Bundle();
@@ -474,7 +554,7 @@ public class ViewPostFragment extends Fragment {
                 fragment.setArguments(args);
 
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, fragment);
+                transaction.replace(Id, fragment);
                 transaction.addToBackStack(getString(R.string.report_post_fragment));
                 transaction.commit();
             }
@@ -641,7 +721,7 @@ public class ViewPostFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 30;
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         int width = listAdapter.getCount() - 1;

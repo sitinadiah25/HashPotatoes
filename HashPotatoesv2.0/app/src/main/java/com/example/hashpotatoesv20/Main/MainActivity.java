@@ -16,11 +16,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Login.LoginActivity;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
+import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
+import com.example.hashpotatoesv20.Utils.EditPostFragment;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.SectionsPagerAdapter;
 import com.example.hashpotatoesv20.Utils.TutorialActivity;
@@ -45,7 +48,8 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements
         MainfeedListAdapter.OnLoadMoreItemsListener,
         MainFragment.onListPostSelectedListener,
-        MainfeedListAdapter.OnTagSelectedListener {
+        MainfeedListAdapter.OnTagSelectedListener,
+        ViewPostFragment.OnTagSelectedListener {
 
     @Override
     public void onLoadMoreItems() {
@@ -92,17 +96,22 @@ public class MainActivity extends AppCompatActivity implements
                         tag.setTag_description(objectMap.get(mContext.getString(R.string.field_tag_description)).toString());
                         tag.setOwner_id(objectMap.get(mContext.getString(R.string.field_owner_id)).toString());
 
-                        Log.d(TAG, "onDataChange: get tag: " + tag.toString());
-                        ViewTagFragment fragment = new ViewTagFragment();
-                        Bundle args = new Bundle();
-                        args.putParcelable(getString(R.string.field_tag), tag);
-                        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
-                        fragment.setArguments(args);
+//                        Log.d(TAG, "onDataChange: get tag: " + tag.toString());
+//                        ViewTagFragment fragment = new ViewTagFragment();
+//                        Bundle args = new Bundle();
+//                        args.putParcelable(getString(R.string.field_tag), tag);
+//                        args.putInt(getString(R.string.activity_number), ACTIVITY_NUM);
+//                        fragment.setArguments(args);
+//
+//                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                        transaction.replace(R.id.relLayoutParent, fragment);
+//                        transaction.addToBackStack(getString(R.string.view_post_fragment));
+//                        transaction.commit();
 
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.relLayoutParent, fragment);
-                        transaction.addToBackStack(getString(R.string.view_post_fragment));
-                        transaction.commit();
+                        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                        intent.putExtra(getString(R.string.calling_activity),getString(R.string.main_activity));
+                        intent.putExtra(getString(R.string.intent_tag), tag);
+                        startActivity(intent);
                     }
                 }
             }

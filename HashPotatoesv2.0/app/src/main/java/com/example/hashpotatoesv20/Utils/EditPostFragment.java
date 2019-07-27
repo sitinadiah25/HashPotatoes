@@ -1,6 +1,7 @@
 package com.example.hashpotatoesv20.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Models.UserAccountSettings;
+import com.example.hashpotatoesv20.Profile.ProfileActivity;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.dialogs.ConfirmDeleteDialog;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,7 +43,8 @@ public class EditPostFragment extends Fragment implements
     @Override
     public void onConfirmDelete() {
         deletePost();
-        getFragmentManager().popBackStack();
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+        startActivity(intent);
 
         getActivity().finish();
         Toast.makeText(getActivity(),"Post deleted", Toast.LENGTH_SHORT).show();
@@ -132,7 +135,6 @@ public class EditPostFragment extends Fragment implements
                 ConfirmDeleteDialog dialog = new ConfirmDeleteDialog();
                 dialog.show(getFragmentManager(),getString(R.string.confirm_delete_dialog));
                 dialog.setTargetFragment(EditPostFragment.this,1);
-
             }
         });
 
@@ -182,10 +184,10 @@ public class EditPostFragment extends Fragment implements
                 .setValue(newDiscussion);
         ArrayList<String> tagIDList = mPost.getTag_list();
         for (int i = 0; i < tagIDList.size(); i++) {
-            myRef.child(mContext.getString(R.string.dbname_tag_post))
+            myRef.child(getString(R.string.dbname_tag_post))
                     .child(tagIDList.get(i))
                     .child(mPost.getPost_id())
-                    .child(mContext.getString(R.string.field_discussion))
+                    .child(getString(R.string.field_discussion))
                     .setValue(newDiscussion);
         }
     }

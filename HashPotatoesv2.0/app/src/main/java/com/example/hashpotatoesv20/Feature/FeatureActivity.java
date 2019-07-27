@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,11 +27,13 @@ import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
 import com.example.hashpotatoesv20.Models.User;
 import com.example.hashpotatoesv20.Profile.ProfileActivity;
+import com.example.hashpotatoesv20.Profile.ProfileFragment;
 import com.example.hashpotatoesv20.R;
 import com.example.hashpotatoesv20.Utils.BottomNavigationViewHelper;
 import com.example.hashpotatoesv20.Utils.MainfeedListAdapter;
 import com.example.hashpotatoesv20.Utils.TagListAdapter;
 import com.example.hashpotatoesv20.Utils.UserListAdapter;
+import com.example.hashpotatoesv20.Utils.ViewPostFragment;
 import com.example.hashpotatoesv20.Utils.ViewTagFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -90,6 +93,11 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
         });
     }
 
+    public interface onListPostSelectedListener {
+        void onPostSelected(Post post, int activity_number);
+    }
+    onListPostSelectedListener mOnListPostSelectedListener;
+
     private static final String TAG = "FeatureActivity";
     private static final int ACTIVITY_NUM = 1;
 
@@ -102,6 +110,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
     private ListView mListViewNew;
 
     //Vars
+    private SwipeRefreshLayout pullToRefresh;
     private List<User> mUserList;
     private List<Tag> mTagList;
     private List<Post> mPosts;
@@ -119,8 +128,18 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
         mListViewUser = (ListView) findViewById(R.id.search_listview);
         mListViewTag = (ListView) findViewById(R.id.search_listview_tag);
         mListViewNew = (ListView) findViewById(R.id.search_listview_new);
+        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
         mPosts = new ArrayList<>();
         Log.d(TAG, "onCreate: started.");
+
+        pullToRefresh.setDistanceToTriggerSync(20);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getPost();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         hideSoftKeyboard();
         setupBottomNavigationView();
@@ -130,6 +149,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
 
     private void getPost() {
         Log.d(TAG, "getPosts: getting posts");
+        mPosts.clear();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference.child(getString(R.string.dbname_posts));
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -436,7 +456,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 25;
+            totalHeight += view.getMeasuredHeight() + 65;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

@@ -90,7 +90,7 @@ public class FollowingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to profile.");
-                getActivity().onBackPressed();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
@@ -153,7 +153,7 @@ public class FollowingFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight += view.getMeasuredHeight() + 30;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.hashpotatoesv20.Feature.FeatureActivity;
 import com.example.hashpotatoesv20.Main.MainFragment;
 import com.example.hashpotatoesv20.Models.Post;
 import com.example.hashpotatoesv20.Models.Tag;
@@ -38,7 +39,9 @@ public class ProfileActivity extends AppCompatActivity implements
         ViewTagFragment.onListPostSelectedListener,
         ViewProfileFragment.onListPostSelectedListener,
         MainFragment.onListPostSelectedListener,
-        MainfeedListAdapter.OnTagSelectedListener{
+        MainfeedListAdapter.OnTagSelectedListener,
+        FeatureActivity.onListPostSelectedListener,
+        ViewPostFragment.OnTagSelectedListener {
     
     private static final String TAG = "ProfileActivity";
     private static final int ACTIVITY_NUM = 3;

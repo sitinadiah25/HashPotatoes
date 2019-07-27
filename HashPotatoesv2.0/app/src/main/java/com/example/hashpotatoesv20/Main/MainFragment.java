@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainFragment extends Fragment{
+public class MainFragment extends Fragment {
     private static final String TAG = "MainFragment";
     private static final int ACTIVITY_NUM = 0;
 
@@ -357,7 +357,7 @@ public class MainFragment extends Fragment{
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 25;
+            totalHeight += view.getMeasuredHeight() + 65;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

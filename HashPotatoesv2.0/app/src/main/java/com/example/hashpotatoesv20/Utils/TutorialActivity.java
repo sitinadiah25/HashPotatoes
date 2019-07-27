@@ -14,7 +14,7 @@ public class TutorialActivity extends com.hololo.tutorial.library.TutorialActivi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addFragment(new Step.Builder().setTitle("Tutorial Walk-through")
+        addFragment(new Step.Builder().setTitle("HashPotatoes Walk-through")
                 .setContent("Yay Walk-through!")
                 .setBackgroundColor(Color.parseColor("#ABD1ED")) // int background color
                 .setDrawable(R.drawable.welcome_tutorial) // int top drawable

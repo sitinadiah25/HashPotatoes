@@ -33,7 +33,7 @@ public class MainEmptyActivity extends AppCompatActivity {
             //the app is being launched for first time, do something
             Log.d("Comments", "First time");
             // first time task (open onboardactivity)
-            activityIntent = new Intent(this, OnBoardActivity.class);
+            activityIntent = new Intent(this, TutorialActivity.class);
 
             // record the fact that the app has been started at least once
             settings.edit().putBoolean("my_first_time", false).commit();
@@ -41,13 +41,14 @@ public class MainEmptyActivity extends AppCompatActivity {
         else {
             // go straight to main if a token is stored
             if (user != null) {
-                FirebaseUserMetadata metadata = FirebaseAuth.getInstance().getCurrentUser().getMetadata();
-                if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp()) {
-                    activityIntent = new Intent(this, TutorialActivity.class);
-                }
-                else {
+                //first login
+//                FirebaseUserMetadata metadata = FirebaseAuth.getInstance().getCurrentUser().getMetadata();
+//                if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp()) {
+//                    //activityIntent = new Intent(this, TutorialActivity.class);
+//                }
+//                else {
                     activityIntent = new Intent(this, MainActivity.class);
-                }
+//                }
             } else {
                 activityIntent = new Intent(this, LoginActivity.class);
             }

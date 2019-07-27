@@ -18,7 +18,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/relLayout1"
         android:id="@+id/relLayout2"
-        android:background="@color/lightBack">
+        android:background="@color/lightBack"
+        android:layout_marginBottom="50dp">
 
         <include layout="@layout/layout_center_view_profile"/>
 

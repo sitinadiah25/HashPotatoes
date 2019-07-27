@@ -16,7 +16,7 @@ public class SendMailTask extends AsyncTask {
 
     protected void onPreExecute() {
         statusDialog = new ProgressDialog(sendMailActivity);
-        statusDialog.setMessage("Getting ready...");
+        statusDialog.setMessage("Sending Report...");
         statusDialog.setIndeterminate(false);
         statusDialog.setCancelable(false);
         statusDialog.show();

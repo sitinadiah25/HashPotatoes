@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +46,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +79,7 @@ public class ViewProfileFragment extends Fragment {
     private ImageView profileMenu, mBackArrow;
     private BottomNavigationViewEx bottomNavigationView;
     private ListView listView;
+    private SwipeRefreshLayout pullToRefresh;
 
     //vars
     private User mUser;
@@ -103,6 +107,7 @@ public class ViewProfileFragment extends Fragment {
         mWebsite = (TextView) view.findViewById(R.id.profile_website);
         mDescription = (TextView) view.findViewById(R.id.profile_description);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
+        pullToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.pullToRefresh);
         mContext = getActivity();
         listView = (ListView) view.findViewById(R.id.listView);
 
@@ -124,6 +129,16 @@ public class ViewProfileFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back");
                 getActivity().finish();
+            }
+        });
+
+        pullToRefresh.setDistanceToTriggerSync(20);
+
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                init();
+                pullToRefresh.setRefreshing(false);
             }
         });
 
@@ -271,26 +286,12 @@ public class ViewProfileFragment extends Fragment {
     }
 
     private void setupListGrid(final ArrayList<Post> posts){
-        //setup list view
-        List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-        for (int i = posts.size()-1; i >= 0; i--) {
-            //for (int i = 0; i < posts.size(); i++) {
-            HashMap<String, String> hm = new HashMap<String, String>();
-
-            final String postTimestamp = posts.get(i).getDate_created();
-            String timestampDiff = getTimestampDifference(postTimestamp);
-
-            hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
-            hm.put(getString(R.string.field_date_created), timestampDiff);
-            hm.put(getString(R.string.field_tags), posts.get(i).getTags());
-            aList.add(hm);
-            Log.d(TAG, "onDataChange: get: " + posts.get(i).getDiscussion());
-        }
-
-        String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-                getString(R.string.field_tags)};
-
-        int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag};
+        Collections.sort(posts, new Comparator<Post>() {
+            @Override
+            public int compare(Post o1, Post o2) {
+                return o2.getDate_created().compareTo(o1.getDate_created());
+            }
+        });
 
         MainfeedListAdapter adapter = new MainfeedListAdapter(mContext, R.layout.layout_post_listview, posts);
         listView.setAdapter(adapter);
@@ -300,9 +301,7 @@ public class ViewProfileFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    int actPosition = posts.size() - position - 1;
-                    Log.d(TAG, "onItemClick: position:" + actPosition);
-                    mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
+                    mOnListPostSelectedListener.onPostSelected(posts.get(position), ACTIVITY_NUM);
                 }
                 catch (NullPointerException e) {
                     Log.e(TAG, "onItemClick: NullPointerException View Post " + e.getLocalizedMessage() );
@@ -445,7 +444,7 @@ public class ViewProfileFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 25;
+            totalHeight += view.getMeasuredHeight() + 65;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

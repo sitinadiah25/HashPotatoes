@@ -59,7 +59,7 @@ public class ReportPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to 'ViewPostFragment'");
-                getActivity().onBackPressed();
+                getFragmentManager().popBackStack();
             }
         });
 
@@ -67,7 +67,7 @@ public class ReportPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to 'ViewPostFragment'");
-                getActivity().onBackPressed();
+                getFragmentManager().popBackStack();
             }
         });
 
@@ -104,8 +104,7 @@ public class ReportPostFragment extends Fragment {
                             + "\nReason: " + chosenOption + "\nPostID: " + mPost.getPost_id() + " \nPost Content: " + mPost.getDiscussion();
                     new SendMailTask(getActivity()).execute(fromEmail, fromPassword, toEmail
                             ,emailSubject, emailBody);
-                    getActivity().onBackPressed();
-                    Toast.makeText(mContext, "Report sent. Please wait while we review the report.", Toast.LENGTH_SHORT).show();
+                    getFragmentManager().popBackStack();
                 }
             }
         });

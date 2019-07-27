@@ -46,6 +46,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -447,61 +449,25 @@ public class ViewTagFragment extends Fragment {
                     post.setLikes(likesList);
                     posts.add(post);
                 }
-                //setup list view
-                final List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                for (int i = posts.size()-1; i >= 0; i--) {
-                    final HashMap<String, String> hm = new HashMap<String, String>();
 
-                    final String postTimestamp = posts.get(i).getDate_created();
-                    String timestampDiff = getTimestampDifference(postTimestamp);
+                Collections.sort(posts, new Comparator<Post>() {
+                    @Override
+                    public int compare(Post o1, Post o2) {
+                        return o2.getDate_created().compareTo(o1.getDate_created());
+                    }
+                });
 
-                    hm.put(getString(R.string.field_discussion), posts.get(i).getDiscussion());
-                    hm.put(getString(R.string.field_date_created), timestampDiff);
-                    hm.put(getString(R.string.field_tags), posts.get(i).getTags());
-                    aList.add(hm);
-                    final String anon = posts.get(i).getAnonymity();
+                MainfeedListAdapter adapter = new MainfeedListAdapter(mContext, R.layout.layout_post_listview, posts);
 
-                    DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
-                    Query query2 = reference2
-                            .child(getString(R.string.dbname_users_account_settings))
-                            .child(posts.get(i).getUser_id());
-                    aList.clear();
-                    query2.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (anon.equals("Anonymous")) {
-                                hm.put(getString(R.string.field_username), "Anonymous");
-                            }
-                            else {
-                                hm.put(getString(R.string.field_username), dataSnapshot.getValue(UserAccountSettings.class).getUsername());
-                            }
-                            aList.add(hm);
-                            String[] from = {getString(R.string.field_discussion), getString(R.string.field_date_created),
-                                    getString(R.string.field_tags), getString(R.string.field_username)};
+                listView.setAdapter(adapter);
+                setListViewHeightBasedOnChildren(listView);
 
-                            int[] to = {R.id.post_discussion, R.id.timestamp, R.id.post_tag, R.id.username};
-
-                            MainfeedListAdapter adapter = new MainfeedListAdapter(mContext, R.layout.layout_post_listview, posts);
-
-                            listView.setAdapter(adapter);
-                            setListViewHeightBasedOnChildren(listView);
-
-                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    int actPosition = posts.size() - position - 1;
-                                    Log.d(TAG, "onItemClick: position:" + actPosition);
-                                    mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        mOnListPostSelectedListener.onPostSelected(posts.get(position), ACTIVITY_NUM);
+                    }
+                });
             }
 
             @Override
@@ -525,7 +491,7 @@ public class ViewTagFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 25;
+            totalHeight += view.getMeasuredHeight() + 65;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/lightBack">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container">
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/relLayout1">
+
             <!-- top tool bar -->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -49,20 +56,28 @@
 
                 </RelativeLayout>
 
-                <ScrollView
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/pullToRefresh"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_below="@id/search_layout">
 
-                    <RelativeLayout
+                    <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <include layout="@layout/layout_search_list"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                    </RelativeLayout>
+                            <include layout="@layout/layout_search_list"/>
 
-                </ScrollView>
+                        </RelativeLayout>
+
+                    </ScrollView>
+
+                </android.support.v4.widget.SwipeRefreshLayout>
+
 
             </RelativeLayout>
 

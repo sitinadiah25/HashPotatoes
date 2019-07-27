@@ -2,156 +2,163 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/pullToRefresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/lightBack">
+            android:layout_height="wrap_content">
 
-            <!-- middle section -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/relLayout1"
-                android:id="@+id/relLayout2">
+                android:layout_height="match_parent"
+                android:background="@color/lightBack">
 
-                <LinearLayout
+                <!-- middle section -->
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:id="@+id/linLayout"
-                    android:weightSum="100">
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/relLayout1"
+                    android:id="@+id/relLayout2">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:id="@+id/linLayout"
+                        android:weightSum="100">
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="55"
+                            android:layout_marginStart="25dp">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:id="@+id/profilePhoto"
+                                app:civ_border_color="@color/Black"
+                                app:civ_border_width="0.5dp"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginTop="30dp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="45"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginEnd="30dp"
+                            android:layout_marginTop="20dp">
+
+                            <include layout="@layout/snippet_top_view_profile"/>
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
 
                     <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="55"
-                        android:layout_marginStart="25dp">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_below="@id/linLayout"
+                        android:paddingLeft="40dp"
+                        android:paddingBottom="5dp"
+                        android:id="@+id/linLayout2">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:id="@+id/profilePhoto"
-                            app:civ_border_color="@color/Black"
-                            app:civ_border_width="0.5dp"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginTop="30dp"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/display_name"
+                            android:textStyle="bold"
+                            android:text="Protato"
+                            android:paddingTop="5dp"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tv_year"
+                            android:text="Year"
+                            android:textSize="16sp"
+                            android:layout_marginTop="2dp"
+                            android:layout_below="@id/display_name"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/profile_year"
+                            android:text="2"
+                            android:textSize="16sp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@id/tv_year"
+                            android:layout_below="@id/display_name"
+                            android:layout_marginLeft="5dp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/profile_major"
+                            android:text="Bachelor of Computing"
+                            android:textSize="16sp"
+                            android:layout_marginTop="2dp"
+                            android:layout_below="@id/profile_year"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/profile_website"
+                            android:text="www.google.com"
+                            android:textSize="16sp"
+                            android:layout_marginTop="2dp"
+                            android:layout_below="@id/profile_major"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/profile_description"
+                            android:text="hello!"
+                            android:textSize="16sp"
+                            android:layout_marginTop="2dp"
+                            android:layout_below="@id/profile_website"/>
 
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="45"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginTop="20dp">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/relLayout3"
+                        android:layout_below="@id/linLayout2"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="50dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp">
 
-                        <include layout="@layout/snippet_top_view_profile"/>
+                        <ListView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/listView"
+                            android:verticalSpacing="1dp"
+                            android:horizontalSpacing="1dp"
+                            android:stretchMode="columnWidth"
+                            android:gravity="center">
+
+
+                        </ListView>
 
                     </RelativeLayout>
-
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_below="@id/linLayout"
-                    android:paddingLeft="40dp"
-                    android:paddingBottom="5dp"
-                    android:id="@+id/linLayout2">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/display_name"
-                        android:textStyle="bold"
-                        android:text="Protato"
-                        android:paddingTop="5dp"
-                        android:textSize="16sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tv_year"
-                        android:text="Year"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"
-                        android:layout_below="@id/display_name"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/profile_year"
-                        android:text="2"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"
-                        android:layout_toRightOf="@id/tv_year"
-                        android:layout_below="@id/display_name"
-                        android:layout_marginLeft="5dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/profile_major"
-                        android:text="Bachelor of Computing"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"
-                        android:layout_below="@id/profile_year"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/profile_website"
-                        android:text="www.google.com"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"
-                        android:layout_below="@id/profile_major"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/profile_description"
-                        android:text="hello!"
-                        android:textSize="16sp"
-                        android:layout_marginTop="2dp"
-                        android:layout_below="@id/profile_website"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/relLayout3"
-                    android:layout_below="@id/linLayout2"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="50dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp">
-
-                    <ListView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/listView"
-                        android:verticalSpacing="1dp"
-                        android:horizontalSpacing="1dp"
-                        android:stretchMode="columnWidth"
-                        android:gravity="center">
-
-
-                    </ListView>
 
                 </RelativeLayout>
 
             </RelativeLayout>
 
-        </RelativeLayout>
+        </ScrollView>
 
-    </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </merge>

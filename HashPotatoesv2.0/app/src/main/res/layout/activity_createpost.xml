@@ -133,6 +133,12 @@
                     android:inputType="textCapSentences|textMultiLine"
                     android:id="@+id/searchTag"/>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="*Add at least one tag"
+                    android:layout_below="@+id/searchTag"/>
+
                 <ListView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
