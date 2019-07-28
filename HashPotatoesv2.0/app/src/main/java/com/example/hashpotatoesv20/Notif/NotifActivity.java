@@ -45,6 +45,8 @@ public class NotifActivity extends AppCompatActivity implements
     private static final String TAG = "NotificationActivity";
     private static final int ACTIVITY_NUM = 2;
 
+    private boolean has_followed = false;
+
     @Override
     public void onNotifSelected(Notification notification, int activity_num) {
         if(!notification.getPost_id().equals("")) {
@@ -163,8 +165,31 @@ public class NotifActivity extends AppCompatActivity implements
 
                 }
             });
-            ConfirmFollowerRequest dialog = new ConfirmFollowerRequest();
-            dialog.show(getSupportFragmentManager(),getString(R.string.confirm_follower_request));
+
+            Log.d(TAG, "onNotifSelected: get tag_id: " + notification.getTag());
+
+            DatabaseReference reference3 = FirebaseDatabase.getInstance().getReference();
+            Query query3 = reference.child(getString(R.string.dbname_tag_followers))
+                    .child(notification.getTag())
+                    .orderByChild(getString(R.string.field_user_id))
+                    .equalTo(notification.getViewer_uid());
+            query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    has_followed = true;
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            if(!has_followed){
+                ConfirmFollowerRequest dialog = new ConfirmFollowerRequest();
+                dialog.show(getSupportFragmentManager(),getString(R.string.confirm_follower_request));
+            }else{
+                Toast.makeText(mContext,"User is following this tag.", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
