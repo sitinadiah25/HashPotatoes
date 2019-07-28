@@ -1,15 +1,19 @@
 package com.example.hashpotatoesv20.Login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView loadingPleaseWait, mError, mBack;
     private Button btnRegister;
     private ProgressBar mProgressBar;
+    private LinearLayout mParent;
 
     //firebase
     private FirebaseAuth mAuth;
@@ -72,27 +77,35 @@ public class RegisterActivity extends AppCompatActivity {
                 username = mUsername.getText().toString();
                 confPassword = mConfirmPassword.getText().toString();
 
+                //check if email is valid
                 if (!isEmailValid(email)) {
                     mError.setText("Email is invalid.");
                     mError.setVisibility(View.VISIBLE);
                 }
                 else {
+                    mError.setText("");
+                    mError.setVisibility(View.GONE);
+                    //check if username exists
+                    checkIfUsernameExists(username);
+                    if (!mError.getText().toString().equals("Username already exists.")) {
+                        //check if passwords are the same
+                        if (password.equals(confPassword)) {
+                            if(checkInputs(email,password,username)){
+                                mProgressBar.setVisibility((View.VISIBLE));
+                                loadingPleaseWait.setVisibility(View.VISIBLE);
 
-                }
-
-                if (password.equals(confPassword)) {
-                    if(checkInputs(email,password,username)){
-                        mProgressBar.setVisibility((View.VISIBLE));
-                        loadingPleaseWait.setVisibility(View.VISIBLE);
-
-                        firebaseMethods.registerNewEmail(email, password, username);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                firebaseMethods.registerNewEmail(email, password, username);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                mProgressBar.setVisibility((View.GONE));
+                                loadingPleaseWait.setVisibility(View.GONE);
+                            }
+                        }
+                        else {
+                            mError.setText("Passwords are not the same.");
+                            mError.setVisibility(View.VISIBLE);
+                            //Toast.makeText(mContext, "Passwords are not the same.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-                else {
-                    mError.setText("Passwords are not the same.");
-                    mError.setVisibility(View.VISIBLE);
-                    //Toast.makeText(mContext, "Passwords are not the same.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -100,7 +113,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to login screen");
-                finish();
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
@@ -141,6 +155,8 @@ public class RegisterActivity extends AppCompatActivity {
         mContext = RegisterActivity.this;
         mProgressBar.setVisibility(View.GONE);
         loadingPleaseWait.setVisibility(View.GONE);
+        mParent = (LinearLayout) findViewById(R.id.layout_parent);
+        setupUI(mParent);
     }
 
     private boolean isStringNull(String string) {
@@ -173,24 +189,22 @@ public class RegisterActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean exists = false;
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     if (singleSnapshot.exists()) {
-                        Log.d(TAG, "onDataChange: FOUND A MATCH: " + singleSnapshot.getValue(User.class).getUsername());
-                        append = myRef.push().getKey().substring(3,10);
-                        Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
+                        mError.setText("");
+                        mError.setVisibility(View.GONE);
+                        exists = true;
                     }
                 }
-                String mUsername = "";
-                mUsername = username + append;
-
-                //add user to database
-                firebaseMethods.addNewUser(email, mUsername, "", "", "", "");
-
-                Log.d(TAG, "onDataChange: Signup successful.");
-
-                Toast.makeText(mContext, "Signup successful. Sending verification email.", Toast.LENGTH_SHORT).show();
-
-                mAuth.signOut();
+                if (exists) {
+                    mError.setText("Username already exists.");
+                    mError.setVisibility(View.VISIBLE);
+                }
+//                else {
+//                    mError.setText("Username already exists.");
+//                    mError.setVisibility(View.VISIBLE);
+//                }
             }
 
             @Override
@@ -198,6 +212,27 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    //hide keyboard if user touches view
+    public void setupUI(View view) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard();
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 
     /**

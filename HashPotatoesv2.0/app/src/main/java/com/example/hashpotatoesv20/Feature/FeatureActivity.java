@@ -114,6 +114,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
     private List<User> mUserList;
     private List<Tag> mTagList;
     private List<Post> mPosts;
+    private List<String> mPublicTags;
     private ArrayList<Post> mPaginatedPosts;
     private MainfeedListAdapter mAdapter;
     private UserListAdapter mUAdapter;
@@ -130,6 +131,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
         mListViewNew = (ListView) findViewById(R.id.search_listview_new);
         pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
         mPosts = new ArrayList<>();
+        mPublicTags = new ArrayList<>();
         Log.d(TAG, "onCreate: started.");
 
         pullToRefresh.setDistanceToTriggerSync(20);
@@ -143,87 +145,27 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
 
         hideSoftKeyboard();
         setupBottomNavigationView();
-        getPost();
+        getPublicTags();
+        //getPost();
         initTextListener();
     }
 
-    private void getPost() {
-        Log.d(TAG, "getPosts: getting posts");
-        mPosts.clear();
+    private void getPublicTags() {
+        Log.d(TAG, "getPublicTags: getting public tags");
+        mPublicTags.clear();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child(getString(R.string.dbname_posts));
+        Query query = reference.child(getString(R.string.dbname_tags))
+                .orderByChild(getString(R.string.field_tag_id));
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    final Post post = new Post();
-                    Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
-                    post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
-                    post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
-                    post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
-                    post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
-                    post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
-                    post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
-
-                    if (post.getAnonymity().equals("Public")) {
-                        ArrayList<String> tagIDList = new ArrayList<>();
-                        for (DataSnapshot dataSnapshot1 : singleSnapshot
-                                .child(getString(R.string.field_tag_list)).getChildren()) {
-                            tagIDList.add(dataSnapshot1.getValue().toString());
-                        }
-
-                        List<Like> likesList = new ArrayList<Like>();
-                        for (DataSnapshot dSnapshot : singleSnapshot
-                                .child(getString(R.string.field_likes)).getChildren()) {
-                            Like like = new Like();
-                            like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
-                            likesList.add(like);
-                        }
-
-                        //find the one with comments pls lol
-                        List<Comment> commentList = new ArrayList<>();
-                        for (DataSnapshot dataSnapshot1 :
-                                singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
-                            Comment comment = new Comment();
-                            comment.setUser_id(dataSnapshot1.getValue(Comment.class).getUser_id());
-                            comment.setComment(dataSnapshot1.getValue(Comment.class).getComment());
-                            comment.setDate_created(dataSnapshot1.getValue(Comment.class).getDate_created());
-                        }
-
-                        post.setTag_list(tagIDList);
-                        post.setComments(commentList);
-                        post.setLikes(likesList);
-                        //Log.d(TAG, "onDataChange: post: " + post.toString());
-
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
-                        Query query1 = reference1.child(getString(R.string.dbname_user_following))
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        query1.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                boolean is_following = false;
-                                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                                    for (int i = 0; i < post.getTag_list().size(); i++) {
-                                        if (singleSnapshot.child(mContext.getString(R.string.field_tag_id)).getValue().toString().equals(post.getTag_list().get(i))) {
-                                            is_following = true;
-                                        }
-                                    }
-                                }
-
-                                if (!is_following) {
-                                    mPosts.add(post);
-                                }
-                                displayPosts();
-                            }
-
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getValue(Tag.class).getPrivacy().equals("Public")) {
+                        Log.d(TAG, "onDataChange: tagname: " + ds.getValue(Tag.class).getTag_name());
+                        mPublicTags.add(ds.getValue(Tag.class).getTag_id());
                     }
                 }
+                getPost();
             }
 
             @Override
@@ -231,6 +173,94 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
 
             }
         });
+    }
+
+    private void getPost() {
+        Log.d(TAG, "getPosts: getting posts");
+        mPosts.clear();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        for (int i = 0; i < mPublicTags.size(); i++) {
+            String currTag = mPublicTags.get(i);
+            Query query = reference.child(getString(R.string.dbname_tag_post))
+                    .child(currTag);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                        final Post post = new Post();
+                        Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+                        post.setDiscussion(objectMap.get(getString(R.string.field_discussion)).toString());
+                        post.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
+                        post.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
+                        post.setPost_id(objectMap.get(getString(R.string.field_post_id)).toString());
+                        post.setTags(objectMap.get(getString(R.string.field_tags)).toString());
+                        post.setAnonymity(objectMap.get(getString(R.string.field_anonymity)).toString());
+
+                        if (post.getAnonymity().equals("Public")) {
+                            ArrayList<String> tagIDList = new ArrayList<>();
+                            for (DataSnapshot dataSnapshot1 : singleSnapshot
+                                    .child(getString(R.string.field_tag_list)).getChildren()) {
+                                tagIDList.add(dataSnapshot1.getValue().toString());
+                            }
+
+                            List<Like> likesList = new ArrayList<Like>();
+                            for (DataSnapshot dSnapshot : singleSnapshot
+                                    .child(getString(R.string.field_likes)).getChildren()) {
+                                Like like = new Like();
+                                like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
+                                likesList.add(like);
+                            }
+
+                            List<Comment> commentList = new ArrayList<>();
+                            for (DataSnapshot dataSnapshot1 :
+                                    singleSnapshot.child(getString(R.string.field_comments)).getChildren()) {
+                                Comment comment = new Comment();
+                                comment.setUser_id(dataSnapshot1.getValue(Comment.class).getUser_id());
+                                comment.setComment(dataSnapshot1.getValue(Comment.class).getComment());
+                                comment.setDate_created(dataSnapshot1.getValue(Comment.class).getDate_created());
+                            }
+
+                            post.setTag_list(tagIDList);
+                            post.setComments(commentList);
+                            post.setLikes(likesList);
+
+                            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+                            Query query1 = reference1.child(getString(R.string.dbname_user_following))
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    boolean is_following = false;
+                                    for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                                        for (int i = 0; i < post.getTag_list().size(); i++) {
+                                            if (singleSnapshot.child(mContext.getString(R.string.field_tag_id)).getValue().toString().equals(post.getTag_list().get(i))) {
+                                                is_following = true;
+                                            }
+                                        }
+                                    }
+
+                                    if (!is_following) {
+                                        mPosts.add(post);
+                                    }
+                                    displayPosts();
+                                }
+
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     private void displayPosts(){
@@ -456,7 +486,7 @@ public class FeatureActivity extends AppCompatActivity implements MainfeedListAd
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 65;
+            totalHeight += view.getMeasuredHeight() * 1.2;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

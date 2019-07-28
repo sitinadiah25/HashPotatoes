@@ -93,6 +93,7 @@ public class CreateTagActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: closing activity, go back to previous screen");
                 finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
 
@@ -134,6 +135,7 @@ public class CreateTagActivity extends AppCompatActivity {
                                 mFirebaseMethods.addTagToDatabase(tag_name, tag_desc, privacy);
                                 Intent intent = new Intent(mContext, ProfileActivity.class);
                                 mContext.startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                             }
                             catch (NullPointerException e) {
                                 Log.e(TAG, "onDataChange: NullPointerException: " + e.getLocalizedMessage() );

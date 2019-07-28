@@ -90,7 +90,7 @@
                 android:id="@+id/relLayout3"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:paddingBottom="20dp"
+                android:paddingBottom="10dp"
                 android:orientation="vertical">
 
                 <EditText
@@ -131,13 +131,14 @@
                     android:textSize="15sp"
                     android:background="@color/lightBlue"
                     android:inputType="textCapSentences|textMultiLine"
+                    android:layout_below="@+id/tvTag"
                     android:id="@+id/searchTag"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="*Add at least one tag"
-                    android:layout_below="@+id/searchTag"/>
+                    android:id="@+id/tvTag"/>
 
                 <ListView
                     android:layout_width="match_parent"

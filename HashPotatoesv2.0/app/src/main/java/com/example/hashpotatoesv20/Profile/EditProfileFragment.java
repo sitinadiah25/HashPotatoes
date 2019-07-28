@@ -143,7 +143,8 @@ public class EditProfileFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to ProfileActivity");
-                getFragmentManager().popBackStack();
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
@@ -268,7 +269,13 @@ public class EditProfileFragment extends Fragment implements
         mYearOfStudy.setText(settings.getYear());
         mMajor.setText((settings.getMajor()));
 
-        int year = Integer.parseInt(settings.getYear());
+        int year;
+        if (settings.getYear().equals("")) {
+            year = 1;
+        }
+        else {
+            year = Integer.parseInt(settings.getYear());
+        }
         ArrayAdapter myAdap = (ArrayAdapter) mSpinner.getAdapter();
         int spinnerPosition = myAdap.getPosition("Year " + year);
         mSpinner.setSelection(spinnerPosition);

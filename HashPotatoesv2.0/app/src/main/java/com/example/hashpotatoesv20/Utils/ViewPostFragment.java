@@ -483,7 +483,6 @@ public class ViewPostFragment extends Fragment {
 
         mTag.setText(ss);
         mTag.setMovementMethod(LinkMovementMethod.getInstance());
-        //mTag.setText(newTag);
 
         setupListView();
 
@@ -495,11 +494,8 @@ public class ViewPostFragment extends Fragment {
                     addNewComment(mCommentText.getText().toString());
 
                     mCommentText.setText("");
-                    closeKeyboard();
-                } else {
-                    //Toast.makeText(getActivity(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
-                    closeKeyboard();
                 }
+                closeKeyboard();
             }
         });
 
@@ -752,6 +748,16 @@ public class ViewPostFragment extends Fragment {
                 .child(getString(R.string.field_comments))
                 .child(commentID)
                 .setValue(comment);
+
+        for (int i = 0; i < mPost.getTag_list().size(); i++) {
+            String currTag = mPost.getTag_list().get(i);
+            myRef.child(getString(R.string.dbname_tag_post))
+                    .child(currTag)
+                    .child(mPost.getPost_id())
+                    .child(getString(R.string.field_comments))
+                    .child(commentID)
+                    .setValue(comment);
+        }
 
         //notify post owner
         if(!mPost.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {

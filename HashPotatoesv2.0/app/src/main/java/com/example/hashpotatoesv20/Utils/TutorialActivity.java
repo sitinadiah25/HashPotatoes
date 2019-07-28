@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.example.hashpotatoesv20.Login.LoginActivity;
 import com.example.hashpotatoesv20.Main.MainActivity;
 import com.example.hashpotatoesv20.R;
 import com.hololo.tutorial.library.Step;
@@ -14,8 +15,17 @@ public class TutorialActivity extends com.hololo.tutorial.library.TutorialActivi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        addFragment(new Step.Builder().setTitle("Welcome to HashPotatoes!")
+                .setContent("HashPotatoes is a platform where students can carry out discussions without the fear of judgement. " +
+                        "\nStudents can post questions with the option to remain anonymous. " +
+                        "\nThis is to encourage students to engage in discussions so as to broaden their knowledge in their field of study.")
+                .setBackgroundColor(Color.parseColor("#ABD1ED")) // int background color
+                .setDrawable(R.drawable.welcome1) // int top drawable
+                .setSummary("Continue")
+                .build());
+
         addFragment(new Step.Builder().setTitle("HashPotatoes Walk-through")
-                .setContent("Yay Walk-through!")
+                .setContent("To help users better understand our app, here is a walk-through of our app!")
                 .setBackgroundColor(Color.parseColor("#ABD1ED")) // int background color
                 .setDrawable(R.drawable.welcome_tutorial) // int top drawable
                 .setSummary("Continue")
@@ -62,7 +72,7 @@ public class TutorialActivity extends com.hololo.tutorial.library.TutorialActivi
 
     @Override
     public void finishTutorial() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

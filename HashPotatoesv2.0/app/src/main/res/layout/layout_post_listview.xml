@@ -28,7 +28,10 @@
                 android:layout_marginLeft="5dp"
                 android:textColor="@color/Black"
                 android:layout_marginRight="25dp"
-                android:id="@id/post_discussion"/>
+                android:id="@id/post_discussion"
+                android:maxLines="3"
+                android:maxLength="200"
+                android:ellipsize="end"/>
 
             <TextView
                 android:layout_width="wrap_content"

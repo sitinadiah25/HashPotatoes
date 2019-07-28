@@ -318,11 +318,7 @@ public class ProfileFragment extends Fragment {
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            int actPosition = posts.size() - position - 1;
-                            Log.d(TAG, "onItemClick: position:" + actPosition);
-                            //Log.d(TAG, "onItemClick: post: " + mPaginatedPosts.get(actPosition));
-                            mOnListPostSelectedListener.onPostSelected(posts.get(actPosition), ACTIVITY_NUM);
-                            //((MainActivity)getActivity()).showLayout();
+                            mOnListPostSelectedListener.onPostSelected(posts.get(position), ACTIVITY_NUM);
                         }
                     });
 
@@ -349,7 +345,7 @@ public class ProfileFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 25;
+            totalHeight += view.getMeasuredHeight() + 20;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();

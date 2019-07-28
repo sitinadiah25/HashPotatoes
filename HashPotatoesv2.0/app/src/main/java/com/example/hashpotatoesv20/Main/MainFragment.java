@@ -357,7 +357,8 @@ public class MainFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() + 65;
+            totalHeight += view.getMeasuredHeight()  * 1.2;
+            Log.d(TAG, "setListViewHeightBasedOnChildren: height" + view.getMeasuredHeight());
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
