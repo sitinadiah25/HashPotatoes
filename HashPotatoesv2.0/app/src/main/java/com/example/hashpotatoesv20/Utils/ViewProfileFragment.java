@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -142,6 +143,22 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
+        mHashtags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to other following fragment");
+                OtherFollowingFragment fragment = new OtherFollowingFragment();
+                Bundle args = new Bundle();
+                args.putParcelable(getString(R.string.intent_user), mUser);
+                fragment.setArguments(args);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.otherfollowing_fragment));
+                transaction.commit();
+            }
+        });
+
         setupBottomNavigationView();
         setupToolbar();
 
@@ -275,7 +292,12 @@ public class ViewProfileFragment extends Fragment {
                     Log.d(TAG, "onDataChange: found post: " + ds.getValue());
                     mTagsCount++;
                 }
-                mHashtags.setText(String.valueOf(mTagsCount));
+                if (mTagsCount == 1) {
+                    mHashtags.setText(String.valueOf(mTagsCount) + " Hashtag");
+                }
+                else {
+                    mHashtags.setText(String.valueOf(mTagsCount) + " Hashtags");
+                }
             }
 
             @Override

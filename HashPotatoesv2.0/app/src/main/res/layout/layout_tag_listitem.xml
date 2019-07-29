@@ -38,6 +38,7 @@
                 android:layout_marginLeft="10dp"
                 android:textSize="18sp"
                 android:textColor="@color/Black"
+                android:layout_marginRight="10dp"
                 android:id="@+id/tag_name"
                 />
 
@@ -49,6 +50,9 @@
                 android:textSize="15sp"
                 android:layout_centerVertical="true"
                 android:textColor="@color/Gray"
+                android:layout_marginRight="10dp"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:id="@+id/tag_desc"
                 />
 

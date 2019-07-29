@@ -171,18 +171,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        tvHash.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating to following fragment");
-                FollowingFragment fragment = new FollowingFragment();
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, fragment);
-                transaction.addToBackStack(getString(R.string.following_fragment));
-                transaction.commit();
-            }
-        });
+        tvHash.setVisibility(View.GONE);
 
         Log.d(TAG, "onCreateView: Started.");
 
@@ -234,7 +223,12 @@ public class ProfileFragment extends Fragment {
                     Log.d(TAG, "onDataChange: found post: " + ds.getValue());
                     mTagsCount++;
                 }
-                mHashtags.setText(String.valueOf(mTagsCount));
+                if (mTagsCount == 1) {
+                    mHashtags.setText(String.valueOf(mTagsCount) + " Hashtag");
+                }
+                else {
+                    mHashtags.setText(String.valueOf(mTagsCount) + " Hashtags");
+                }
             }
 
             @Override

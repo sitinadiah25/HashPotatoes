@@ -14,6 +14,7 @@
     <string name="following_fragment">Following</string>
     <string name="notification_fragment">Notification</string>
     <string name="changepass_fragment">Change Password</string>
+    <string name="otherfollowing_fragment">Other Following</string>
 
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>

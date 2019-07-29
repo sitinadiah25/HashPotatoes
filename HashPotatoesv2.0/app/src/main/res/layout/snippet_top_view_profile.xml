@@ -44,6 +44,7 @@
             android:layout_marginTop="4dp"
             android:text="Hashtags"
             app:layout_constraintStart_toEndOf="@+id/tvHash"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/textPost" />
 
     </android.support.constraint.ConstraintLayout>
