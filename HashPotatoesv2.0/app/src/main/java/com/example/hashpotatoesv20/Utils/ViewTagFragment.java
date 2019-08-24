@@ -445,6 +445,15 @@ public class ViewTagFragment extends Fragment {
                         like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                         likesList.add(like);
                     }
+
+                    ArrayList<String> tagIDList = new ArrayList<>();
+                    for (DataSnapshot dataSnapshot1 : singleSnapshot
+                            .child(mContext.getString(R.string.field_tag_list)).getChildren()) {
+                        Log.d(TAG, "onDataChange: post taglist" + dataSnapshot1.getValue());
+                        tagIDList.add(dataSnapshot1.getValue().toString());
+                    }
+
+                    post.setTag_list(tagIDList);
                     post.setComments(comments);
                     post.setLikes(likesList);
                     posts.add(post);

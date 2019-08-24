@@ -749,14 +749,19 @@ public class ViewPostFragment extends Fragment {
                 .child(commentID)
                 .setValue(comment);
 
-        for (int i = 0; i < mPost.getTag_list().size(); i++) {
-            String currTag = mPost.getTag_list().get(i);
-            myRef.child(getString(R.string.dbname_tag_post))
-                    .child(currTag)
-                    .child(mPost.getPost_id())
-                    .child(getString(R.string.field_comments))
-                    .child(commentID)
-                    .setValue(comment);
+        try {
+            for (int i = 0; i < mPost.getTag_list().size(); i++) {
+                String currTag = mPost.getTag_list().get(i);
+                myRef.child(getString(R.string.dbname_tag_post))
+                        .child(currTag)
+                        .child(mPost.getPost_id())
+                        .child(getString(R.string.field_comments))
+                        .child(commentID)
+                        .setValue(comment);
+            }
+        }
+        catch (NullPointerException e) {
+            Log.e(TAG, "addNewComment: " + e.getMessage() );
         }
 
         //notify post owner
