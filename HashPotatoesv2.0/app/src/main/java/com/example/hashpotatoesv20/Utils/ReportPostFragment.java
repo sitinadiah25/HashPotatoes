@@ -97,7 +97,7 @@ public class ReportPostFragment extends Fragment {
                 else {
                     Log.d(TAG, "onClick: sending report to gmail");
                     String fromEmail = "hashpotatoes98@gmail.com";
-                    String fromPassword = "98jannad98";
+                    String fromPassword = "";
                     String toEmail = "hashpotatoes98@gmail.com";
                     String emailSubject = "Report Post: " + mPost.getPost_id();
                     String emailBody = "Reported by UserID: " + FirebaseAuth.getInstance().getCurrentUser().getUid()
